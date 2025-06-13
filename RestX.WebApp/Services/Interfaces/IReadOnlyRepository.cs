@@ -7,7 +7,7 @@ namespace RestX.BLL.Interfaces
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using Tprofile.Models.Interfaces;
+    using RestX.Models.Interfaces;
 
     //using Tprofile.Models.Interfaces;
 

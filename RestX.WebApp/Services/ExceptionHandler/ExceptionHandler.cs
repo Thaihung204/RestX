@@ -44,7 +44,7 @@ namespace Tprofile.BLL.ExceptionHandling
                 };
                 url = uriBuilder.Uri.ToString();
             }
-            this.logger.LogError(ex, customMessage, new { CurrentTenant = this.currentTenant, URL = url });
+            //this.logger.LogError(ex, customMessage, new { CurrentTenant = this.currentTenant, URL = url });
         }
     }
 }

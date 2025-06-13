@@ -18,8 +18,8 @@ namespace RestX.Models.Interfaces
 
         //byte[] Version { get; set; }
 
-        string PropertiesJson { get; set; }
+        //string PropertiesJson { get; set; }
 
-        ExpandoObject CustomProperties { get; set; }
+        //ExpandoObject CustomProperties { get; set; }
     }
 }

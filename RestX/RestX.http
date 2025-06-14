@@ -1,6 +1,0 @@
-@RestX_HostAddress = http://localhost:5118
-
-GET {{RestX_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

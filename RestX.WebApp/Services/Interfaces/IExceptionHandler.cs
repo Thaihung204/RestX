@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tprofile.BLL.Interfaces
+namespace RestX.WebApp.Services.Interfaces
 {
     public interface IExceptionHandler
     {

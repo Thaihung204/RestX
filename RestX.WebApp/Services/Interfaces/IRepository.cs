@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using RestX.BLL.Interfaces;
 using RestX.Models.Interfaces;
 
-namespace RestX.BLL.Interfaces
+namespace RestX.WebApp.Services.Interfaces
 {
     public interface IRepository : IReadOnlyRepository
     {

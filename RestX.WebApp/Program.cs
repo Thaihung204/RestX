@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using RestX.WebApp.Models;
+using RestX.WebApp.Services;
+using RestX.WebApp.Services.Interfaces;
+
 namespace RestX.WebApp
 {
     public class Program
@@ -8,6 +13,35 @@ namespace RestX.WebApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<IOwnerService, Services.Services.OwnerService>();
+            builder.Services.AddScoped<ICustomerService, Services.Services.CustomerService>();
+            builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXDbContext>>();
+
+            // Configure the new Code First DbContext
+            builder.Services.AddDbContext<RestXDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"),
+                    sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                    });
+                
+                // Enable sensitive data logging in development
+                if (builder.Environment.IsDevelopment())
+                {
+                    options.EnableSensitiveDataLogging();
+                    options.EnableDetailedErrors();
+                }
+            });
+
+            // Keep the old DbContext for compatibility during migration
+            builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"));
+            });
 
             var app = builder.Build();
 
@@ -28,8 +62,7 @@ namespace RestX.WebApp
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-
+                pattern: "{controller=Home}/{action=Index}/{ownerId?}/{tableId?}");
             app.Run();
         }
     }

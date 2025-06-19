@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
-using RestX.BLL.Interfaces;
+using RestX.WebApp.Services.Interfaces;
 
-namespace RestX.BLL.Services
+namespace RestX.WebApp.Services.Services
 {
     public class BaseService
     {
@@ -14,7 +14,7 @@ namespace RestX.BLL.Services
         //public IRedisService RedisService;
         //public readonly ActiveTenant CurrentTenant;
 
-        public BaseService(IRepository repo 
+        public BaseService(IRepository repo
             //IRedisService redisService, 
             //IEnumerable<ActiveTenant> tenant = null
             )

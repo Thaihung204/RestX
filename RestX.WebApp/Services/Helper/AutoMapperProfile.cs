@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 
-namespace RestX.BLL.Helper
+namespace RestX.WebApp.Services.Helper
 {
     internal class AutoMapperProfile : Profile
     {

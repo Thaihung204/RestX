@@ -1,8 +1,72 @@
-﻿@{
+﻿@model RestX.WebApp.Models.ViewModels.Home_GetOwnerViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
+<link rel="stylesheet" href="~/css/index.css" />
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-mobile">
+    <!-- Header -->
+    <div class="header">
+        <div style="font-size:1.2rem;color:#888;margin-right:8px;">🏠</div>
+        <div class="header-info">
+            <div class="header-title">@Model.Name</div>
+            <div class="header-address">@Model.Address</div>
+        </div>
+        <div class="header-flag">
+            <span style="font-size:1.2rem;">🇬🇧</span>
+        </div>
+    </div>
+
+    <!-- Banner -->
+    <div class="banner">
+        <img src="@Model.FileUrl" alt="Banner" />
+    </div>
+
+    <!-- Greeting -->
+    <div class="greeting">
+        <span class="icon">🌙</span>
+        Good evening <span class="customer">Customers</span>
+        <span class="edit">✏️</span>
+    </div>
+    <div class="table-info">
+        We will return your items to you at the table: <span class="table-code">C1</span>
+    </div>
+
+    <!-- Phone points -->
+    <div class="phone-points">
+        <span class="icon">🎁</span>
+        Enter phone number to accumulate points
+    </div>
+
+    <!-- Quick actions -->
+    <div class="quick-actions">
+        <div class="quick-action">
+            <span class="icon">🧾</span>
+            Request bill
+        </div>
+        <div class="quick-action">
+            <span class="icon">🧑‍💼</span>
+            Ask for service
+        </div>
+        <div class="quick-action">
+            <span class="icon">⭐</span>
+            Give feedback
+        </div>
+    </div>
+
+    <!-- Order menu -->
+    <div class="order-menu" onclick="location.href='@Url.Action("Menu", "Dish")'" style="cursor:pointer;">
+        <span class="icon">🍽️</span>
+        View Menu - Order food
+        <span class="arrow">&gt;</span>
+    </div>
+
+    <!-- Floating button -->
+    <div class="floating-btn">
+        <span>🔔</span>
+    </div>
+
+    <div class="powered-by">
+        Powered by RestX
+    </div>
 </div>

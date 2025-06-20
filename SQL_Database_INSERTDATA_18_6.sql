@@ -1,6 +1,8 @@
 -- Restaurant Management System Database
 -- SQL Server Script for Inserting Sample Data with Audit Fields
 
+Create database RestX_RestaurantManagement
+
 -- Use the existing database
 USE RestX_RestaurantManagement;
 GO

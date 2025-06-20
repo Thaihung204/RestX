@@ -16,6 +16,7 @@ namespace RestX.WebApp
             builder.Services.AddScoped<IOwnerService, Services.Services.OwnerService>();
             builder.Services.AddScoped<ICustomerService, Services.Services.CustomerService>();
             builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXDbContext>>();
+            builder.Services.AddScoped<IDishService, Services.Services.DishService>();
 
             // Configure the new Code First DbContext
             builder.Services.AddDbContext<RestXDbContext>(options =>

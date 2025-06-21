@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using RestX.WebApp.Models;
 using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
+using RestX.WebApp.Services.Services;
 
 namespace RestX.WebApp
 {
@@ -13,10 +14,11 @@ namespace RestX.WebApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddScoped<IOwnerService, Services.Services.OwnerService>();
-            builder.Services.AddScoped<ICustomerService, Services.Services.CustomerService>();
+            builder.Services.AddScoped<IOwnerService, OwnerService>();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXDbContext>>();
-            builder.Services.AddScoped<IDishService, Services.Services.DishService>();
+            builder.Services.AddScoped<IDishService, DishService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             // Configure the new Code First DbContext
             builder.Services.AddDbContext<RestXDbContext>(options =>

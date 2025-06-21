@@ -7,37 +7,35 @@ using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly ICustomerService customerService;
-        private readonly IOwnerService ownerService;
+        private readonly IHomeService homeService;
 
-        public HomeController(ILogger<HomeController> logger, ICustomerService customerService, IOwnerService ownerService)
+        public HomeController(IHomeService homeService, IExceptionHandler exceptionHandler) : base(exceptionHandler) 
         {
-            _logger = logger;
-            this.customerService = customerService;
-            this.ownerService = ownerService;
+            this.homeService = homeService;
         }
 
         [HttpGet]
-        [Route("Home/Index/{ownerId}/{tableId}")]
-        public async Task<IActionResult> Index(Guid ownerId, int tableId)
+        [Route("Home/Index/{ownerId:guid}/{tableId:int}")]
+        public async Task<IActionResult> Index(Guid ownerId, int tableId, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Index action called with OwnerId: {OwnerId}, TableId: {TableId}", ownerId, tableId);
-
-            Owner owner = await ownerService.GetOwnerByIdAsync(ownerId);
-
-            var viewModel = new Home_GetOwnerViewModel
+            try
             {
-                Id = owner.Id,
-                FileId = owner.FileId,
-                Name = owner.Name,
-                Address = owner.Address,
-                FileName = owner.File?.Name,
-                FileUrl = owner.File?.Url
-            };
-            return View(viewModel);
+                var viewModel = await homeService.GetHomeViewsAsync(ownerId, tableId, cancellationToken);
+
+                if (viewModel == null)
+                {
+                    return NotFound();
+                }
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while processing Index for OwnerId: {OwnerId}");
+                return this.BadRequest("An unexpected error occurred. Please try again later.");
+            }
         }
 
         public IActionResult Privacy()

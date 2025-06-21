@@ -6,38 +6,40 @@ namespace RestX.WebApp.Controllers
 {
     public class DishController : Controller
     {
-        private readonly IRepository _repo;
+        private readonly IDishService _dishService;
+        private readonly ICategoryService _categoryService;
 
-        public DishController(IRepository repo)
+        public DishController(IDishService dishService, ICategoryService categoryService)
         {
-            _repo = repo;
+            _dishService = dishService;
+            _categoryService = categoryService;
         }
 
         public IActionResult Menu()
         {
-            var categories = _repo.GetAll<Models.Category>(
-                    orderBy: q => q.OrderBy(c => c.Name),
-                    includeProperties: "Dishes,Dishes.File"
-                )
-                .Select(category => new CategoryViewModel
-                {
-                    Id = category.Id,
-                    CategoryName = category.Name,
-                    Dishes = category.Dishes
-                        .OrderBy(d => d.Name)
-                        .Select(dish => new DishViewModel
-                        {
-                            Id = dish.Id,
-                            Name = dish.Name,
-                            Description = dish.Description,
-                            Price = dish.Price,
-                            ImageUrl = dish.File?.Url ?? "/images/no-image.png"
-                        }).ToList()
-                }).ToList();
+            var dishes = _dishService.GetDishes();
+            var categories = _categoryService.GetCategories();
 
             var model = new MenuViewModel
             {
                 Categories = categories
+                    .OrderBy(c => c.Name)
+                    .Select(category => new CategoryViewModel
+                    {
+                        Id = category.Id,
+                        CategoryName = category.Name,
+                        Dishes = dishes
+                            .Where(d => d.CategoryId == category.Id)
+                            .OrderBy(d => d.Name)
+                            .Select(dish => new DishViewModel
+                            {
+                                Id = dish.Id,
+                                Name = dish.Name,
+                                Description = dish.Description,
+                                Price = dish.Price,
+                                ImageUrl = dish.File?.Url ?? "/images/no-image.png"
+                            }).ToList()
+                    }).ToList()
             };
 
             return View(model);

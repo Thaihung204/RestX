@@ -1,16 +1,17 @@
-﻿using RestX.WebApp.Services.Interfaces;
+﻿using RestX.WebApp.Models;
+using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Services.Services
 {
     public class CustomerService : BaseService, ICustomerService
     {
-        public CustomerService(IRepository repo) : base(repo)
+        public CustomerService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
         {
         }
 
-        public List<Models.Customer> GetCustomers()
+        public List<Customer> GetCustomers()
         {
-            return Repo.GetAll<Models.Customer>().ToList();
+            return repo.GetAll<Customer>().ToList();
 
         }
     }

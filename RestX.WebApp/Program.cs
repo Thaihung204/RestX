@@ -1,8 +1,9 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using RestX.WebApp.Models;
 using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
 using RestX.WebApp.Services.Services;
+using RestX.WebApp.Filters;
 
 namespace RestX.WebApp
 {
@@ -12,19 +13,22 @@ namespace RestX.WebApp
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<RestaurantContextFilterAttribute>();
+            });
             builder.Services.AddScoped<IOwnerService, OwnerService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXDbContext>>();
-            builder.Services.AddScoped<IDishService, Services.Services.DishService>();
+            builder.Services.AddScoped<IDishService, DishService>();
             builder.Services.AddScoped<IHomeService, HomeService>();
+            builder.Services.AddScoped<ITableService, TableService>();
             builder.Services.AddScoped<IExceptionHandler, ExceptionHandler>();
             builder.Services.AddScoped<IMenuService, MenuService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
 
-            builder.Services.AddAutoMapper(typeof(Program)); // or (MappingProfile)
-            
+            builder.Services.AddAutoMapper(typeof(Program));    
 
             // Configure the new Code First DbContext
             builder.Services.AddDbContext<RestXDbContext>(options =>
@@ -46,7 +50,7 @@ namespace RestX.WebApp
                 }
             });
             // Buld port 5000
-            builder.WebHost.UseUrls("https://0.0.0.0:5000");
+            //builder.WebHost.UseUrls("https://0.0.0.0:5000");
             // Keep the old DbContext for compatibility during migration
             builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
             {
@@ -65,6 +69,17 @@ namespace RestX.WebApp
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            // Thêm middleware để chuyển hướng
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path == "/")
+                {
+                    context.Response.Redirect("/Home/Index/550E8400-E29B-41D4-A716-446655440040/1");
+                    return;
+                }
+                await next();
+            });
 
             app.UseRouting();
 

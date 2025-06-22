@@ -2,5 +2,6 @@
 {
     public interface IDishService
     {
+        List<Models.Dish> GetDishes();
     }
 }

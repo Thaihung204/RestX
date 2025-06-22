@@ -18,11 +18,11 @@ namespace RestX.WebApp.Controllers
 
         [HttpGet]
         [Route("Home/Index/{ownerId:guid}/{tableId:int}")]
-        public async Task<IActionResult> Index(Guid ownerId, int tableId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
             try
             {
-                var viewModel = await homeService.GetHomeViewsAsync(ownerId, tableId, cancellationToken);
+                var viewModel = await homeService.GetHomeViewsAsync(cancellationToken);
 
                 if (viewModel == null)
                 {

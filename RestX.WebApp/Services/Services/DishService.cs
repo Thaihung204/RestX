@@ -1,17 +1,20 @@
-﻿using RestX.WebApp.Services.Interfaces;
+﻿using RestX.WebApp.Models;
+using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Services.Services
 {
     public class DishService : BaseService, IDishService
     {
-        public DishService(IRepository repo) : base(repo)
+        public DishService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
         {
         }
 
-        public List<Models.Dish> GetDishes()
+        public List<Dish> GetDishes()
         {
-            return Repo.GetAll<Models.Dish>().ToList();
-           
+            Console.WriteLine($"OwnerId: {OwnerId}"); // Test xem có lấy được OwnerId không
+            Console.WriteLine($"TableId: {TableId}"); // Test xem có lấy được TableId không
+
+            return repo.GetAll<Dish>().ToList();
         }
     }
 }

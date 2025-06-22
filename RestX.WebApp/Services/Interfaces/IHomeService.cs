@@ -4,6 +4,6 @@ namespace RestX.WebApp.Services.Interfaces
 {
     public interface IHomeService
     {
-        Task<HomeViewModel> GetHomeViewsAsync(Guid ownerId, int tableId, CancellationToken cancellationToken = default);
+        Task<HomeViewModel> GetHomeViewsAsync(CancellationToken cancellationToken = default);
     }
 }

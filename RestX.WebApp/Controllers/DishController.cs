@@ -7,14 +7,20 @@ namespace RestX.WebApp.Controllers
     public class DishController : Controller
     {
         private readonly IRepository _repo;
+        private readonly IDishService dishService;
 
-        public DishController(IRepository repo)
+        public DishController(IRepository repo, IDishService dishService)
         {
             _repo = repo;
+            this.dishService = dishService;
         }
 
-        public IActionResult Menu()
+        [HttpGet]
+        [Route("Dish/Menu/{ownerId:guid}/{tableId:int}")]
+        public IActionResult Menu(Guid ownerId, int tableId)
         {
+            dishService.GetDishes(); // Test xem có lấy được OwnerId không
+
             var categories = _repo.GetAll<Models.Category>(
                     orderBy: q => q.OrderBy(c => c.Name),
                     includeProperties: "Dishes,Dishes.File"

@@ -1,27 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RestX.WebApp.Models.ViewModels;
+﻿using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace RestX.WebApp.Controllers
+namespace RestX.WebApp.Services.Services
 {
-    public class DishController : Controller
+    public class MenuService : BaseService, IMenuService
     {
         private readonly IDishService _dishService;
         private readonly ICategoryService _categoryService;
 
-        public DishController(IDishService dishService, ICategoryService categoryService)
+        public MenuService(IRepository repo, IDishService dishService, ICategoryService categoryService) : base(repo)
         {
             _dishService = dishService;
             _categoryService = categoryService;
         }
 
-        public IActionResult Menu()
+        public async Task<MenuViewModel> GetMenuViewModelAsync(Guid ownerId, CancellationToken cancellationToken = default)
         {
-            var dishes = _dishService.GetDishes();
+            var dishes = _dishService.GetDishes()
+                .Where(d => d.IsActive == true && d.OwnerId == ownerId)
+                .ToList();
             var categories = _categoryService.GetCategories();
 
             var model = new MenuViewModel
             {
+                ownerId = ownerId,
                 Categories = categories
                     .OrderBy(c => c.Name)
                     .Select(category => new CategoryViewModel
@@ -42,7 +47,7 @@ namespace RestX.WebApp.Controllers
                     }).ToList()
             };
 
-            return View(model);
+            return await Task.FromResult(model);
         }
     }
 }

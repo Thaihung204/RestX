@@ -20,7 +20,7 @@ namespace RestX.WebApp
             builder.Services.AddScoped<IDishService, Services.Services.DishService>();
             builder.Services.AddScoped<IHomeService, HomeService>();
             builder.Services.AddScoped<IExceptionHandler, ExceptionHandler>();
-            builder.Services.AddScoped<IDishService, DishService>();
+            builder.Services.AddScoped<IMenuService, MenuService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             builder.Services.AddAutoMapper(typeof(Program)); // or (MappingProfile)

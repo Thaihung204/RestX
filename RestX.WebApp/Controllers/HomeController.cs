@@ -33,7 +33,7 @@ namespace RestX.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                this.exceptionHandler.RaiseException(ex, "An error occurred while processing Index for OwnerId: {OwnerId}");
+                this.exceptionHandler.RaiseException(ex, "An error occurred while processing Index for OwnerId");
                 return this.BadRequest("An unexpected error occurred. Please try again later.");
             }
         }

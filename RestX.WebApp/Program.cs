@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using RestX.WebApp.Models;
 using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
+using RestX.WebApp.Services.Services;
 
 namespace RestX.WebApp
 {
@@ -17,6 +18,10 @@ namespace RestX.WebApp
             builder.Services.AddScoped<ICustomerService, Services.Services.CustomerService>();
             builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXDbContext>>();
             builder.Services.AddScoped<IDishService, Services.Services.DishService>();
+            builder.Services.AddScoped<IHomeService, HomeService>();
+            builder.Services.AddScoped<IExceptionHandler, ExceptionHandler>();
+
+            builder.Services.AddAutoMapper(typeof(Program)); // or (MappingProfile)
 
             // Configure the new Code First DbContext
             builder.Services.AddDbContext<RestXDbContext>(options =>
@@ -37,7 +42,8 @@ namespace RestX.WebApp
                     options.EnableDetailedErrors();
                 }
             });
-
+            // Buld port 5000
+            builder.WebHost.UseUrls("https://0.0.0.0:5000");
             // Keep the old DbContext for compatibility during migration
             builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
             {

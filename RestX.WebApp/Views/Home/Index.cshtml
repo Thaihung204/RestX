@@ -29,7 +29,7 @@
         <span class="edit">✏️</span>
     </div>
     <div class="table-info">
-        We will return your items to you at the table: <span class="table-code">C1</span>
+        We will return your items to you at the table: <span class="table-code">@Model.TableNumber</span>
     </div>
 
     <!-- Phone points -->
@@ -55,12 +55,7 @@
     </div>
 
     <!-- Order menu -->
-    @* <div class="order-menu" onclick="location.href='@Url.Action("Menu", "Dish")'" style="cursor:pointer;">
-        <span class="icon">🍽️</span>
-        View Menu - Order food
-        <span class="arrow">&gt;</span>
-    </div> *@
-    <a asp-controller="Dish" asp-action="Menu" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@Model.TableId" class="order-menu" style="cursor:pointer;">
+    <a asp-controller="Menu" asp-action="Index" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@Model.TableId" class="order-menu" style="cursor:pointer;">
         <span class="icon">🍽️</span>
         View Menu - Order food
         <span class="arrow">&gt;</span>

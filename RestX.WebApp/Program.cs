@@ -28,8 +28,11 @@ namespace RestX.WebApp
             builder.Services.AddScoped<IHomeService, HomeService>();
             builder.Services.AddScoped<ITableService, TableService>();
             builder.Services.AddScoped<IExceptionHandler, ExceptionHandler>();
+            builder.Services.AddScoped<IMenuService, MenuService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             builder.Services.AddAutoMapper(typeof(Program)); // or (MappingProfile)
+            
 
             // Configure the new Code First DbContext
             builder.Services.AddDbContext<RestXDbContext>(options =>

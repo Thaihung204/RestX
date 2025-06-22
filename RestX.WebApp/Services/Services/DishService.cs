@@ -9,12 +9,10 @@ namespace RestX.WebApp.Services.Services
         {
         }
 
-        public List<Dish> GetDishes()
+        public async Task<List<Dish>> GetDishesAsync()
         {
-            Console.WriteLine($"OwnerId: {OwnerId}"); // Test xem có lấy được OwnerId không
-            Console.WriteLine($"TableId: {TableId}"); // Test xem có lấy được TableId không
-
-            return repo.GetAll<Dish>().ToList();
+            var dishes = await repo.GetAllAsync<Dish>();
+            return dishes.ToList();
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using RestX.WebApp.Models;
-using RestX.WebApp.Models.Home;
-using RestX.WebApp.Models.ViewModels;
+﻿using RestX.WebApp.Models.Home;
 using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Services.Services

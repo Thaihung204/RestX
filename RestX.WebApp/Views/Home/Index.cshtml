@@ -55,11 +55,14 @@
     </div>
 
     <!-- Order menu -->
-    <div class="order-menu" onclick="location.href='@Url.Action("Menu", "Dish")'" style="cursor:pointer;">
-        <span class="icon">🍽️</span>
-        View Menu - Order food
-        <span class="arrow">&gt;</span>
-    </div>
+    <form method="get" action="@Url.Action("Index", "Menu")" class="order-menu" style="cursor:pointer; margin:0; padding:0;">
+        <input type="hidden" name="ownerId" value="@Model.Id" />
+        <button type="submit" style="all:unset; cursor:pointer; width:100%; display:flex; align-items:center;">
+            <span class="icon">🍽️</span>
+            View Menu - Order food
+            <span class="arrow">&gt;</span>
+        </button>
+    </form>
 
     <!-- Floating button -->
     <div class="floating-btn">

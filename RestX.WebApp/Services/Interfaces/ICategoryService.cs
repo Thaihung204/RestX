@@ -2,8 +2,8 @@
 
 namespace RestX.WebApp.Services.Interfaces
 {
-    public interface IDishService
+    public interface ICategoryService
     {
-        List<Dish> GetDishes();
+        List<Category> GetCategories();
     }
 }

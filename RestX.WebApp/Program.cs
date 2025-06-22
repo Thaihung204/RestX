@@ -14,14 +14,17 @@ namespace RestX.WebApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddScoped<IOwnerService, Services.Services.OwnerService>();
-            builder.Services.AddScoped<ICustomerService, Services.Services.CustomerService>();
+            builder.Services.AddScoped<IOwnerService, OwnerService>();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXDbContext>>();
             builder.Services.AddScoped<IDishService, Services.Services.DishService>();
             builder.Services.AddScoped<IHomeService, HomeService>();
             builder.Services.AddScoped<IExceptionHandler, ExceptionHandler>();
+            builder.Services.AddScoped<IMenuService, MenuService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             builder.Services.AddAutoMapper(typeof(Program)); // or (MappingProfile)
+            
 
             // Configure the new Code First DbContext
             builder.Services.AddDbContext<RestXDbContext>(options =>

@@ -13,12 +13,9 @@ namespace RestX.WebApp
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddControllersWithViews(options =>
             {
-                // Đăng ký filter của chúng ta vào bộ sưu tập filter toàn cục
-                // ASP.NET Core sẽ tự động tìm và khởi tạo nó cho mỗi request
                 options.Filters.Add<RestaurantContextFilterAttribute>();
             });
             builder.Services.AddScoped<IOwnerService, OwnerService>();
@@ -31,8 +28,7 @@ namespace RestX.WebApp
             builder.Services.AddScoped<IMenuService, MenuService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
 
-            builder.Services.AddAutoMapper(typeof(Program)); // or (MappingProfile)
-            
+            builder.Services.AddAutoMapper(typeof(Program));    
 
             // Configure the new Code First DbContext
             builder.Services.AddDbContext<RestXDbContext>(options =>

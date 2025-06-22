@@ -133,6 +133,40 @@
         background: #fff3e0;
         color: #d17a00;
     }
+
+    /* RX-06 */
+
+    .input-number span{
+        border: solid 1px #F4F4F4;
+        color: #A4A4A4;
+        display: flex;
+    }
+
+    .input-number p{
+        display: flex;
+        height: fit-content;
+    }
+
+    .ViewChoseOrder{
+        --bs-gutter-x: 0;
+    }
+
+    .OrderList{
+        --bs-gutter-x: 0;
+    }
+
+    .OrderList img{
+        width: 36px;
+        height: 36px;
+    }
+
+    .ShortConfirm{
+        --bs-gutter-x: 0;
+        background-color: #ff9800;
+        color: #fff;
+        border-radius: 5px;
+    }
+
 </style>
 
 <div class="container-mobile">
@@ -173,13 +207,34 @@
                             }
                             <div class="menu-dish-price">@dish.Price.ToString("N0") đ</div>
                         </div>
-                        <button class="menu-dish-add" title="Add">
+                        @* <button class="menu-dish-add" title="Add">
                             <span>+</span>
-                        </button>
+                        </button> *@
+                        <div class="input-number d-flex">
+                            <span>-</span>
+                            <p class="m-0 px-4">1</p>
+                            <span>+</span>
+                        </div>
                     </div>
                 }
             </div>
         }
+    </div>
+
+    <div class="ViewChoseOrder row py-3">
+        <div class="OrderList col-6 row flex-nowrap justify-content-between align-items-center">
+            <img alt="Bun Bo Hue" class="col-3 p-0"/>
+            <img alt="Hu Tieu" class="col-3 p-0" />
+            <img alt="Mi Quang" class="col-3 p-0" />
+            <img alt="Pho Bo" class="col-3 p-0" />
+            <img alt="Pho Ga" class="col-3 p-0" hidden />
+            <img alt="Banh Canh Cua" class="col-3 p-0" hidden />
+            <h5 class="m-0" hidden >+2</h5>
+        </div>
+        <div class="ShortConfirm col-6 row align-items-center px-2 py-1">
+            <p class="col-5 m-0">999.999đ</p>
+            <h5 class="col-7 m-0 text-center">Xem,<br />xác nhận</h5>
+        </div>
     </div>
 </div>
 
@@ -224,4 +279,7 @@
             activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
     });
+
+    // RX-06
+
 </script>

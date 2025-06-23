@@ -2,8 +2,9 @@
 
 namespace RestX.WebApp.Services.Interfaces
 {
-    public interface ICategoryService
+    public interface ITableService
     {
-        Task<List<Category>> GetCategoriesAsync();
+        public Task<Table> GetTableByIdAsync(int id);
+
     }
 }

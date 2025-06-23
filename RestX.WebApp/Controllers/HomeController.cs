@@ -18,11 +18,11 @@ namespace RestX.WebApp.Controllers
 
         [HttpGet]
         [Route("Home/Index/{ownerId:guid}/{tableId:int}")]
-        public async Task<IActionResult> Index(Guid ownerId, int tableId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
             try
             {
-                var viewModel = await homeService.GetHomeViewsAsync(ownerId, tableId, cancellationToken);
+                var viewModel = await homeService.GetHomeViewsAsync(cancellationToken);
 
                 if (viewModel == null)
                 {
@@ -33,7 +33,7 @@ namespace RestX.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                this.exceptionHandler.RaiseException(ex, "An error occurred while processing Index for OwnerId: {OwnerId}");
+                this.exceptionHandler.RaiseException(ex, "An error occurred while processing Index for OwnerId");
                 return this.BadRequest("An unexpected error occurred. Please try again later.");
             }
         }

@@ -5,11 +5,14 @@ namespace RestX.WebApp.Services.Services
 {
     public class CategoryService : BaseService, ICategoryService
     {
-        public CategoryService(IRepository repo) : base(repo) { }
-
-        public List<Category> GetCategories()
+        public CategoryService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
         {
-            return Repo.GetAll<Category>().ToList();
+        }
+
+        public async Task<List<Category>> GetCategoriesAsync()
+        {
+            var categories = await repo.GetAllAsync<Category>();
+            return categories.ToList();
         }
     }
 }

@@ -1,23 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RestX.WebApp.Controllers
 {
-    public class MenuController : Controller
+    public class MenuController : BaseController
     {
-        private readonly IMenuService _menuService;
+        private readonly IMenuService menuService;
 
-        public MenuController(IMenuService menuService)
+        public MenuController(IMenuService menuService, IExceptionHandler exceptionHandler) : base(exceptionHandler)
         {
-            _menuService = menuService;
+            this.menuService = menuService;
         }
 
-        public async Task<IActionResult> Index(Guid ownerID, CancellationToken cancellationToken)
+        [HttpGet]
+        [Route("Menu/Index/{ownerId:guid}/{tableId:int}")]
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var model = await _menuService.GetMenuViewModelAsync(ownerID, cancellationToken);
+            var model = await menuService.GetMenuViewModelAsync(cancellationToken);
             return View(model);
         }
     }

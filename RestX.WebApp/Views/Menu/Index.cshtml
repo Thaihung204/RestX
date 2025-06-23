@@ -290,6 +290,8 @@
     const ViewChoseOrder = document.getElementsByClassName("ViewChoseOrder")[0];
     const OrderList = document.getElementsByClassName("OrderList")[0];
     let numChosenDish = 0;
+    const ShortConfirm = document.getElementsByClassName("ShortConfirm")[0];
+    let CartValue = 0;
 
     // Nếu ấn vào .menu-dish-add thì nó sẽ hiện .input-number
     const menuDishAdd = document.getElementsByClassName("menu-dish-add");
@@ -299,7 +301,10 @@
             btn.nextElementSibling.style.display = "flex";
             ViewChoseOrder.style.display = "flex";
             numChosenDish++;
-            updateOrderWindow(btn.parentElement.children[0].src, btn.parentElement.children[0].alt)
+            updateOrderWindow(btn.parentElement.children[0].src, btn.parentElement.children[0].alt);
+
+            CartValue += parseCurrencyString(btn.previousElementSibling.lastElementChild.textContent);
+            updateCartValue();
         });
     });
 
@@ -321,6 +326,9 @@
             } else {
                 inputNum.children[1].textContent = number.toString();
             }
+
+            CartValue -= parseCurrencyString(inputNum.previousElementSibling.previousElementSibling.lastElementChild.textContent);
+            updateCartValue();
         });
 
 
@@ -328,9 +336,16 @@
         inputNum.children[2].addEventListener("click", () => {
             inputNum.children[1].textContent = (Number(inputNum.children[1].textContent) + 1).toString();
 
+            CartValue += parseCurrencyString(inputNum.previousElementSibling.previousElementSibling.lastElementChild.textContent);
+            updateCartValue();
         });
     });
 
+    ShortConfirm.addEventListener("click", () => {
+        fetch();
+    });
+
+    // cap nhat thanh xem truoc gio hang duoi man hinh
     function updateOrderWindow(srcImg, altImg) {
         if (!srcImg || srcImg.trim() === "") {
 
@@ -340,9 +355,14 @@
                 }
             });
 
-            // Cap nhat hinh anh nho ben canh nut Xem, xac nhan
+            
             const numberOrder = OrderList.children.length - 1;
-            if (numberOrder > 3) {
+
+            // neu khong con gi o thanh xem truoc gio hang thi display: none
+            if (numberOrder === 0){
+                ViewChoseOrder.style.display = "none";
+            } else if (numberOrder > 3) {   
+                // Cap nhat hinh anh nho ben canh nut Xem, xac nhan
 
                 let num = 0;
                 Array.from(OrderList.children).forEach((dishImg) => {
@@ -380,5 +400,15 @@
                 })
             }
         }
+    }
+
+    function updateCartValue(){
+        ShortConfirm.children[0].textContent = CartValue + "đ";
+    }
+
+    function parseCurrencyString(str) {
+        // Loại bỏ tất cả ký tự không phải số
+        const numberString = str.replace(/[^\d]/g, '');
+        return parseInt(numberString, 10);
     }
 </script>

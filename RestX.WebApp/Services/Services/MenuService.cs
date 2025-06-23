@@ -23,7 +23,8 @@ namespace RestX.WebApp.Services.Services
 
             var model = new MenuViewModel
             {
-                ownerId = OwnerId,
+                OwnerId = OwnerId,
+                TableId = TableId,
                 Categories = categories
                     .OrderBy(c => c.Name)
                     .Select(category => new CategoryViewModel

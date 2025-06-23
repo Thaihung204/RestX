@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /RestX.WebApp/appsettings.json
+/RestX.WebApp/wwwroot/lib

@@ -1,0 +1,118 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<link rel="stylesheet" href="~/css/index.css" />
+
+<style>
+
+    .order-card {
+        max-width: 360px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 20px;
+    }
+
+    .order-card h3 {
+        margin: 0 0 15px;
+        font-size: 18px;
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .order-header button {
+        background: none;
+        border: none;
+        color: #f44336;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .item-row {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+    }
+
+    .item-image {
+        width: 60px;
+        height: 60px;
+        background-color: #ddd;
+        border-radius: 8px;
+        margin-right: 12px;
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-info p {
+        margin: 3px 0;
+    }
+
+    .edit-link {
+        color: rgb(247, 148, 30);
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .delete-item {
+        background: none;
+        border: none;
+        font-size: 18px;
+        color: #999;
+        cursor: pointer;
+    }
+
+    .total {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0 10px;
+        font-weight: bold;
+    }
+
+    .confirm-button {
+        display: block;
+        width: 100%;
+        background-color: rgb(247, 148, 30);
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="order-card">
+    <div class="order-header">
+        <span><</span>
+        <h3 class="m-0">Các món đang chọn</h3>
+        <button>Xóa giỏ</button>
+    </div>
+
+    <div class="item-row">
+        <img src="..." class="item-image" />
+        <div class="item-info">
+            <p>1 × Bánh bao trứng sữa</p>
+            <p>39.000 đ</p>
+            <p class="edit-link">Chỉnh sửa</p>
+        </div>
+        <button class="delete-item">×</button>
+    </div>
+
+    <div class="total">
+        <span>Tổng tiền</span>
+        <span>39.000 đ</span>
+    </div>
+
+    <button class="confirm-button">Xác nhận gửi yêu cầu gọi món</button>
+</div>
+

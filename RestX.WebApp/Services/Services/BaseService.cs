@@ -1,27 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using RestX.WebApp.Models;
 using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Services.Services
 {
     public class BaseService
     {
-        public readonly IRepository Repo;
-        //public IRedisService RedisService;
-        //public readonly ActiveTenant CurrentTenant;
+        protected readonly IRepository repo;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private RestaurantContext? restaurantContext;
 
-        public BaseService(IRepository repo
-            //IRedisService redisService, 
-            //IEnumerable<ActiveTenant> tenant = null
-            )
+        protected RestaurantContext RestaurantContext
         {
-            this.Repo = repo;
-            //this.RedisService = redisService;
-            //this.CurrentTenant = tenant?.FirstOrDefault();
+            get
+            {
+                if (restaurantContext == null)
+                {
+                    restaurantContext = _httpContextAccessor.HttpContext?.Items["RestaurantContext"] as RestaurantContext ?? new RestaurantContext();
+                }
+                return restaurantContext;
+            }
+        }
+
+        protected Guid OwnerId => RestaurantContext.OwnerId;
+        protected int TableId => RestaurantContext.TableId;
+
+
+        public BaseService(IRepository repo, IHttpContextAccessor httpContextAccessor)
+        {
+            this.repo = repo;
+            _httpContextAccessor = httpContextAccessor;
         }
     }
 }

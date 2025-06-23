@@ -4,6 +4,6 @@ namespace RestX.WebApp.Services.Interfaces
 {
     public interface IDishService
     {
-        List<Dish> GetDishes();
+        Task<List<Dish>> GetDishesAsync();
     }
 }

@@ -29,7 +29,7 @@
         <span class="edit">✏️</span>
     </div>
     <div class="table-info">
-        We will return your items to you at the table: <span class="table-code">C1</span>
+        We will return your items to you at the table: <span class="table-code">@Model.TableNumber</span>
     </div>
 
     <!-- Phone points -->
@@ -55,14 +55,11 @@
     </div>
 
     <!-- Order menu -->
-    <form method="get" action="@Url.Action("Index", "Menu")" class="order-menu" style="cursor:pointer; margin:0; padding:0;">
-        <input type="hidden" name="ownerId" value="@Model.Id" />
-        <button type="submit" style="all:unset; cursor:pointer; width:100%; display:flex; align-items:center;">
-            <span class="icon">🍽️</span>
-            View Menu - Order food
-            <span class="arrow">&gt;</span>
-        </button>
-    </form>
+    <a asp-controller="Menu" asp-action="Index" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@Model.TableId" class="order-menu" style="cursor:pointer;">
+        <span class="icon">🍽️</span>
+        View Menu - Order food
+        <span class="arrow">&gt;</span>
+    </a>
 
     <!-- Floating button -->
     <div class="floating-btn">

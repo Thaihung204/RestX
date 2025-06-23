@@ -1,8 +1,5 @@
 ﻿using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RestX.WebApp.Services.Services
 {
@@ -11,22 +8,23 @@ namespace RestX.WebApp.Services.Services
         private readonly IDishService _dishService;
         private readonly ICategoryService _categoryService;
 
-        public MenuService(IRepository repo, IDishService dishService, ICategoryService categoryService) : base(repo)
+        public MenuService(IRepository repo, IDishService dishService, ICategoryService categoryService, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
         {
             _dishService = dishService;
             _categoryService = categoryService;
         }
 
-        public async Task<MenuViewModel> GetMenuViewModelAsync(Guid ownerId, CancellationToken cancellationToken = default)
+        public async Task<MenuViewModel> GetMenuViewModelAsync(CancellationToken cancellationToken = default)
         {
-            var dishes = _dishService.GetDishes()
-                .Where(d => d.IsActive == true && d.OwnerId == ownerId)
+            var dishes = (await _dishService.GetDishesAsync())
+                .Where(d => d.IsActive == true && d.OwnerId == OwnerId)
                 .ToList();
-            var categories = _categoryService.GetCategories();
+            var categories = await _categoryService.GetCategoriesAsync();
 
             var model = new MenuViewModel
             {
-                ownerId = ownerId,
+                OwnerId = OwnerId,
+                TableId = TableId,
                 Categories = categories
                     .OrderBy(c => c.Name)
                     .Select(category => new CategoryViewModel
@@ -47,7 +45,7 @@ namespace RestX.WebApp.Services.Services
                     }).ToList()
             };
 
-            return await Task.FromResult(model);
+            return model;
         }
     }
 }

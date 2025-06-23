@@ -3,14 +3,14 @@
 @import "./variables/variables";
 
 // Import Bootstrap source files (Required file)
-@import "../libs/bootstrap/scss/bootstrap.scss";
+@import "../lib/bootstrap/scss/bootstrap.scss";
 
 
 @import "./variables/theme-variables";
 
 
 // Scrollbar style (Required file)
-@import "../libs/simplebar/dist/simplebar.css";
+@import "../lib/simplebar/dist/simplebar.css";
 
 // Tabler Icons style
 @import "../css/icons/tabler-icons/tabler-icons.css";

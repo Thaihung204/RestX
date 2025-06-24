@@ -27,6 +27,7 @@ namespace RestX.WebApp
             builder.Services.AddScoped<IExceptionHandler, ExceptionHandler>();
             builder.Services.AddScoped<IMenuService, MenuService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<ICartService, CartService>();
 
             builder.Services.AddAutoMapper(typeof(Program));    
 

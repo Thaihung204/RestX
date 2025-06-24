@@ -170,6 +170,8 @@
         background-color: #ff9800;
         color: #fff;
         border-radius: 5px;
+        border: none;
+        width: 100%;
     }
 
 </style>
@@ -202,7 +204,7 @@
                 <div class="menu-section-title">@category.CategoryName</div>
                 @foreach (var dish in category.Dishes)
                 {
-                    <div class="menu-dish-card">
+                    <div class="menu-dish-card" dish-id="@dish.Id">
                         <img class="menu-dish-img" src="@dish.ImageUrl" alt="@dish.Name" />
                         <div class="menu-dish-info">
                             <div class="menu-dish-name">@dish.Name</div>
@@ -228,18 +230,18 @@
 
     <div class="ViewChoseOrder row py-3 position-fixed bottom-0 start-50 translate-middle-x w-100 bg-white px-3" style="display: none;">
         <div class="OrderList col-6 row flex-nowrap justify-content-start align-items-center">
-            @* <img alt="Bun Bo Hue" class="pe-1"/>
-            <img alt="Hu Tieu" class="pe-1" />
-            <img alt="Mi Quang" class="pe-1" />
-            <img alt="Pho Bo" class="pe-1" />
-            <img alt="Pho Ga" class="pe-1" hidden />
-            <img alt="Banh Canh Cua" class="pe-1" hidden /> *@
             <h5 class="m-0" hidden>+0</h5>
         </div>
-        <div class="ShortConfirm col-6 row align-items-center px-2 py-1">
-            <p class="col-5 m-0">999.999đ</p>
-            <h5 class="col-7 m-0 text-center">Xem,<br />xác nhận</h5>
-        </div>
+        <form action="/Cart/Index/@Model.OwnerId/@Model.TableId" method="get" class="col-6">
+            <input type="hidden" name="OwnerId" value="@Model.OwnerId"/>
+            <input type="hidden" name="TableId" value="@Model.TableId"/>
+            <input type="hidden" name="DishListJson" id="jsonData" />
+            <button type="submit" class="ShortConfirm row align-items-center px-2 py-1">
+                <p class="col-5 m-0">999.999đ</p>
+                <h5 class="col-7 m-0 text-center">Xem,<br />xác nhận</h5>
+            </button>
+        </form>
+        
     </div>
 </div>
 
@@ -292,6 +294,8 @@
     let numChosenDish = 0;
     const ShortConfirm = document.getElementsByClassName("ShortConfirm")[0];
     let CartValue = 0;
+    let cart = [];
+    let jsonData = document.getElementById("jsonData");
 
     // Nếu ấn vào .menu-dish-add thì nó sẽ hiện .input-number
     const menuDishAdd = document.getElementsByClassName("menu-dish-add");
@@ -303,8 +307,19 @@
             numChosenDish++;
             updateOrderWindow(btn.parentElement.children[0].src, btn.parentElement.children[0].alt);
 
+            // Cập nhật giá tiền
             CartValue += parseCurrencyString(btn.previousElementSibling.lastElementChild.textContent);
             updateCartValue();
+
+            // Chuẩn bị cho cart
+            cart.push({
+                DishId: Number(btn.parentElement.getAttribute("dish-id")),
+                DishName: btn.parentElement.firstElementChild.alt,
+                Quantity: Number(1),
+                Price: parseCurrencyString(btn.previousElementSibling.lastElementChild.textContent),
+                ImgUrl: btn.parentElement.firstElementChild.src,
+            });
+            jsonData.value = JSON.stringify(cart);
         });
     });
 
@@ -323,10 +338,15 @@
                 numChosenDish--;
 
                 updateOrderWindow("", inputNum.parentElement.children[0].alt);
+
+                RemoveFromCart(Number(inputNum.parentElement.getAttribute("dish-id")));
             } else {
                 inputNum.children[1].textContent = number.toString();
+
+                UpdateNumberFromCart(Number(inputNum.parentElement.getAttribute("dish-id")), number);
             }
 
+            // Cập nhật giá tiền
             CartValue -= parseCurrencyString(inputNum.previousElementSibling.previousElementSibling.lastElementChild.textContent);
             updateCartValue();
         });
@@ -336,15 +356,12 @@
         inputNum.children[2].addEventListener("click", () => {
             inputNum.children[1].textContent = (Number(inputNum.children[1].textContent) + 1).toString();
 
+            // Cập nhật giá tiền
             CartValue += parseCurrencyString(inputNum.previousElementSibling.previousElementSibling.lastElementChild.textContent);
             updateCartValue();
+
+            UpdateNumberFromCart(Number(inputNum.parentElement.getAttribute("dish-id")), Number(inputNum.children[1].textContent));
         });
-    });
-
-    ShortConfirm.addEventListener("click", () => {
-        console.log("click");
-        window.location.href = "https://localhost:5000/Cart";
-
     });
 
     // cap nhat thanh xem truoc gio hang duoi man hinh
@@ -412,5 +429,19 @@
         // Loại bỏ tất cả ký tự không phải số
         const numberString = str.replace(/[^\d]/g, '');
         return parseInt(numberString, 10);
+    }
+
+    function RemoveFromCart(dishId){
+        const removeDishIndex = cart.findIndex(dish => dish.DishId == dishId);
+
+        cart.splice(removeDishIndex, 1);
+        jsonData.value = JSON.stringify(cart);
+    }
+
+    function UpdateNumberFromCart(dishId, numDish){
+        const updateDishIndex = cart.findIndex(dish => dish.DishId == dishId);
+
+        cart[updateDishIndex].Quantity = numDish;
+        jsonData.value = JSON.stringify(cart);
     }
 </script>

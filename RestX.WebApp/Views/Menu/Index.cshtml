@@ -133,6 +133,47 @@
         background: #fff3e0;
         color: #d17a00;
     }
+
+    /* RX-06 */
+
+    .input-number span{
+        border: solid 1px #F4F4F4;
+        color: #A4A4A4;
+        display: flex;
+        width: 14px;
+        height: 14px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 3px;
+    }
+
+    .input-number p{
+        display: flex;
+        height: fit-content;
+    }
+
+    .ViewChoseOrder{
+        --bs-gutter-x: 0;
+    }
+
+    .OrderList{
+        --bs-gutter-x: 0;
+    }
+
+    .OrderList img{
+        width: 36px;
+        height: 36px;
+    }
+
+    .ShortConfirm{
+        --bs-gutter-x: 0;
+        background-color: #ff9800;
+        color: #fff;
+        border-radius: 5px;
+        border: none;
+        width: 100%;
+    }
+
 </style>
 
 <div class="container-mobile">
@@ -163,7 +204,7 @@
                 <div class="menu-section-title">@category.CategoryName</div>
                 @foreach (var dish in category.Dishes)
                 {
-                    <div class="menu-dish-card">
+                    <div class="menu-dish-card" dish-id="@dish.Id">
                         <img class="menu-dish-img" src="@dish.ImageUrl" alt="@dish.Name" />
                         <div class="menu-dish-info">
                             <div class="menu-dish-name">@dish.Name</div>
@@ -173,13 +214,34 @@
                             }
                             <div class="menu-dish-price">@dish.Price.ToString("N0") đ</div>
                         </div>
-                        <button class="menu-dish-add" title="Add">
+                        <button class="menu-dish-add" title="add">
                             <span>+</span>
                         </button>
+                        <div class="input-number align-items-center" style="display: none;">
+                            <span>-</span>
+                            <p class="m-0 px-4">1</p>
+                            <span>+</span>
+                        </div>
                     </div>
                 }
             </div>
         }
+    </div>
+
+    <div class="ViewChoseOrder row py-3 position-fixed bottom-0 start-50 translate-middle-x w-100 bg-white px-3" style="display: none;">
+        <div class="OrderList col-6 row flex-nowrap justify-content-start align-items-center">
+            <h5 class="m-0" hidden>+0</h5>
+        </div>
+        <form action="/Cart/Index/@Model.OwnerId/@Model.TableId" method="get" class="col-6">
+            <input type="hidden" name="OwnerId" value="@Model.OwnerId"/>
+            <input type="hidden" name="TableId" value="@Model.TableId"/>
+            <input type="hidden" name="DishListJson" id="jsonData" />
+            <button type="submit" class="ShortConfirm row align-items-center px-2 py-1">
+                <p class="col-5 m-0">999.999đ</p>
+                <h5 class="col-7 m-0 text-center">Xem,<br />xác nhận</h5>
+            </button>
+        </form>
+        
     </div>
 </div>
 
@@ -224,4 +286,162 @@
             activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
     });
+
+    // RX-06
+
+    const ViewChoseOrder = document.getElementsByClassName("ViewChoseOrder")[0];
+    const OrderList = document.getElementsByClassName("OrderList")[0];
+    let numChosenDish = 0;
+    const ShortConfirm = document.getElementsByClassName("ShortConfirm")[0];
+    let CartValue = 0;
+    let cart = [];
+    let jsonData = document.getElementById("jsonData");
+
+    // Nếu ấn vào .menu-dish-add thì nó sẽ hiện .input-number
+    const menuDishAdd = document.getElementsByClassName("menu-dish-add");
+    Array.from(menuDishAdd).forEach((btn) => {
+        btn.addEventListener("click", () => {
+            btn.style.display = "none";
+            btn.nextElementSibling.style.display = "flex";
+            ViewChoseOrder.style.display = "flex";
+            numChosenDish++;
+            updateOrderWindow(btn.parentElement.children[0].src, btn.parentElement.children[0].alt);
+
+            // Cập nhật giá tiền
+            CartValue += parseCurrencyString(btn.previousElementSibling.lastElementChild.textContent);
+            updateCartValue();
+
+            // Chuẩn bị cho cart
+            cart.push({
+                DishId: Number(btn.parentElement.getAttribute("dish-id")),
+                DishName: btn.parentElement.firstElementChild.alt,
+                Quantity: Number(1),
+                Price: parseCurrencyString(btn.previousElementSibling.lastElementChild.textContent),
+                ImgUrl: btn.parentElement.firstElementChild.src,
+            });
+            jsonData.value = JSON.stringify(cart);
+        });
+    });
+
+    // Nếu ấn vào +/- thì sẽ thay đổi giá trị số lượng sản phẩm
+    const inputNumber = document.getElementsByClassName("input-number");
+    Array.from(inputNumber).forEach((inputNum) => {
+
+        // Giảm
+        inputNum.children[0].addEventListener("click", () => {
+            let number = Number(inputNum.children[1].textContent) - 1;
+
+            // Nếu số lượng = 0 thì chuyển sang dạng button
+            if (number == 0) {
+                inputNum.previousElementSibling.style.display = "flex";
+                inputNum.style.display = "none";
+                numChosenDish--;
+
+                updateOrderWindow("", inputNum.parentElement.children[0].alt);
+
+                RemoveFromCart(Number(inputNum.parentElement.getAttribute("dish-id")));
+            } else {
+                inputNum.children[1].textContent = number.toString();
+
+                UpdateNumberFromCart(Number(inputNum.parentElement.getAttribute("dish-id")), number);
+            }
+
+            // Cập nhật giá tiền
+            CartValue -= parseCurrencyString(inputNum.previousElementSibling.previousElementSibling.lastElementChild.textContent);
+            updateCartValue();
+        });
+
+
+        // Tăng
+        inputNum.children[2].addEventListener("click", () => {
+            inputNum.children[1].textContent = (Number(inputNum.children[1].textContent) + 1).toString();
+
+            // Cập nhật giá tiền
+            CartValue += parseCurrencyString(inputNum.previousElementSibling.previousElementSibling.lastElementChild.textContent);
+            updateCartValue();
+
+            UpdateNumberFromCart(Number(inputNum.parentElement.getAttribute("dish-id")), Number(inputNum.children[1].textContent));
+        });
+    });
+
+    // cap nhat thanh xem truoc gio hang duoi man hinh
+    function updateOrderWindow(srcImg, altImg) {
+        if (!srcImg || srcImg.trim() === "") {
+
+            Array.from(OrderList.children).forEach((img) => {
+                if (img.alt === altImg){
+                    img.remove();
+                }
+            });
+
+            
+            const numberOrder = OrderList.children.length - 1;
+
+            // neu khong con gi o thanh xem truoc gio hang thi display: none
+            if (numberOrder === 0){
+                ViewChoseOrder.style.display = "none";
+            } else if (numberOrder > 3) {   
+                // Cap nhat hinh anh nho ben canh nut Xem, xac nhan
+
+                let num = 0;
+                Array.from(OrderList.children).forEach((dishImg) => {
+                    if (num > 3 && num < numberOrder) {
+                        dishImg.setAttribute("hidden", "");
+                    } else {
+                        console.log(dishImg.textContent);
+                        dishImg.removeAttribute("hidden");
+                        if (num == 4 && dishImg.textContent){
+                            dishImg.setAttribute("hidden", "");
+                        }
+                    }
+                    num++;
+                })
+            }
+        } else {
+            const newImg = document.createElement("img");
+            newImg.className = "pe-1";
+            newImg.alt = altImg;
+            OrderList.prepend(newImg);
+
+            // Cap nhat hinh anh nho ben canh nut Xem, xac nhan
+            const numberOrder = OrderList.children.length - 1;
+            if (numberOrder > 4) {
+                
+                let num = 0;
+                Array.from(OrderList.children).forEach((dishImg) => {
+                    if (num > 3 && num < numberOrder){
+                        dishImg.setAttribute("hidden", "");
+
+                    } else {
+                        dishImg.removeAttribute("hidden");
+                    }
+                    num++;
+                })
+            }
+        }
+    }
+
+    function updateCartValue(){
+        ShortConfirm.children[0].textContent = CartValue + "đ";
+    }
+
+    function parseCurrencyString(str) {
+        // Loại bỏ tất cả ký tự không phải số
+        const numberString = str.replace(/[^\d]/g, '');
+        return parseInt(numberString, 10);
+    }
+
+    function RemoveFromCart(dishId){
+        const removeDishIndex = cart.findIndex(dish => dish.DishId == dishId);
+
+        cart.splice(removeDishIndex, 1);
+        jsonData.value = JSON.stringify(cart);
+    }
+
+    function UpdateNumberFromCart(dishId, numDish){
+        const updateDishIndex = cart.findIndex(dish => dish.DishId == dishId);
+
+        cart[updateDishIndex].Quantity = numDish;
+        jsonData.value = JSON.stringify(cart);
+    }
 </script>

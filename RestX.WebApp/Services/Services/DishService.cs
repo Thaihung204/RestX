@@ -14,5 +14,12 @@ namespace RestX.WebApp.Services.Services
             var dishes = await repo.GetAllAsync<Dish>();
             return dishes.ToList();
         }
+        public async Task<List<Dish>> GetDishesByOwnerIdAsync(Guid ownerId)
+        {
+            var dishes = await repo.GetAsync<Dish>(
+                d => d.OwnerId == ownerId && d.IsActive == true
+            );
+            return dishes.ToList();
+        }
     }
 }

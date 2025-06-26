@@ -1,0 +1,38 @@
+﻿@media (max-width: 576px) {
+    body {
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    .card {
+        box-shadow: none;
+        border-radius: 10px;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .logo-img img {
+        width: 120px !important;
+    }
+
+    .form-control {
+        font-size: 1rem;
+        padding: 0.75rem 0.5rem;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 0.75rem 0;
+    }
+
+    .col-md-8, .col-lg-6, .col-xxl-3 {
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+
+    .row.justify-content-center {
+        margin: 0;
+    }
+}

@@ -16,16 +16,13 @@ namespace RestX.WebApp.Controllers
         {
             this.loginService = loginService;
         }
-
-        [HttpGet]
-        [Route("Login")]
-        public IActionResult Login()
+        public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password, CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(string username, string password, CancellationToken cancellationToken)
         {
             try
             {
@@ -61,8 +58,9 @@ namespace RestX.WebApp.Controllers
                 }
                 else if (account.Role == "Owner")
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Owner", new { ownerId = account.OwnerId });
                 }
+
 
                 return RedirectToAction("Index", "Home");
             }

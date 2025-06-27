@@ -6,8 +6,8 @@ $(function () {
   // =====================================
   var chart = {
     series: [
-      { name: "Earnings this month:", data: [355, 390, 300, 350, 390, 180, 355, 390] },
-      { name: "Expense this month:", data: [280, 250, 325, 215, 250, 310, 280, 250] },
+      { name: "Earnings this month:", data: [1200000, 3900000, 3000000, 3500000, 3900000, 1800000, 3550000, 3900000] },
+      { name: "Expense this month:", data: [2800000, 2500000, 3250000, 2150000, 2500000, 3100000, 2800000, 2500000] },
     ],
 
     chart: {
@@ -67,7 +67,7 @@ $(function () {
     yaxis: {
       show: true,
       min: 0,
-      max: 400,
+      max: 10000000,
       tickAmount: 4,
       labels: {
         style: {

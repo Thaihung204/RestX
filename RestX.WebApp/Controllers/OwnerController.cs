@@ -10,10 +10,13 @@ namespace RestX.WebApp.Controllers
         {
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        [Route("Owner/Index/{ownerId:guid}")]
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
             return View();
         }
+
 
         [HttpGet("Owner/Dishes")]
         public async Task<IActionResult> DishesManagement()

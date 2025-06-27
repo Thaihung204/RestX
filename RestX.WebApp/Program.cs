@@ -4,6 +4,7 @@ using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
 using RestX.WebApp.Services.Services;
 using RestX.WebApp.Filters;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace RestX.WebApp
 {
@@ -27,6 +28,14 @@ namespace RestX.WebApp
             builder.Services.AddScoped<IExceptionHandler, ExceptionHandler>();
             builder.Services.AddScoped<IMenuService, MenuService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<ILoginService, LoginService>();
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Login";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+            });
 
             builder.Services.AddAutoMapper(typeof(Program));    
 

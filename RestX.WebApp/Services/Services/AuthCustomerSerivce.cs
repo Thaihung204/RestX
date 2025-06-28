@@ -55,7 +55,7 @@ namespace RestX.WebApp.Services.Services
                 customer.Name = model.Name;
                 customer.ModifiedDate = DateTime.UtcNow;
 
-                await repo.UpdateAsync(customer, cancellationToken);
+                repo.Update<Customer>(customer, customer.Id.ToString());
             }
 
             return customer;
@@ -75,7 +75,7 @@ namespace RestX.WebApp.Services.Services
                 ModifiedDate = null
             };
 
-            await repo.CreateAsync(newCustomer, cancellationToken);
+            await repo.CreateAsync<Customer>(newCustomer, newCustomer.Id.ToString());
             return newCustomer;
         }
     }

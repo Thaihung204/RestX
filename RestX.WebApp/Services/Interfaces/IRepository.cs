@@ -27,8 +27,5 @@ namespace RestX.WebApp.Services.Interfaces
         Task<T> ExecuteStoredProcedureAsync<T>(string storedProcedure, params object[] parameters);
         Task<List<T>> ExecuteSqlSelectAsync<T>(string query, object[] parameters = null, int commandTimeout = 600) where T : new();
         Task<int> ExecuteNonQueryAsync(string query, object[] parameters = null, int commandTimeout = 600);
-        Task<List<T>> GetAllAsync<T>(CancellationToken cancellationToken = default) where T : class;
-        Task<T> CreateAsync<T>(T entity, CancellationToken cancellationToken = default) where T : class;
-        Task<T> UpdateAsync<T>(T entity, CancellationToken cancellationToken = default) where T : class;
     }
 }

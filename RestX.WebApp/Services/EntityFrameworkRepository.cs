@@ -352,21 +352,6 @@ namespace RestX.WebApp.Services
             }
         }
 
-        public Task<List<T>> GetAllAsync<T>(CancellationToken cancellationToken = default) where T : class
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<T> CreateAsync<T>(T entity, CancellationToken cancellationToken = default) where T : class
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<T> UpdateAsync<T>(T entity, CancellationToken cancellationToken = default) where T : class
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// This method validates the custom properties set against an entity to ensure they are still current
         /// and that they haven't been deleted etc. since the last time this entity was saved.

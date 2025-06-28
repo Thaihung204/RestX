@@ -3,22 +3,43 @@ using RestX.WebApp.Models;
 using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
 using RestX.WebApp.Services.Services;
+using RestX.WebApp.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IOwnerService, OwnerService>();
+
+builder.Services.AddDistributedMemoryCache(); 
+builder.Services.AddSession(options =>
+{
+    
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true; 
+});
+
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<RestaurantContextFilterAttribute>();
+});
+
+
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IOwnerService, OwnerService>();
+builder.Services.AddScoped<IAuthCustomerService, AuthCustomerService>();
 builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXRestaurantManagementContext>>();
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<IExceptionHandler, ExceptionHandler>();
+builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
-builder.Services.AddAutoMapper(typeof(Program)); // or (MappingProfile)
-
-// Configure the new Code First DbContext
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
+
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"),
         sqlOptions =>
@@ -36,6 +57,7 @@ builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
         options.EnableDetailedErrors();
     }
 });
+
 // Build port 5000
 //builder.WebHost.UseUrls("http://0.0.0.0:5000");
 // Keep the old DbContext for compatibility during migration
@@ -64,9 +86,38 @@ app.UseRouting();
 
 app.UseForwardedHeaders();
 
+// app.MapControllerRoute(
+//     name: "default",
+//     pattern: "{controller=Home}/{action=Index}/{ownerId?}/{tableId?}");
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseSession();
 app.UseAuthorization();
+                                                                
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        
+        context.Response.Redirect("/Home/Index/550E8400-E29B-41D4-A716-446655440040/1");
+        return;
+    }
+    await next();
+});
+
+app.MapControllerRoute(
+    name: "home_with_params",
+    pattern: "Home/Index/{ownerId:guid}/{tableId:int}",
+    defaults: new { controller = "Home", action = "Index" });
+
+app.MapControllerRoute(
+    name: "login_with_params",
+    pattern: "AuthCustomer/Login/{ownerId:guid}/{tableId:int}",
+    defaults: new { controller = "AuthCustomer", action = "Login" });
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{ownerId?}/{tableId?}");
+
 app.Run();

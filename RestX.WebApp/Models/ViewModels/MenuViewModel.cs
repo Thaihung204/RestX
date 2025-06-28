@@ -2,6 +2,8 @@
 {
     public class MenuViewModel
     {
+        public Guid OwnerId { get; set; }
+        public int TableId { get; set; }
         public List<CategoryViewModel> Categories { get; set; } = new();
     }
 

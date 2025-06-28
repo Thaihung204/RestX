@@ -1,17 +1,18 @@
-﻿using RestX.WebApp.Services.Interfaces;
+﻿using RestX.WebApp.Models;
+using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Services.Services
 {
     public class DishService : BaseService, IDishService
     {
-        public DishService(IRepository repo) : base(repo)
+        public DishService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
         {
         }
 
-        public List<Models.Dish> GetDishes()
+        public async Task<List<Dish>> GetDishesAsync()
         {
-            return Repo.GetAll<Models.Dish>().ToList();
-           
+            var dishes = await repo.GetAllAsync<Dish>();
+            return dishes.ToList();
         }
     }
 }

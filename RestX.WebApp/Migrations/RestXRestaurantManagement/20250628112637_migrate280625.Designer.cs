@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestX.WebApp.Models;
 
@@ -11,9 +12,11 @@ using RestX.WebApp.Models;
 namespace RestX.WebApp.Migrations.RestXRestaurantManagement
 {
     [DbContext(typeof(RestXRestaurantManagementContext))]
-    partial class RestXRestaurantManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250628112637_migrate280625")]
+    partial class migrate280625
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -547,9 +550,7 @@ namespace RestX.WebApp.Migrations.RestXRestaurantManagement
             modelBuilder.Entity("RestX.WebApp.Models.OrderDetail", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)

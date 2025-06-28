@@ -12,8 +12,8 @@ using RestX.WebApp.Models;
 namespace RestX.WebApp.Migrations.RestXRestaurantManagement
 {
     [DbContext(typeof(RestXRestaurantManagementContext))]
-    [Migration("20250620180334_UpdateDB")]
-    partial class UpdateDB
+    [Migration("20250628150952_migrate280625_2")]
+    partial class migrate280625_2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -491,7 +491,9 @@ namespace RestX.WebApp.Migrations.RestXRestaurantManagement
             modelBuilder.Entity("RestX.WebApp.Models.Order", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -548,7 +550,9 @@ namespace RestX.WebApp.Migrations.RestXRestaurantManagement
             modelBuilder.Entity("RestX.WebApp.Models.OrderDetail", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)

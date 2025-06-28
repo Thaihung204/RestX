@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RestX.WebApp.Migrations.RestXRestaurantManagement
 {
     /// <inheritdoc />
-    public partial class UpdateDB : Migration
+    public partial class migrate280625 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -405,7 +405,7 @@ namespace RestX.WebApp.Migrations.RestXRestaurantManagement
                 name: "Order",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TableId = table.Column<int>(type: "int", nullable: false),
                     OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),

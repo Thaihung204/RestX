@@ -27,7 +27,7 @@ builder.Services.AddControllersWithViews(options =>
 
 builder.Services.AddScoped<IOwnerService, OwnerService>();
 builder.Services.AddScoped<IAuthCustomerService, AuthCustomerService>();
-builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXDbContext>>();
+builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXRestaurantManagementContext>>();
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<ITableService, TableService>();
@@ -39,7 +39,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddAutoMapper(typeof(Program));
 
 
-builder.Services.AddDbContext<RestXDbContext>(options =>
+builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"),
         sqlOptions =>

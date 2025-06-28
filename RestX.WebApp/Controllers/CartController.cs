@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
+using RestX.WebApp.Services.SignalRLab;
 using System.Text.Json;
 
 namespace RestX.WebApp.Controllers
@@ -9,9 +11,13 @@ namespace RestX.WebApp.Controllers
     public class CartController : BaseController
     {
         private readonly ICartService cartService;
-        public CartController(IExceptionHandler exceptionHandler, ICartService cartService) : base(exceptionHandler)
+        private readonly IOrderService orderService;
+        private readonly IHubContext<SignalrServer> hubContext;
+        public CartController(IExceptionHandler exceptionHandler, ICartService cartService, IOrderService orderService, IHubContext<SignalrServer> hubContext) : base(exceptionHandler)
         {
             this.cartService = cartService;
+            this.orderService = orderService;
+            this.hubContext = hubContext;
         }
 
         [HttpGet]
@@ -41,25 +47,20 @@ namespace RestX.WebApp.Controllers
             {
                 model.Message = "Ối! Có gì đó không ổn";
                 TempData["tempModel"] = JsonSerializer.Serialize(model);
-                return RedirectToAction("Index", new {OwnerId = model.OwnerId, TableId = model.TableId});
+                return RedirectToAction("Index", new {OwnerId = model.OwnerId,
+                                                      TableId = model.TableId});
             }
 
-            UniversalValue<Guid> returnUVOrderId = await cartService.CreatedOrder(model);
+            UniversalValue<Guid> returnUVOrderId = await orderService.CreatedOrderAndOrderDetails(model);
             if (!returnUVOrderId.ErrorMessage.IsNullOrEmpty())
             {
                 model.Message = returnUVOrderId.ErrorMessage;
-                TempData["tempModel"] = JsonSerializer.Serialize(model);
-                return RedirectToAction("Index", new { OwnerId = model.OwnerId, TableId = model.TableId });
             }
-                
-            model.OrderId = returnUVOrderId.Data;
-            UniversalValue<Guid[]> returnUVOrderDetailId = await cartService.CreatedOrderDetails(model);
-
-            if (!returnUVOrderDetailId.ErrorMessage.IsNullOrEmpty())
-                model.Message = returnUVOrderDetailId.ErrorMessage;
 
             TempData["tempModel"] = JsonSerializer.Serialize(model);
-            return RedirectToAction("Index", new { OwnerId = model.OwnerId, TableId = model.TableId });
+            await hubContext.Clients.All.SendAsync("ReceiveMessage");
+            return RedirectToAction("Index", new { OwnerId = model.OwnerId,
+                                                   TableId = model.TableId });
         }
     }
 }

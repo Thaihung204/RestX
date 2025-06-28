@@ -7,6 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestX.AdminWeb", "RestX.Adm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestX.WebApp", "RestX.WebApp\RestX.WebApp.csproj", "{FF04CE3D-CB50-4FD0-B932-BD6750AF91F8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReverseProxy", "RevertProxy\ReverseProxy.csproj", "{6588B700-F0DF-4982-BDA6-C881B4BB0AF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +28,10 @@ Global
 		{FF04CE3D-CB50-4FD0-B932-BD6750AF91F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF04CE3D-CB50-4FD0-B932-BD6750AF91F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF04CE3D-CB50-4FD0-B932-BD6750AF91F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6588B700-F0DF-4982-BDA6-C881B4BB0AF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6588B700-F0DF-4982-BDA6-C881B4BB0AF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6588B700-F0DF-4982-BDA6-C881B4BB0AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6588B700-F0DF-4982-BDA6-C881B4BB0AF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

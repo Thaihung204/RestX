@@ -26,6 +26,7 @@ builder.Services.AddControllersWithViews(options =>
 });
 builder.Services.AddSignalR();
 
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOwnerService, OwnerService>();
 builder.Services.AddScoped<IAuthCustomerService, AuthCustomerService>();
 builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXRestaurantManagementContext>>();
@@ -39,8 +40,6 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddAutoMapper(typeof(Program));
-
-
 builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"),
@@ -51,6 +50,8 @@ builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
                 maxRetryDelay: TimeSpan.FromSeconds(30),
                 errorNumbersToAdd: null);
         });
+                
+    // Enable sensitive data logging in development
     if (builder.Environment.IsDevelopment())
     {
         options.EnableSensitiveDataLogging();
@@ -58,25 +59,43 @@ builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
     }
 });
 
+// Build port 5000
+//builder.WebHost.UseUrls("http://0.0.0.0:5000");
+// Keep the old DbContext for compatibility during migration
+builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"));
+});
+
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseHttpsRedirection(); // Chỉ redirect khi dev
+//}
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseForwardedHeaders();
+
+// app.MapControllerRoute(
+//     name: "default",
+//     pattern: "{controller=Home}/{action=Index}/{ownerId?}/{tableId?}");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
-
 app.UseSession();
-
-
 app.UseAuthorization();
-
-
+                                                                
 app.Use(async (context, next) =>
 {
     if (context.Request.Path == "/")
@@ -87,7 +106,6 @@ app.Use(async (context, next) =>
     }
     await next();
 });
-
 
 app.MapControllerRoute(
     name: "home_with_params",

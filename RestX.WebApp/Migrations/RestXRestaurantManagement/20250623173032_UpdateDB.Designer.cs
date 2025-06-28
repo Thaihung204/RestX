@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestX.WebApp.Models;
 
 #nullable disable
 
-namespace RestX.WebApp.Migrations
+namespace RestX.WebApp.Migrations.RestXRestaurantManagement
 {
     [DbContext(typeof(RestXRestaurantManagementContext))]
-    partial class RestXDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250623173032_UpdateDB")]
+    partial class UpdateDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +68,8 @@ namespace RestX.WebApp.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Account__3214EC073932612C");
 
                     b.HasIndex("AdminId");
 
@@ -73,13 +77,12 @@ namespace RestX.WebApp.Migrations
 
                     b.HasIndex("StaffId");
 
-                    b.HasIndex("Username")
+                    b.HasIndex(new[] { "Username" }, "IX_Account_Username");
+
+                    b.HasIndex(new[] { "Username" }, "UQ__Account__536C85E4698E81CD")
                         .IsUnique();
 
-                    b.ToTable("Account", t =>
-                        {
-                            t.HasCheckConstraint("CK_Account_Role", "[Role] IN ('Admin', 'Owner', 'Staff')");
-                        });
+                    b.ToTable("Account", (string)null);
                 });
 
             modelBuilder.Entity("RestX.WebApp.Models.Admin", b =>
@@ -116,12 +119,13 @@ namespace RestX.WebApp.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Admin__3214EC07380656D8");
 
-                    b.HasIndex("Email")
+                    b.HasIndex(new[] { "Email" }, "UQ__Admin__A9D10534835FB0A7")
                         .IsUnique();
 
-                    b.ToTable("Admin");
+                    b.ToTable("Admin", (string)null);
                 });
 
             modelBuilder.Entity("RestX.WebApp.Models.Category", b =>
@@ -151,9 +155,10 @@ namespace RestX.WebApp.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Category__3214EC074450655F");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("RestX.WebApp.Models.Customer", b =>
@@ -198,11 +203,12 @@ namespace RestX.WebApp.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Customer__3214EC075989F835");
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Customer");
+                    b.ToTable("Customer", (string)null);
                 });
 
             modelBuilder.Entity("RestX.WebApp.Models.Dish", b =>
@@ -251,9 +257,10 @@ namespace RestX.WebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(10, 2)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Dish__3214EC07D92FFE6D");
 
                     b.HasIndex("CategoryId");
 
@@ -290,9 +297,10 @@ namespace RestX.WebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(10, 2)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__DishIngr__3214EC07330C4C3A");
 
                     b.HasIndex("DishId");
 
@@ -330,9 +338,10 @@ namespace RestX.WebApp.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__File__3214EC07EB5FEA71");
 
-                    b.ToTable("File");
+                    b.ToTable("File", (string)null);
                 });
 
             modelBuilder.Entity("RestX.WebApp.Models.Ingredient", b =>
@@ -352,7 +361,7 @@ namespace RestX.WebApp.Migrations
 
                     b.Property<decimal?>("CurrentQuantity")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(10,2)")
+                        .HasColumnType("decimal(10, 2)")
                         .HasDefaultValue(0m);
 
                     b.Property<string>("ModifiedBy")
@@ -375,7 +384,8 @@ namespace RestX.WebApp.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Ingredie__3214EC072635B208");
 
                     b.HasIndex("OwnerId");
 
@@ -408,21 +418,21 @@ namespace RestX.WebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<DateTime?>("Time")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("(getdate())");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Ingredie__3214EC07A61E35BB");
 
                     b.HasIndex("IngredientId");
 
                     b.HasIndex("OrderDetailId");
 
-                    b.HasIndex("Time")
-                        .HasDatabaseName("IX_IngredientExport_Time");
+                    b.HasIndex(new[] { "Time" }, "IX_IngredientExport_Time");
 
                     b.ToTable("IngredientExport", (string)null);
                 });
@@ -450,7 +460,7 @@ namespace RestX.WebApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<Guid>("SupplierId")
                         .HasColumnType("uniqueidentifier");
@@ -458,22 +468,22 @@ namespace RestX.WebApp.Migrations
                     b.Property<DateTime?>("Time")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("(getdate())");
 
                     b.Property<decimal>("TotalCost")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(10, 2)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Ingredie__3214EC0795025CD8");
 
                     b.HasIndex("IngredientId");
 
                     b.HasIndex("SupplierId");
 
-                    b.HasIndex("Time")
-                        .HasDatabaseName("IX_IngredientImport_Time");
+                    b.HasIndex(new[] { "Time" }, "IX_IngredientImport_Time");
 
                     b.ToTable("IngredientImport", (string)null);
                 });
@@ -517,9 +527,10 @@ namespace RestX.WebApp.Migrations
                     b.Property<DateTime?>("Time")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("(getdate())");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Order__3214EC0769715AE0");
 
                     b.HasIndex("CustomerId");
 
@@ -529,8 +540,7 @@ namespace RestX.WebApp.Migrations
 
                     b.HasIndex("TableId");
 
-                    b.HasIndex("Time")
-                        .HasDatabaseName("IX_Order_Time");
+                    b.HasIndex(new[] { "Time" }, "IX_Order_Time");
 
                     b.ToTable("Order", (string)null);
                 });
@@ -566,21 +576,19 @@ namespace RestX.WebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__OrderDet__3214EC07A0295A6F");
 
                     b.HasIndex("DishId");
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderDetail", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_OrderDetail_Quantity", "[Quantity] > 0");
-                        });
+                    b.ToTable("OrderDetail", (string)null);
                 });
 
             modelBuilder.Entity("RestX.WebApp.Models.OrderStatus", b =>
@@ -596,7 +604,8 @@ namespace RestX.WebApp.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__OrderSta__3214EC0771C03BF7");
 
                     b.ToTable("OrderStatus", (string)null);
                 });
@@ -642,11 +651,12 @@ namespace RestX.WebApp.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Owner__3214EC071EC6C349");
 
                     b.HasIndex("FileId");
 
-                    b.ToTable("Owner");
+                    b.ToTable("Owner", (string)null);
                 });
 
             modelBuilder.Entity("RestX.WebApp.Models.Payment", b =>
@@ -655,7 +665,7 @@ namespace RestX.WebApp.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -685,16 +695,16 @@ namespace RestX.WebApp.Migrations
                     b.Property<DateTime?>("Time")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("(getdate())");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Payment__3214EC07E0A31845");
 
                     b.HasIndex("OrderId");
 
                     b.HasIndex("PaymentMethodId");
 
-                    b.HasIndex("Time")
-                        .HasDatabaseName("IX_Payment_Time");
+                    b.HasIndex(new[] { "Time" }, "IX_Payment_Time");
 
                     b.ToTable("Payment", (string)null);
                 });
@@ -709,7 +719,8 @@ namespace RestX.WebApp.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__PaymentM__3214EC079192C53D");
 
                     b.ToTable("PaymentMethod", (string)null);
                 });
@@ -759,7 +770,8 @@ namespace RestX.WebApp.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Staff__3214EC07249ED879");
 
                     b.HasIndex("FileId");
 
@@ -814,7 +826,8 @@ namespace RestX.WebApp.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Supplier__3214EC074D1A33ED");
 
                     b.HasIndex("OwnerId");
 
@@ -863,16 +876,19 @@ namespace RestX.WebApp.Migrations
                     b.Property<int>("TableStatusId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Table__3214EC0766A28536");
 
                     b.HasIndex("OwnerId");
 
-                    b.HasIndex("Qrcode")
-                        .IsUnique();
-
                     b.HasIndex("TableStatusId");
 
-                    b.ToTable("Table");
+                    b.HasIndex(new[] { "Qrcode" }, "IX_Table_QRCode");
+
+                    b.HasIndex(new[] { "Qrcode" }, "UQ__Table__5B869AD96220ED30")
+                        .IsUnique();
+
+                    b.ToTable("Table", (string)null);
                 });
 
             modelBuilder.Entity("RestX.WebApp.Models.TableStatus", b =>
@@ -902,9 +918,10 @@ namespace RestX.WebApp.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__TableSta__3214EC074A7DCAE8");
 
-                    b.ToTable("TableStatus");
+                    b.ToTable("TableStatus", (string)null);
                 });
 
             modelBuilder.Entity("RestX.WebApp.Models.Account", b =>
@@ -912,17 +929,17 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Admin", "Admin")
                         .WithMany("Accounts")
                         .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasConstraintName("FK__Account__AdminId__6A85CC04");
 
                     b.HasOne("RestX.WebApp.Models.Owner", "Owner")
                         .WithMany("Accounts")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasConstraintName("FK__Account__OwnerId__6B79F03D");
 
                     b.HasOne("RestX.WebApp.Models.Staff", "Staff")
                         .WithMany("Accounts")
                         .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasConstraintName("FK__Account__StaffId__6C6E1476");
 
                     b.Navigation("Admin");
 
@@ -936,7 +953,7 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Owner", "Owner")
                         .WithMany("Customers")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasConstraintName("FK__Customer__OwnerI__7132C993");
 
                     b.Navigation("Owner");
                 });
@@ -946,20 +963,20 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Category", "Category")
                         .WithMany("Dishes")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Dish__CategoryId__00750D23");
 
                     b.HasOne("RestX.WebApp.Models.File", "File")
                         .WithMany()
                         .HasForeignKey("FileId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Dish__FileId__7F80E8EA");
 
                     b.HasOne("RestX.WebApp.Models.Owner", "Owner")
                         .WithMany("Dishes")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Dish__OwnerId__7E8CC4B1");
 
                     b.Navigation("Category");
 
@@ -973,14 +990,14 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Dish", "Dish")
                         .WithMany("DishIngredients")
                         .HasForeignKey("DishId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__DishIngre__DishI__21D600EE");
 
                     b.HasOne("RestX.WebApp.Models.Ingredient", "Ingredient")
                         .WithMany("DishIngredients")
                         .HasForeignKey("IngredientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__DishIngre__Ingre__22CA2527");
 
                     b.Navigation("Dish");
 
@@ -992,8 +1009,8 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Owner", "Owner")
                         .WithMany("Ingredients")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Ingredien__Owner__1B29035F");
 
                     b.Navigation("Owner");
                 });
@@ -1003,14 +1020,14 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Ingredient", "Ingredient")
                         .WithMany("IngredientExports")
                         .HasForeignKey("IngredientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Ingredien__Ingre__269AB60B");
 
                     b.HasOne("RestX.WebApp.Models.OrderDetail", "OrderDetail")
                         .WithMany("IngredientExports")
                         .HasForeignKey("OrderDetailId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Ingredien__Order__278EDA44");
 
                     b.Navigation("Ingredient");
 
@@ -1022,14 +1039,14 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Ingredient", "Ingredient")
                         .WithMany("IngredientImports")
                         .HasForeignKey("IngredientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Ingredien__Ingre__2B5F6B28");
 
                     b.HasOne("RestX.WebApp.Models.Supplier", "Supplier")
                         .WithMany("IngredientImports")
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Ingredien__Suppl__2C538F61");
 
                     b.Navigation("Ingredient");
 
@@ -1041,26 +1058,26 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Order__CustomerI__07220AB2");
 
                     b.HasOne("RestX.WebApp.Models.OrderStatus", "OrderStatus")
                         .WithMany("Orders")
                         .HasForeignKey("OrderStatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Order__OrderStat__09FE775D");
 
                     b.HasOne("RestX.WebApp.Models.Owner", "Owner")
                         .WithMany("Orders")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Order__OwnerId__090A5324");
 
                     b.HasOne("RestX.WebApp.Models.Table", "Table")
                         .WithMany("Orders")
                         .HasForeignKey("TableId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Order__TableId__08162EEB");
 
                     b.Navigation("Customer");
 
@@ -1076,14 +1093,14 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Dish", "Dish")
                         .WithMany("OrderDetails")
                         .HasForeignKey("DishId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__OrderDeta__DishI__0FB750B3");
 
                     b.HasOne("RestX.WebApp.Models.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__OrderDeta__Order__0EC32C7A");
 
                     b.Navigation("Dish");
 
@@ -1095,8 +1112,8 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.File", "File")
                         .WithMany()
                         .HasForeignKey("FileId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Owner__FileId__7F80E8EA");
 
                     b.Navigation("File");
                 });
@@ -1106,14 +1123,14 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Order", "Order")
                         .WithMany("Payments")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Payment__OrderId__16644E42");
 
                     b.HasOne("RestX.WebApp.Models.PaymentMethod", "PaymentMethod")
                         .WithMany("Payments")
                         .HasForeignKey("PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Payment__Payment__1758727B");
 
                     b.Navigation("Order");
 
@@ -1125,13 +1142,13 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.File", "File")
                         .WithMany()
                         .HasForeignKey("FileId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Staff__FileId__7F80E8EA");
 
                     b.HasOne("RestX.WebApp.Models.Owner", "Owner")
                         .WithMany("Staff")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasConstraintName("FK__Staff__OwnerId__64CCF2AE");
 
                     b.Navigation("File");
 
@@ -1143,8 +1160,8 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Owner", "Owner")
                         .WithMany("Suppliers")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Supplier__OwnerI__1EF99443");
 
                     b.Navigation("Owner");
                 });
@@ -1154,14 +1171,14 @@ namespace RestX.WebApp.Migrations
                     b.HasOne("RestX.WebApp.Models.Owner", "Owner")
                         .WithMany("Tables")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Table__OwnerId__77DFC722");
 
                     b.HasOne("RestX.WebApp.Models.TableStatus", "TableStatus")
                         .WithMany("Tables")
                         .HasForeignKey("TableStatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__Table__TableStat__78D3EB5B");
 
                     b.Navigation("Owner");
 

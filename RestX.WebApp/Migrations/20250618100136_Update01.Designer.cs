@@ -11,7 +11,7 @@ using RestX.WebApp.Models;
 
 namespace RestX.WebApp.Migrations
 {
-    [DbContext(typeof(RestXDbContext))]
+    [DbContext(typeof(RestXRestaurantManagementContext))]
     [Migration("20250618100136_Update01")]
     partial class Update01
     {

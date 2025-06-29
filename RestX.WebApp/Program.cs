@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using RestX.WebApp.Filters;
 using RestX.WebApp.Models;
 using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
 using RestX.WebApp.Services.Services;
-using RestX.WebApp.Filters;
+using RestX.WebApp.Hubs;
 
 namespace RestX.WebApp
 {
@@ -27,6 +29,15 @@ namespace RestX.WebApp
             builder.Services.AddScoped<IExceptionHandler, ExceptionHandler>();
             builder.Services.AddScoped<IMenuService, MenuService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<ILoginService, LoginService>();
+            builder.Services.AddScoped<IStaffService, StaffService>();
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Login/Login";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+            });
 
             builder.Services.AddAutoMapper(typeof(Program));    
 
@@ -57,6 +68,8 @@ namespace RestX.WebApp
                 options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"));
             });
 
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -83,11 +96,15 @@ namespace RestX.WebApp
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{ownerId?}/{tableId?}");
+
+            app.MapHub<TableStatusHub>("/tableStatusHub");
+
             app.Run();
             //this is comment
         }

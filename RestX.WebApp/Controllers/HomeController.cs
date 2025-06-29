@@ -1,8 +1,7 @@
 using System.Diagnostics;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestX.WebApp.Models;
-using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Controllers

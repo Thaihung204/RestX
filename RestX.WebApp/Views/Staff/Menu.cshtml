@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "Menu";
+    Layout = "_StaffLayout";
+}
+
+<div class="menu-container">
+    <div class="page-header">
+        <h1>Menu & Status</h1>
+    </div>
+
+    <div class="search-bar-staff">
+        <input type="text" placeholder="Search dishes..." />
+    </div>
+
+    <!-- Appetizers -->
+    <div class="menu-section-staff">
+        <div class="menu-section-title-staff">Appetizers</div>
+        <div class="menu-dish-card-staff">
+            <img class="menu-dish-img-staff" src="https://via.placeholder.com/150" alt="Gỏi cuốn" />
+            <div class="menu-dish-info-staff">
+                <div class="menu-dish-name-staff">Gỏi cuốn tôm thịt</div>
+                <div class="menu-dish-price-staff">65.000 đ</div>
+            </div>
+            <div class="availability-toggle">
+                <span>Available</span>
+                <i class="fa-solid fa-toggle-on"></i>
+            </div>
+        </div>
+        <div class="menu-dish-card-staff">
+            <img class="menu-dish-img-staff" src="https://via.placeholder.com/150" alt="Chả giò" />
+            <div class="menu-dish-info-staff">
+                <div class="menu-dish-name-staff">Chả giò hải sản</div>
+                <div class="menu-dish-price-staff">75.000 đ</div>
+            </div>
+            <div class="availability-toggle off">
+                <span>Out of Stock</span>
+                <i class="fa-solid fa-toggle-off"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dishes -->
+    <div class="menu-section-staff">
+        <div class="menu-section-title-staff">Main Dishes</div>
+        <div class="menu-dish-card-staff">
+            <img class="menu-dish-img-staff" src="https://via.placeholder.com/150" alt="Phở" />
+            <div class="menu-dish-info-staff">
+                <div class="menu-dish-name-staff">Phở bò đặc biệt</div>
+                <div class="menu-dish-price-staff">95.000 đ</div>
+            </div>
+            <div class="availability-toggle">
+                <span>Available</span>
+                <i class="fa-solid fa-toggle-on"></i>
+            </div>
+        </div>
+        <div class="menu-dish-card-staff">
+            <img class="menu-dish-img-staff" src="https://via.placeholder.com/150" alt="Cơm tấm" />
+            <div class="menu-dish-info-staff">
+                <div class="menu-dish-name-staff">Cơm tấm sườn bì chả</div>
+                <div class="menu-dish-price-staff">85.000 đ</div>
+            </div>
+            <div class="availability-toggle">
+                <span>Available</span>
+                <i class="fa-solid fa-toggle-on"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.availability-toggle').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            toggle.classList.toggle('off');
+            const icon = toggle.querySelector('i');
+            const label = toggle.querySelector('span');
+            if (toggle.classList.contains('off')) {
+                icon.className = 'fa-solid fa-toggle-off';
+                label.textContent = 'Out of Stock';
+            } else {
+                icon.className = 'fa-solid fa-toggle-on';
+                label.textContent = 'Available';
+            }
+        });
+    });
+</script>

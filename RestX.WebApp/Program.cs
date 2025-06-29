@@ -29,6 +29,11 @@ namespace RestX.WebApp
             builder.Services.AddScoped<IMenuService, MenuService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ILoginService, LoginService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
+            builder.Services.AddScoped<IIngredientImportService, IngredientImportService>();
+            builder.Services.AddScoped<IDashboardService, DashboardService>();
+            builder.Services.AddScoped<IDishManagementService, DishManagementService>();
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
@@ -47,7 +52,7 @@ namespace RestX.WebApp
                     {
                         sqlOptions.EnableRetryOnFailure(
                             maxRetryCount: 5,
-                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            maxRetryDelay: TimeSpan.FromDays(1),
                             errorNumbersToAdd: null);
                     });
                 

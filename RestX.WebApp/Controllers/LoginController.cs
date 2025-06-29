@@ -58,7 +58,7 @@ namespace RestX.WebApp.Controllers
                 }
                 else if (account.Role == "Owner")
                 {
-                    return RedirectToAction("Index", "Owner", new { ownerId = account.OwnerId });
+                    return RedirectToAction("DashBoard", "Owner", new { ownerId = account.OwnerId });
                 }
 
 

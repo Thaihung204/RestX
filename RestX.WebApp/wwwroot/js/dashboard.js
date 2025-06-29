@@ -6,8 +6,7 @@ $(function () {
   // =====================================
   var chart = {
     series: [
-      { name: "Earnings this month:", data: [1200000, 3900000, 3000000, 3500000, 3900000, 1800000, 3550000, 3900000] },
-      { name: "Expense this month:", data: [2800000, 2500000, 3250000, 2150000, 2500000, 3100000, 2800000, 2500000] },
+      { name: "Revenue", data: typeof profitData !== "undefined" ? profitData : [] }
     ],
 
     chart: {
@@ -20,9 +19,7 @@ $(function () {
       sparkline: { enabled: false },
     },
 
-
-    colors: ["#5D87FF", "#49BEFF"],
-
+    colors: ["#5D87FF"],
 
     plotOptions: {
       bar: {
@@ -57,7 +54,7 @@ $(function () {
 
     xaxis: {
       type: "category",
-      categories: ["16/08", "17/08", "18/08", "19/08", "20/08", "21/08", "22/08", "23/08"],
+      categories: typeof revenueLabels !== "undefined" ? revenueLabels : [],
       labels: {
         style: { cssClass: "grey--text lighten-2--text fill-color" },
       },

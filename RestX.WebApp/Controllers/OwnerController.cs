@@ -1,77 +1,89 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RestX.WebApp.Controllers
 {
     public class OwnerController : BaseController
     {
-        public OwnerController(IExceptionHandler exceptionHandler) : base(exceptionHandler)
+        private readonly IDashboardService dashboardService;
+        private readonly IDishManagementService dishManagementService;
+        private readonly IDishService dishService;
+
+        public OwnerController(IDashboardService dashboardService, IDishManagementService dishManagementService, IExceptionHandler exceptionHandler) : base(exceptionHandler)
         {
+            this.dashboardService = dashboardService;
+            this.dishManagementService = dishManagementService;
         }
 
         [HttpGet]
-        [Route("Owner/Index/{ownerId:guid}")]
-        public async Task<IActionResult> Index(CancellationToken cancellationToken)
+        [Route("Owner/DashBoard/{ownerId:guid}")]
+        public async Task<IActionResult> DashBoard(Guid ownerId, CancellationToken cancellationToken)
         {
-            return View();
-        }
-
-
-        [HttpGet("Owner/Dishes")]
-        public async Task<IActionResult> DishesManagement()
-        {
-            // Tạo dữ liệu mẫu cho CategoryViewModel
-            var categories = new List<CategoryViewModel>
-    {
-        new CategoryViewModel { Id = 1, CategoryName = "Appetizer" },
-        new CategoryViewModel { Id = 2, CategoryName = "Main Course" },
-        new CategoryViewModel { Id = 3, CategoryName = "Dessert" }
-    };
-
-            // Tạo dữ liệu mẫu cho DishesViewModel
-            var dishes = new List<DishesViewModel>
-    {
-        new DishesViewModel
-        {
-            Id = 1,
-            Name = "Spring Rolls",
-            Description = "Crispy rolls with vegetables",
-            Price = 5.99m,
-            ImageUrl = "/images/dishes/springrolls.jpg",
-            CategoryName = "Appetizer",
-            IsActive = true
-        },
-        new DishesViewModel
-        {
-            Id = 2,
-            Name = "Grilled Chicken",
-            Description = "Juicy grilled chicken breast",
-            Price = 12.50m,
-            ImageUrl = "/images/dishes/grilledchicken.jpg",
-            CategoryName = "Main Course",
-            IsActive = true
-        },
-        new DishesViewModel
-        {
-            Id = 3,
-            Name = "Chocolate Cake",
-            Description = "Rich chocolate layered cake",
-            Price = 6.75m,
-            ImageUrl = "/images/dishes/chocolatecake.jpg",
-            CategoryName = "Dessert",
-            IsActive = false
-        }
-    };
-
-            var model = new DishesManagementViewModel
-            {
-                Dishes = dishes,
-                Categories = categories
-            };
-
+            var model = await dashboardService.GetDashboardViewModelAsync(ownerId, cancellationToken);
             return View(model);
         }
 
+        [HttpGet("Owner/Dishes/{ownerId:guid}")]
+        public async Task<IActionResult> DishesManagement(Guid ownerId, CancellationToken cancellationToken)
+        {
+            var model = await dishManagementService.GetDishesManagementViewModelAsync(ownerId);
+            return View(model);
+        }
+
+        [HttpGet("Owner/Dishes/Create/{ownerId:guid}")]
+        public IActionResult CreateDish(Guid ownerId)
+        {
+            var model = new DishViewModel();
+            return View(model);
+        }
+
+        [HttpPost("Owner/Dishes/Create/{ownerId:guid}")]
+        public async Task<IActionResult> CreateDish(Guid ownerId, DishViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                await dishManagementService.UpsertDishAsync(model, ownerId, User.Identity?.Name ?? "system");
+                return RedirectToAction("DishesManagement", new { ownerId });
+            }
+            return View(model);
+        }
+
+        [HttpGet("Owner/Dishes/Edit/{id:int}/{ownerId:guid}")]
+        public async Task<IActionResult> EditDish(int id, Guid ownerId)
+        {
+            var model = await dishManagementService.GetDishViewModelByIdAsync(id);
+            if (model == null) return NotFound();
+            return View(model);
+        }
+
+        [HttpPost("Owner/Dishes/Edit/{id:int}/{ownerId:guid}")]
+        public async Task<IActionResult> EditDish(int id, Guid ownerId, DishViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                await dishManagementService.UpsertDishAsync(model, ownerId, User.Identity?.Name ?? "system");
+                return RedirectToAction("DishesManagement", new { ownerId });
+            }
+            return View(model);
+        }
+
+        [HttpGet("Owner/Dishes/DetailDish/{id:int}/{ownerId:guid}")]
+        public async Task<IActionResult> DetailDish(int id, Guid ownerId)
+        {
+            var model = await dishManagementService.GetDishViewModelByIdAsync(id);
+            if (model == null) return NotFound();
+            return View("Dishes/DetailDish", model);
+        }
+
+        [HttpPost("Owner/Dishes/Delete/{id:int}/{ownerId:guid}")]
+        public async Task<IActionResult> DeleteDish(int id, Guid ownerId)
+        {
+            await dishManagementService.DeleteDishAsync(id);
+            return RedirectToAction("DishesManagement", new { ownerId });
+        }
     }
 }

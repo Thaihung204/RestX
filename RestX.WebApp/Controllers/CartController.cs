@@ -29,8 +29,7 @@ namespace RestX.WebApp.Controllers
             {
                 model = await cartService.JsonToCartViewModel(tempModel.ToString());
             }
-                
-
+            
             model = await cartService.JsonToDishList(model);
 
             if (model.Message != null) 
@@ -51,7 +50,7 @@ namespace RestX.WebApp.Controllers
                                                       TableId = model.TableId});
             }
 
-            UniversalValue<Guid> returnUVOrderId = await orderService.CreatedOrderAndOrderDetails(model);
+            UniversalValue<Guid> returnUVOrderId = await orderService.CreatedOrder(model);
             if (!returnUVOrderId.ErrorMessage.IsNullOrEmpty())
             {
                 model.Message = returnUVOrderId.ErrorMessage;

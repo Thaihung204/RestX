@@ -15,28 +15,24 @@ namespace RestX.WebApp.Services.Services
             this.cartService = cartService;
         }
 
-        public async Task<UniversalValue<Guid>> CreatedOrderAndOrderDetails(CartViewModel model)
+        public async Task<UniversalValue<Guid>> CreatedOrder(CartViewModel model)
         {
             DateTime currentTime = DateTime.Now;
             string customerId = httpContextAccessor.HttpContext.Session.GetString("CustomerId");
+            if (customerId.IsNullOrEmpty())
+                return UniversalValue<Guid>.Failure("Bạn hãy vui lòng đăng nhập!");
             Order newOrder = null;
             string message = null;
-            try
+            
+            newOrder = new Order()
             {
-                newOrder = new Order()
-                {
-                    CustomerId = Guid.Parse(customerId),
-                    TableId = model.TableId,
-                    OwnerId = model.OwnerId,
-                    OrderStatusId = 1,
-                    Time = currentTime,
-                    IsActive = true,
-                };
-            }
-            catch (ArgumentNullException ane)
-            {
-                return UniversalValue<Guid>.Failure("Bạn hãy vui lòng đăng nhập!");
-            }
+                CustomerId = Guid.Parse(customerId),
+                TableId = model.TableId,
+                OwnerId = model.OwnerId,
+                OrderStatusId = 1,
+                Time = currentTime,
+                IsActive = true,
+            };
 
             Guid temp = Guid.Parse((await Repo.CreateAsync(newOrder)).ToString());
             await Repo.SaveAsync();
@@ -78,7 +74,7 @@ namespace RestX.WebApp.Services.Services
                     i++;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return UniversalValue<Guid[]>.Failure("Ối! Có gì đó không ổn ở " + nameof(CreatedOrderDetails));
             }
@@ -90,22 +86,25 @@ namespace RestX.WebApp.Services.Services
         {
             DateTime currentTime = DateTime.Now;
             string customerId = httpContextAccessor.HttpContext.Session.GetString("CustomerId");
+            if (customerId.IsNullOrEmpty())
+                return UniversalValue<Guid>.Failure("Bạn hãy vui lòng đăng nhập!");
             OrderDetail newOrderDetail = null;
             Guid temp = Guid.Empty;
+            
+            newOrderDetail = new OrderDetail()
+            {
+                OrderId = OrderId,
+                DishId = model.DishId,
+                Quantity = model.Quantity,
+                Price = model.Price,
+                IsActive = true,
+            };
             try
             {
-                newOrderDetail = new OrderDetail()
-                {
-                    OrderId = OrderId,
-                    DishId = model.DishId,
-                    Quantity = model.Quantity,
-                    Price = model.Price,
-                    IsActive = true,
-                };
                 temp = Guid.Parse((await Repo.CreateAsync(newOrderDetail, customerId)).ToString());
                 await Repo.SaveAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return UniversalValue<Guid>.Failure("Ối! Có gì đó không ổn ở " + nameof(CreatedOrderDetails));
             }

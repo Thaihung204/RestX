@@ -4,7 +4,7 @@ namespace RestX.WebApp.Services.Interfaces
 {
     public interface IOrderService
     {
-        Task<UniversalValue<Guid>> CreatedOrderAndOrderDetails(CartViewModel model);
+        Task<UniversalValue<Guid>> CreatedOrder(CartViewModel model);
         Task<UniversalValue<Guid[]>> CreatedOrderDetails(CartViewModel model);
         Task<UniversalValue<Guid[]>> CreatedOrderDetails(DishCartViewModel[] modelList, Guid OrderId);
         Task<UniversalValue<Guid>> CreatedOrderDetail(DishCartViewModel model, Guid OrderId);

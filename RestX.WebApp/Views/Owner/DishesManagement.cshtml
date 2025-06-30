@@ -7,11 +7,28 @@
 
 <div class="container-fluid py-4">
     <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <h2 class="mb-0">Dishes Management</h2>
-            <a class="btn btn-primary" href="@Url.Action("CreateDish", "Owner", new { ownerId = Model.OwnerId })">
-                <i class="bi bi-plus-lg"></i> Add New Dish
-            </a>
+        <div class="col-12">
+            <h2 class="mb-4">Dishes Management</h2>
+
+            <div class="d-flex align-items-center gap-2 mb-4">
+
+                <div class="flex-grow-1">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search dish name...">
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-primary" onclick="searchDishes()">
+                    Search
+                </button>
+
+                <a class="btn btn-primary" href="@Url.Action("CreateDish", "Owner", new { ownerId = Model.OwnerId })">
+                    <i class="bi bi-plus-lg"></i> Add New Dish
+                </a>
+            </div>
         </div>
     </div>
 
@@ -20,7 +37,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table align-middle table-hover">
+                        <table class="table align-middle table-hover" id="dishesTable">
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col">Name</th>
@@ -35,10 +52,10 @@
                                 {
                                     foreach (var dish in Model.Dishes)
                                     {
-                                        <tr>
-                                            <td>@dish.Name</td>
-                                            <td>@dish.CategoryName</td>
-                                            <td>@dish.Price.ToString("C")</td>
+                                        <tr class="dish-row">
+                                            <td class="dish-name">@dish.Name</td>
+                                            <td class="dish-category">@dish.CategoryName</td>
+                                            <td class="dish-price">@dish.Price.ToString("C")</td>
                                             <td>
                                                 @if (dish.IsActive == true)
                                                 {
@@ -65,12 +82,16 @@
                                 }
                                 else
                                 {
-                                    <tr>
+                                    <tr id="noDishesRow">
                                         <td colspan="5" class="text-center text-muted">No dishes found.</td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
+                    </div>
+                    <div id="noSearchResults" class="text-center text-muted py-4" style="display: none;">
+                        <i class="bi bi-search fs-1 mb-3"></i>
+                        <p>No dishes found matching your search criteria.</p>
                     </div>
                 </div>
             </div>
@@ -84,4 +105,57 @@
     <script src="/lib/simplebar/dist/simplebar.js"></script>
     <script src="/js/sidebarmenu.js"></script>
     <script src="/js/app.min.js"></script>
+
+    <script>
+        function searchDishes() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const tableRows = document.querySelectorAll('.dish-row');
+            const noResultsDiv = document.getElementById('noSearchResults');
+            let visibleRows = 0;
+
+            tableRows.forEach(row => {
+                const dishName = row.querySelector('.dish-name').textContent.toLowerCase();
+                const dishCategory = row.querySelector('.dish-category').textContent.toLowerCase();
+
+                if (dishName.includes(searchTerm) || dishCategory.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleRows++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Show/hide no results message
+            if (visibleRows === 0 && searchTerm !== '') {
+                noResultsDiv.style.display = 'block';
+            } else {
+                noResultsDiv.style.display = 'none';
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            const tableRows = document.querySelectorAll('.dish-row');
+            const noResultsDiv = document.getElementById('noSearchResults');
+
+            tableRows.forEach(row => {
+                row.style.display = '';
+            });
+
+            noResultsDiv.style.display = 'none';
+        }
+
+        // Enable search on Enter key press
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchDishes();
+            }
+        });
+
+        // Real-time search as user types
+        document.getElementById('searchInput').addEventListener('input', function() {
+            searchDishes();
+        });
+    </script>
 }

@@ -26,21 +26,3 @@ jobs:
             git pull origin master
             docker compose down
             docker compose up -d --build
-          dotnet-version: '9.0.301' # Thay theo version em dùng
-
-      # 3. Restore packages
-      - name: Restore dependencies
-        run: dotnet restore
-
-      # 4. Build project
-      - name: Build
-        run: dotnet build --no-restore
-
-      # 5. Chạy test (nếu có)
-      #- name: Test
-      # run: dotnet test --no-build --verbosity normal
-
-      # 6. Publish
-      - name: Publish
-        run: dotnet publish RestX.WebApp/RestX.WebApp.csproj -c Release -o ./publish
-      #TEST CICDD

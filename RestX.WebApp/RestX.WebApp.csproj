@@ -30,6 +30,7 @@
   <ItemGroup>
     <Folder Include="Controllers\Interface\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Migrations\RestXRestaurantManagement\" />
     <Folder Include="Views\CustomerManagerment\" />
     <Folder Include="Views\Customer\" />
   </ItemGroup>

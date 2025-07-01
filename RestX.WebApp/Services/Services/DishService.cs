@@ -11,7 +11,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<List<Dish>> GetDishesAsync()
         {
-            var dishes = await repo.GetAllAsync<Dish>();
+            var dishes = await Repo.GetAllAsync<Dish>();
             return dishes.ToList();
         }
     }

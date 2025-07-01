@@ -261,7 +261,7 @@ public partial class RestXRestaurantManagementContext : DbContext
 
             entity.HasIndex(e => e.Time, "IX_Order_Time");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Time).HasDefaultValueSql("(getdate())");
 
@@ -292,7 +292,7 @@ public partial class RestXRestaurantManagementContext : DbContext
 
             entity.ToTable("OrderDetail");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).HasDefaultValueSql("NEWID()");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
 

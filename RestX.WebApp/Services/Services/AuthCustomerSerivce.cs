@@ -7,9 +7,11 @@ namespace RestX.WebApp.Services.Services
 {
     public class AuthCustomerService : BaseService, IAuthCustomerService
     {
+        private readonly IHttpContextAccessor httpContextAccessor;
         public AuthCustomerService(IRepository repo, IHttpContextAccessor httpContextAccessor)
             : base(repo, httpContextAccessor)
         {
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Customer> LoginOrCreateAsync(LoginViewModel model, CancellationToken cancellationToken = default)
@@ -20,6 +22,7 @@ namespace RestX.WebApp.Services.Services
 
             if (customer != null)
             {
+                httpContextAccessor.HttpContext.Session.SetString("CustomerId", customer.Id.ToString());
                 return await UpdateExistingCustomerAsync(customer, model, cancellationToken);
             }
 
@@ -43,7 +46,7 @@ namespace RestX.WebApp.Services.Services
 
         private async Task<Customer?> FindExistingCustomerAsync(string phone, Guid ownerId, CancellationToken cancellationToken)
         {
-            return await repo.GetFirstAsync<Customer>(
+            return await Repo.GetFirstAsync<Customer>(
                 c => c.Phone == phone && c.OwnerId == ownerId
             );
         }
@@ -55,7 +58,7 @@ namespace RestX.WebApp.Services.Services
                 customer.Name = model.Name;
                 customer.ModifiedDate = DateTime.UtcNow;
 
-                repo.Update<Customer>(customer, customer.Id.ToString());
+                Repo.Update<Customer>(customer, customer.Id.ToString());
             }
 
             return customer;
@@ -75,7 +78,8 @@ namespace RestX.WebApp.Services.Services
                 ModifiedDate = null
             };
 
-            await repo.CreateAsync<Customer>(newCustomer, newCustomer.Id.ToString());
+            await Repo.CreateAsync<Customer>(newCustomer, newCustomer.Id.ToString());
+            httpContextAccessor.HttpContext.Session.SetString("CustomerId", newCustomer.Id.ToString());
             return newCustomer;
         }
     }

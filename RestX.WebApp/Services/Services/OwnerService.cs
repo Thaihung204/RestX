@@ -11,7 +11,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<Owner> GetOwnerByIdAsync(Guid id)
         {
-            return await repo.GetOneAsync<Owner>(o => o.Id == id, "File");
+            return await Repo.GetOneAsync<Owner>(o => o.Id == id, "File");
         }
     }
 }

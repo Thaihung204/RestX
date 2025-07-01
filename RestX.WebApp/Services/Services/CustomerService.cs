@@ -11,7 +11,7 @@ namespace RestX.WebApp.Services.Services
 
         public List<Customer> GetCustomers()
         {
-            return repo.GetAll<Customer>().ToList();
+            return Repo.GetAll<Customer>().ToList();
 
         }
     }

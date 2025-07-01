@@ -1,4 +1,23 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿"use strict";
 
-// Write your JavaScript code.
+var connection = new signalR.HubConnectionBuilder()
+    .withUrl("/signalrServer")
+  .build();
+
+connection.on("ReceiveMessage", function () {
+  loadData();
+});
+
+connection
+  .start()
+  .then(function () {
+      console.log("Signalr is ready!");
+  })
+  .catch(function (err) {
+    return console.error(err.toString());
+  });
+
+function loadData() {
+  // Check if the product table body exists on the page
+  console.log("Successfully receive signal from signalr!")
+}

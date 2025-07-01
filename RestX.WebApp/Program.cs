@@ -3,6 +3,7 @@ using RestX.WebApp.Models;
 using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
 using RestX.WebApp.Services.Services;
+using RestX.WebApp.Services.SignalRLab;
 using RestX.WebApp.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +24,7 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<RestaurantContextFilterAttribute>();
 });
-
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOwnerService, OwnerService>();
@@ -36,10 +37,10 @@ builder.Services.AddScoped<IExceptionHandler, ExceptionHandler>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
-
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"),
         sqlOptions =>
@@ -119,5 +120,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{ownerId?}/{tableId?}");
+
+app.MapHub<SignalrServer>("/signalrServer");
 
 app.Run();

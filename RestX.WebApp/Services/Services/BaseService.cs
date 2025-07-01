@@ -5,7 +5,7 @@ namespace RestX.WebApp.Services.Services
 {
     public class BaseService
     {
-        protected readonly IRepository repo;
+        protected readonly IRepository Repo;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private RestaurantContext? restaurantContext;
 
@@ -27,7 +27,7 @@ namespace RestX.WebApp.Services.Services
 
         public BaseService(IRepository repo, IHttpContextAccessor httpContextAccessor)
         {
-            this.repo = repo;
+            this.Repo = repo;
             _httpContextAccessor = httpContextAccessor;
         }
     }

@@ -3,21 +3,29 @@ name: Build and Deploy .NET App
 on:
   push:
     branches:
-      - master  
+      - master
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Lấy source từ repo
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Cài đặt .NET SDK
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      # Đăng nhập SSH và deploy
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
         with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            cd C:\Users\ADMIN\source\repos\RestX
+            git pull origin master
+            docker compose down
+            docker compose up -d --build
           dotnet-version: '9.0.301' # Thay theo version em dùng
 
       # 3. Restore packages

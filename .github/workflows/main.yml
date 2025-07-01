@@ -35,3 +35,4 @@ jobs:
       # 6. Publish
       - name: Publish
         run: dotnet publish RestX.WebApp/RestX.WebApp.csproj -c Release -o ./publish
+      #TEST CICDD

@@ -1,19 +1,19 @@
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using RestX.WebApp.Models;
-using RestX.WebApp.Models.ViewModels;
-using RestX.WebApp.Services.Interfaces;
+    using System.Diagnostics;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using RestX.WebApp.Models;
+    using RestX.WebApp.Models.ViewModels;
+    using RestX.WebApp.Services.Interfaces;
 
-namespace RestX.WebApp.Controllers
-{
-    public class BaseController : Controller
+    namespace RestX.WebApp.Controllers
     {
-        public readonly IExceptionHandler exceptionHandler;
-
-        public BaseController(IExceptionHandler exceptionHandler)
+        public class BaseController : Controller
         {
-            this.exceptionHandler = exceptionHandler;
+            public readonly IExceptionHandler exceptionHandler;
+
+            public BaseController(IExceptionHandler exceptionHandler)
+            {
+                this.exceptionHandler = exceptionHandler;
+            }
         }
     }
-}

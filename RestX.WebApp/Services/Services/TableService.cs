@@ -12,7 +12,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<Table> GetTableByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await repo.GetOneAsync<Table>(t => t.Id == id);
+            return await Repo.GetOneAsync<Table>(t => t.Id == id);
         }
 
         public async Task<List<TableStatusViewModel>> GetAllTablesByOwnerIdAsync(Guid? guid, CancellationToken cancellationToken = default)

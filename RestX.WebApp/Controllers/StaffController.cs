@@ -28,7 +28,6 @@ namespace RestX.WebApp.Controllers
         {
             try
             {
-
                 return View();
             }
             catch (Exception ex)
@@ -67,9 +66,7 @@ namespace RestX.WebApp.Controllers
                 }
 
                 var staff = await staffService.GetStaffByIdAsync(staffId, cancellationToken);
-
                 var model = await tableService.GetAllTablesByOwnerIdAsync(staff.OwnerId, cancellationToken);
-
                 return View(model);
             }
             catch (Exception ex)
@@ -90,7 +87,6 @@ namespace RestX.WebApp.Controllers
                 {
                     return Unauthorized("Staff ID not found in claims.");
                 }
-
                 var staff = await staffService.GetStaffByIdAsync(staffId, cancellationToken);
 
                 if (staff == null)

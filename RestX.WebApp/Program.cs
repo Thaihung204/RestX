@@ -1,13 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using RestX.WebApp.Filters;
 using RestX.WebApp.Models;
 using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
 using RestX.WebApp.Services.Services;
+using RestX.WebApp.Hubs;
 using RestX.WebApp.Services.SignalRLab;
 using RestX.WebApp.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddDistributedMemoryCache(); 
 builder.Services.AddSession(options =>
@@ -17,7 +19,6 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true; 
 });
-
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews(options =>
@@ -38,6 +39,15 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IStaffService, StaffService>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddCookie(options =>
+{
+options.LoginPath = "/Login/Login";
+options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+});
 
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
@@ -51,7 +61,6 @@ builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
                 errorNumbersToAdd: null);
         });
                 
-    // Enable sensitive data logging in development
     if (builder.Environment.IsDevelopment())
     {
         options.EnableSensitiveDataLogging();
@@ -82,14 +91,8 @@ if (!app.Environment.IsDevelopment())
 //}
 
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseForwardedHeaders();
-
-// app.MapControllerRoute(
-//     name: "default",
-//     pattern: "{controller=Home}/{action=Index}/{ownerId?}/{tableId?}");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
@@ -122,5 +125,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{ownerId?}/{tableId?}");
 
 app.MapHub<SignalrServer>("/signalrServer");
+app.MapHub<TableStatusHub>("/tableStatusHub");
 
 app.Run();

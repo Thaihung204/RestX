@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
+using RestX.WebApp.Filters;
 using RestX.WebApp.Models;
 using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
 using RestX.WebApp.Services.Services;
-using RestX.WebApp.Filters;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace RestX.WebApp
 {
@@ -34,15 +35,24 @@ namespace RestX.WebApp
             builder.Services.AddScoped<IIngredientImportService, IngredientImportService>();
             builder.Services.AddScoped<IDashboardService, DashboardService>();
             builder.Services.AddScoped<IDishManagementService, DishManagementService>();
+            builder.Services.AddScoped<IFileService, FileService>();
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
                 options.LoginPath = "/Login";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+                options.ExpireTimeSpan = TimeSpan.FromDays(1);
             });
 
-            builder.Services.AddAutoMapper(typeof(Program));    
+            builder.Services.AddAutoMapper(typeof(Program));
+
+            // File upload configuration
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.ValueLengthLimit = int.MaxValue;
+                options.MultipartBodyLengthLimit = int.MaxValue;
+                options.MultipartHeadersLengthLimit = int.MaxValue;
+            });
 
             // Configure the new Code First DbContext
             builder.Services.AddDbContext<RestXDbContext>(options =>

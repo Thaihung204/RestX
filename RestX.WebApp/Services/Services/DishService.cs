@@ -13,13 +13,20 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<List<Dish>> GetDishesByOwnerIdAsync(Guid ownerId)
         {
-            var dishes = await repo.GetAsync<Dish>(d => d.OwnerId == ownerId && d.IsActive == true);
+            var dishes = await repo.GetAsync<Dish>(
+                filter: d => d.OwnerId == ownerId && d.IsActive == true,
+                includeProperties: "Category,File"
+            );
             return dishes.ToList();
         }
 
         public async Task<Dish?> GetDishByIdAsync(int id)
         {
-            return await repo.GetByIdAsync<Dish>(id);
+            var dishes = await repo.GetAsync<Dish>(
+                filter: d => d.Id == id,
+                includeProperties: "Category,File"
+            );
+            return dishes.FirstOrDefault();
         }
 
         public async Task<int> UpsertDishAsync(Dish entity, string userId)

@@ -63,7 +63,6 @@ namespace RestX.WebApp.Services.Services
 
             return new DashboardViewModel
             {
-                OwnerId = ownerId,
                 DailyFinances = dailyFinances
             };
         }

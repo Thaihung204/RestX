@@ -44,6 +44,9 @@ namespace RestX.WebApp.Controllers
                 if (account.StaffId.HasValue)
                 {
                     claims.Add(new Claim("StaffId", account.StaffId.Value.ToString()));
+                } else if (account.OwnerId.HasValue)
+                {
+                    claims.Add(new Claim("OwnerId", account.OwnerId.Value.ToString()));
                 }
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -58,7 +61,7 @@ namespace RestX.WebApp.Controllers
                 }
                 else if (account.Role == "Owner")
                 {
-                    return RedirectToAction("DashBoard", "Owner", new { ownerId = account.OwnerId });
+                    return RedirectToAction("DashBoard", "Owner");
                 }
 
 

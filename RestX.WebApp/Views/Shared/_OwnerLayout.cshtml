@@ -1,4 +1,6 @@
-@model RestX.WebApp.Models.ViewModels.IOwnerViewModel
+@{
+    var ownerId = User.FindFirst("OwnerId")?.Value;
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +34,7 @@
                             <span class="hide-menu">Home</span>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="/Owner/DashBoard/@Model.OwnerId" aria-expanded="false">
+                            <a class="sidebar-link" href="/Owner/DashBoard" aria-expanded="false">
                                 <span>
                                     <i class="ti ti-layout-dashboard"></i>
                                 </span>
@@ -52,7 +54,7 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="/Owner/Dishes/@Model.OwnerId" aria-expanded="false">
+                            <a class="sidebar-link" href="/Owner/Dishes" aria-expanded="false">
                                 <span>
                                     <i class="ti ti-article"></i>
                                 </span>

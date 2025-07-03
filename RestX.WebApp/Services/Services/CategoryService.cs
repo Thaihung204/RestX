@@ -14,5 +14,29 @@ namespace RestX.WebApp.Services.Services
             var categories = await repo.GetAllAsync<Category>();
             return categories.ToList();
         }
+
+        public async Task<int> CreateCategoryAsync(string categoryName, string userId)
+        {
+            var existingCategory = await GetCategoryByNameAsync(categoryName);
+            if (existingCategory != null)
+            {
+                return existingCategory.Id;
+            }
+
+            var category = new Category
+            {
+                Name = categoryName.Trim()
+            };
+
+            var result = await repo.CreateAsync(category, userId);
+            await repo.SaveAsync();
+            return (int)result;
+        }
+
+        public async Task<Category?> GetCategoryByNameAsync(string name)
+        {
+            var categories = await repo.GetAsync<Category>(c => c.Name.ToLower() == name.ToLower().Trim());
+            return categories.FirstOrDefault();
+        }
     }
 }

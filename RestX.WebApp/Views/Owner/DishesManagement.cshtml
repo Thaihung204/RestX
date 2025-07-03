@@ -4,84 +4,1164 @@
     ViewData["Title"] = "Dishes Management";
     Layout = "~/Views/Shared/_OwnerLayout.cshtml";
 }
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<style>
+    :root {
+        --primary-color: #4A3AFF;
+        --primary-hover-color: #3e31cc;
+        --border-color: #e9ecef;
+        --text-color-light: #6c757d;
+        --background-light: #f8f9fa;
+        --card-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+        --border-radius: 12px;
+        --action-view-bg: #e7f3ff;
+        --action-view-text: #007bff;
+        --action-edit-bg: #fff0e0;
+        --action-edit-text: #ff9f43;
+        --action-delete-bg: #ffe6e6;
+        --action-delete-text: #dc3545;
+    }
+
+    body {
+        background-color: var(--background-light);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 0 0.5rem;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    /* Modern Search Bar */
+    .search-container {
+        position: relative;
+        flex-grow: 1;
+        max-width: 400px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 3rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        font-size: 0.95rem;
+        background-color: #fff;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 58, 255, 0.1);
+        }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-color-light);
+        font-size: 1rem;
+    }
+
+    /* Modern Button Styles */
+    .btn-modern {
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .btn-primary-modern {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #6366f1 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(74, 58, 255, 0.25);
+    }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 58, 255, 0.35);
+            color: white;
+        }
+
+    .btn-secondary-modern {
+        background: #6c757d;
+        color: white;
+    }
+
+        .btn-secondary-modern:hover {
+            background: #5a6268;
+            color: white;
+        }
+
+    /* Modern Card */
+    .modern-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+        border: none;
+        overflow: hidden;
+    }
+
+    .card-body-modern {
+        padding: 1.5rem;
+    }
+
+    /* Enhanced Table */
+    .modern-table {
+        margin-bottom: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .modern-table thead th {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: none;
+            padding: 1.25rem 1rem;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #4a5568;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+            .modern-table thead th:first-child {
+                border-top-left-radius: var(--border-radius);
+            }
+
+            .modern-table thead th:last-child {
+                border-top-right-radius: var(--border-radius);
+            }
+
+        .modern-table tbody tr {
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+            .modern-table tbody tr:hover {
+                background: #f8f9ff;
+                transform: scale(1.001);
+            }
+
+        .modern-table td {
+            padding: 1.25rem 1rem;
+            border: none;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        .modern-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    /* Dish Item Styling */
+    .dish-name {
+        font-weight: 600;
+        color: #1a202c;
+        font-size: 0.95rem;
+    }
+
+    .dish-category {
+        color: var(--text-color-light);
+        font-size: 0.9rem;
+    }
+
+    .dish-price {
+        font-weight: 700;
+        color: #059669;
+        font-size: 1rem;
+    }
+
+    /* Modern Badges */
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-active {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+    .status-inactive {
+        background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        color: white;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+    .btn-detail {
+        background: var(--action-view-bg);
+        color: var(--action-view-text);
+    }
+
+    .btn-edit {
+        background: var(--action-edit-bg);
+        color: var(--action-edit-text);
+    }
+
+    .btn-delete {
+        background: var(--action-delete-bg);
+        color: var(--action-delete-text);
+    }
+
+    /* No Results State */
+    .no-results {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-color-light);
+    }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .no-results p {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+    /* Modal Styles */
+    .modal-content {
+        border-radius: var(--border-radius);
+        border: none;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.5rem;
+    }
+
+    .modal-title {
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--border-color);
+        padding: 1rem 1.5rem;
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 58, 255, 0.1);
+        }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-check-input {
+        margin: 0;
+    }
+
+    /* Sweet Alert Custom Styles */
+    .swal2-popup {
+        border-radius: var(--border-radius) !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .swal2-confirm {
+        background: var(--primary-color) !important;
+        border-radius: 8px !important;
+    }
+
+    .swal2-cancel {
+        background: #6c757d !important;
+        border-radius: 8px !important;
+    }
+
+    .category-group {
+        display: flex;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+
+        .category-group .form-control {
+            flex: 1;
+        }
+
+    .btn-add-category {
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: #f8f9fa;
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+    }
+
+        .btn-add-category:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+    .image-upload-container {
+        position: relative;
+    }
+
+    .image-preview {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+
+        .image-preview img {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: cover;
+        }
+
+    .btn-remove-image {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #dc3545;
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .file-upload-area {
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .file-upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(74, 58, 255, 0.05);
+        }
+
+    .upload-placeholder p {
+        margin: 0.5rem 0;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .upload-placeholder small {
+        color: #adb5bd;
+    }
+</style>
 
 <div class="container-fluid py-4">
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <h2 class="mb-0">Dishes Management</h2>
-            <a class="btn btn-primary" href="@Url.Action("CreateDish", "Owner", new { ownerId = Model.OwnerId })">
-                <i class="bi bi-plus-lg"></i> Add New Dish
-            </a>
+    <div class="page-header">
+        <h1 class="page-title">Dishes Management</h1>
+        <div class="header-actions">
+            <div class="search-container">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search dishes...">
+            </div>
+            <button class="btn-modern btn-primary-modern" id="btnAddDish">
+                <i class="bi bi-plus-lg"></i>
+                Add Dish
+            </button>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table align-middle table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col" class="text-end">Actions</th>
+    <div class="modern-card">
+        <div class="card-body-modern">
+            <div class="table-responsive">
+                <table class="modern-table table" id="dishesTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Dish Name</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Dishes != null && Model.Dishes.Any())
+                        {
+                            foreach (var dish in Model.Dishes)
+                            {
+                                <tr class="dish-row">
+                                    <td>
+                                        <div class="dish-name">@dish.Name</div>
+                                    </td>
+                                    <td>
+                                        <div class="dish-category">@dish.CategoryName</div>
+                                    </td>
+                                    <td>
+                                        <div class="dish-price">@dish.Price</div>
+                                    </td>
+                                    <td>
+                                        @if (dish.IsActive == true)
+                                        {
+                                            <span class="status-badge status-active">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge status-inactive">Inactive</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn-action btn-detail" title="View Details" onclick="viewDish(@dish.Id)">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </button>
+                                            <button class="btn-action btn-edit" title="Edit Dish" onclick="editDish(@dish.Id)">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button class="btn-action btn-delete" title="Delete Dish" onclick="deleteDish(@dish.Id, '@dish.Name')">
+                                                <i class="bi bi-trash3-fill"></i>
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @if (Model.Dishes != null && Model.Dishes.Any())
-                                {
-                                    foreach (var dish in Model.Dishes)
-                                    {
-                                        <tr>
-                                            <td>@dish.Name</td>
-                                            <td>@dish.CategoryName</td>
-                                            <td>@dish.Price.ToString("C")</td>
-                                            <td>
-                                                @if (dish.IsActive == true)
-                                                {
-                                                    <span class="badge bg-success">Active</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-secondary">Inactive</span>
-                                                }
-                                            </td>
-                                            <td class="text-end">
-                                                <a class="btn btn-sm btn-info" href="@Url.Action("DetailDish", "Owner", new { id = dish.Id, ownerId = Model.OwnerId })">
-                                                    <i class="bi bi-info-circle"></i> Detail
-                                                </a>
-                                                <a class="btn btn-sm btn-warning" href="@Url.Action("EditDish", "Owner", new { id = dish.Id, ownerId = Model.OwnerId })">
-                                                    <i class="bi bi-pencil-square"></i> Edit
-                                                </a>
-                                                <a class="btn btn-sm btn-danger" href="@Url.Action("DeleteDish", "Owner", new { id = dish.Id, ownerId = Model.OwnerId })" onclick="return confirm('Are you sure?');">
-                                                    <i class="bi bi-trash"></i> Delete
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                                else
-                                {
-                                    <tr>
-                                        <td colspan="5" class="text-center text-muted">No dishes found.</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                            }
+                        }
+                        else
+                        {
+                            <tr id="noDishesRow">
+                                <td colspan="5">
+                                    <div class="no-results">
+                                        <i class="bi bi-journal-text"></i>
+                                        <p>No dishes have been created yet</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="noSearchResults" class="no-results" style="display: none;">
+                <i class="bi bi-search"></i>
+                <p>No matching dishes found</p>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Add/Edit Dish Modal -->
+<div class="modal fade" id="dishModal" tabindex="-1" aria-labelledby="dishModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dishModalLabel">Add New Dish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="dishForm">
+                <div class="modal-body">
+                    <input type="hidden" id="dishId" name="Id" value="0">
+
+                    <div class="form-group">
+                        <label for="dishName" class="form-label">Dish Name *</label>
+                        <input type="text" class="form-control" id="dishName" name="Name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categorySelect" class="form-label">Category *</label>
+                        <div class="category-group">
+                            <select class="form-control" id="categorySelect" name="CategoryId" required onchange="handleCategoryChange()">
+                                <option value="">Select Category</option>
+                            </select>
+                            <button type="button" class="btn-add-category" onclick="showAddCategoryDialog()" title="Add New Category">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                        <input type="hidden" id="categoryName" name="CategoryName">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="Description" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price" class="form-label">Price *</label>
+                        <input type="number" step="0.01" class="form-control" id="price" name="Price" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="imageFile" class="form-label">Dish Image *</label>
+                        <div class="image-upload-container">
+                            <div class="image-preview" id="imagePreview" style="display: none;">
+                                <img id="previewImg" src="" alt="Preview">
+                                <button type="button" class="btn-remove-image" onclick="removeImage()" title="Remove Image">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                            <div class="file-upload-area" id="fileUploadArea">
+                                <input type="file" class="form-control" id="imageFile" name="ImageFile" accept="image/*" required style="display: none;" onchange="handleImageUpload(this)">
+                                <div class="upload-placeholder" onclick="document.getElementById('imageFile').click()">
+                                    <i class="bi bi-cloud-upload" style="font-size: 2rem; color: #6c757d;"></i>
+                                    <p>Click to upload dish image</p>
+                                    <small>JPG, PNG, GIF, WEBP (Max 5MB)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="isActive" name="IsActive" checked>
+                            <label class="form-check-label" for="isActive">
+                                Active Status
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-secondary-modern" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-primary-modern" id="btnSaveDish">
+                        <i class="bi bi-check-lg"></i>
+                        Save Dish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
-    <script src="/lib/jquery/dist/jquery.min.js"></script>
-    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/lib/simplebar/dist/simplebar.js"></script>
-    <script src="/js/sidebarmenu.js"></script>
-    <script src="/js/app.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let categories = []; // Global variable to store categories
+
+        // Load categories when page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadCategories();
+        });
+
+        // Load categories from API
+        async function loadCategories() {
+            try {
+                const response = await fetch('/Owner/Categories');
+                const result = await response.json();
+                if (result.success) {
+                    categories = result.data;
+                    populateCategoryDropdown();
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        // Populate category dropdown
+        function populateCategoryDropdown() {
+            const categorySelect = document.getElementById('categorySelect');
+            if (!categorySelect) return;
+
+            categorySelect.innerHTML = '<option value="">Select Category</option>';
+
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                categorySelect.appendChild(option);
+            });
+        }
+
+        // Handle category selection
+        function handleCategoryChange() {
+            const categorySelect = document.getElementById('categorySelect');
+            const categoryNameInput = document.getElementById('categoryName');
+
+            if (categorySelect.value) {
+                const selectedCategory = categories.find(c => c.id == categorySelect.value);
+                if (selectedCategory) {
+                    categoryNameInput.value = selectedCategory.name;
+                }
+            } else {
+                categoryNameInput.value = '';
+            }
+        }
+
+        // Show add category dialog
+        async function showAddCategoryDialog() {
+            const { value: categoryName } = await Swal.fire({
+                title: 'Add New Category',
+                input: 'text',
+                inputPlaceholder: 'Enter category name',
+                showCancelButton: true,
+                confirmButtonColor: '#4A3AFF',
+                confirmButtonText: 'Add Category',
+                cancelButtonText: 'Cancel',
+                inputValidator: (value) => {
+                    if (!value || value.trim() === '') {
+                        return 'Category name is required!';
+                    }
+                    if (categories.some(c => c.name.toLowerCase() === value.toLowerCase().trim())) {
+                        return 'Category already exists!';
+                    }
+                }
+            });
+
+            if (categoryName) {
+                await createCategory(categoryName.trim());
+            }
+        }
+
+        // Create new category - FIXED: Removed duplicate variable declaration
+        async function createCategory(categoryName) {
+            try {
+                const response = await fetch('/Owner/Categories/Create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: categoryName })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    categories.push(result.data);
+                    populateCategoryDropdown();
+
+                    const categorySelect = document.getElementById('categorySelect');
+                    const categoryNameInput = document.getElementById('categoryName');
+                    if (categorySelect && categoryNameInput) {
+                        categorySelect.value = result.data.id;
+                        categoryNameInput.value = result.data.name;
+                    }
+
+                    Swal.fire({
+                        title: 'Success!',
+                        text: result.message,
+                        icon: 'success',
+                        confirmButtonColor: '#4A3AFF'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: result.message,
+                        icon: 'error',
+                        confirmButtonColor: '#4A3AFF'
+                    });
+                }
+            } catch (error) {
+                console.error('Error creating category:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to create category',
+                    icon: 'error',
+                    confirmButtonColor: '#4A3AFF'
+                });
+            }
+        }
+
+        // Search functionality
+        function searchDishes() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const dishRows = document.querySelectorAll('.dish-row');
+            const noResultsDiv = document.getElementById('noSearchResults');
+            const noDishesRow = document.getElementById('noDishesRow');
+            let visibleRows = 0;
+
+            dishRows.forEach(row => {
+                const dishName = row.cells[0].textContent.toLowerCase();
+                const categoryName = row.cells[1].textContent.toLowerCase();
+                const price = row.cells[2].textContent.toLowerCase();
+
+                if (dishName.includes(searchTerm) ||
+                    categoryName.includes(searchTerm) ||
+                    price.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleRows++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (noDishesRow) {
+                noDishesRow.style.display = 'none';
+            }
+
+            if (visibleRows === 0 && searchTerm !== '') {
+                noResultsDiv.style.display = 'block';
+            } else {
+                noResultsDiv.style.display = 'none';
+            }
+
+            if (searchTerm === '' && dishRows.length === 0 && noDishesRow) {
+                noDishesRow.style.display = '';
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', searchDishes);
+
+        // Handle image upload
+        function handleImageUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                // Validate file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    Swal.fire({
+                        title: 'File Too Large!',
+                        text: 'Please select an image smaller than 5MB',
+                        icon: 'error',
+                        confirmButtonColor: '#4A3AFF'
+                    });
+                    input.value = '';
+                    return;
+                }
+
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                    Swal.fire({
+                        title: 'Invalid File Type!',
+                        text: 'Please select a valid image file (JPG, PNG, GIF, WEBP)',
+                        icon: 'error',
+                        confirmButtonColor: '#4A3AFF'
+                    });
+                    input.value = '';
+                    return;
+                }
+
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                    document.getElementById('fileUploadArea').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Remove image
+        function removeImage() {
+            document.getElementById('imageFile').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('fileUploadArea').style.display = 'block';
+        }
+
+        // FIXED: Updated showDishModal function
+        function showDishModal(title, dishData = null) {
+            document.getElementById('dishModalLabel').textContent = title;
+
+            if (dishData) {
+                document.getElementById('dishId').value = dishData.id || 0;
+                document.getElementById('dishName').value = dishData.name || '';
+
+                const categorySelect = document.getElementById('categorySelect');
+                const categoryNameInput = document.getElementById('categoryName');
+
+                if (dishData.categoryId) {
+                    categorySelect.value = dishData.categoryId;
+                } else if (dishData.categoryName) {
+                    const category = categories.find(c => c.name === dishData.categoryName);
+                    if (category) {
+                        categorySelect.value = category.id;
+                    }
+                }
+                categoryNameInput.value = dishData.categoryName || '';
+
+                document.getElementById('description').value = dishData.description || '';
+                document.getElementById('price').value = dishData.price || '';
+                document.getElementById('isActive').checked = dishData.isActive || false;
+
+                // Show existing image if available
+                if (dishData.imageUrl) {
+                    document.getElementById('previewImg').src = dishData.imageUrl;
+                    document.getElementById('imagePreview').style.display = 'block';
+                    document.getElementById('fileUploadArea').style.display = 'none';
+                    // Remove required attribute for edit mode
+                    document.getElementById('imageFile').removeAttribute('required');
+                } else {
+                    // Reset image upload area if no image
+                    removeImage();
+                    document.getElementById('imageFile').removeAttribute('required');
+                }
+            } else {
+                document.getElementById('dishForm').reset();
+                document.getElementById('dishId').value = '0';
+                document.getElementById('isActive').checked = true;
+                document.getElementById('categoryName').value = '';
+
+                // Reset image upload area
+                removeImage();
+                // Add required attribute for create mode
+                document.getElementById('imageFile').setAttribute('required', 'required');
+            }
+
+            new bootstrap.Modal(document.getElementById('dishModal')).show();
+        }
+
+        // Add new dish
+        document.getElementById('btnAddDish').addEventListener('click', function() {
+            showDishModal('Add New Dish');
+        });
+
+        // Edit dish
+        function editDish(id) {
+            fetch(`/Owner/Dishes/GetDish/${id}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        showDishModal('Edit Dish', result.data);
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: result.message,
+                            icon: 'error',
+                            confirmButtonColor: '#4A3AFF'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading dish:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to load dish data',
+                        icon: 'error',
+                        confirmButtonColor: '#4A3AFF'
+                    });
+                });
+        }
+
+        // View dish details
+        function viewDish(id) {
+            fetch(`/Owner/Dishes/GetDish/${id}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        const dish = result.data;
+                        Swal.fire({
+                            title: dish.name,
+                            html: `
+                                <div style="text-align: left;">
+                                    <p><strong>Category:</strong> ${dish.categoryName || 'N/A'}</p>
+                                    <p><strong>Price:</strong> $${dish.price}</p>
+                                    <p><strong>Description:</strong> ${dish.description || 'No description'}</p>
+                                    <p><strong>Status:</strong> ${dish.isActive ? 'Active' : 'Inactive'}</p>
+                                    ${dish.imageUrl ? `<p><strong>Image:</strong> <img src="${dish.imageUrl}" style="max-width: 200px; margin-top: 10px; border-radius: 8px;"></p>` : ''}
+                                </div>
+                            `,
+                            confirmButtonColor: '#4A3AFF',
+                            confirmButtonText: 'Close'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: result.message,
+                            icon: 'error',
+                            confirmButtonColor: '#4A3AFF'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading dish:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to load dish details',
+                        icon: 'error',
+                        confirmButtonColor: '#4A3AFF'
+                    });
+                });
+        }
+
+        // Delete dish
+        function deleteDish(id, dishName) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `Do you want to delete "${dishName}"? This action cannot be undone!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/Owner/Dishes/Delete/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: result.message,
+                                icon: 'success',
+                                confirmButtonColor: '#4A3AFF'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: result.message,
+                                icon: 'error',
+                                confirmButtonColor: '#4A3AFF'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting dish:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to delete dish',
+                            icon: 'error',
+                            confirmButtonColor: '#4A3AFF'
+                        });
+                    });
+                }
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('dishForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const dishId = formData.get('Id');
+            const isEdit = dishId && dishId !== '0';
+
+            const dishName = formData.get('Name');
+            const categorySelect = document.getElementById('categorySelect');
+            const categoryName = document.getElementById('categoryName').value;
+            const price = formData.get('Price');
+            const imageFile = document.getElementById('imageFile').files[0];
+
+            // Validation
+            if (!dishName || !dishName.trim()) {
+                Swal.fire({
+                    title: 'Validation Error!',
+                    text: 'Dish name is required',
+                    icon: 'error',
+                    confirmButtonColor: '#4A3AFF'
+                });
+                return;
+            }
+
+            if (!categorySelect.value) {
+                Swal.fire({
+                    title: 'Validation Error!',
+                    text: 'Please select a category',
+                    icon: 'error',
+                    confirmButtonColor: '#4A3AFF'
+                });
+                return;
+            }
+
+            if (!price || parseFloat(price) <= 0) {
+                Swal.fire({
+                    title: 'Validation Error!',
+                    text: 'Valid price is required',
+                    icon: 'error',
+                    confirmButtonColor: '#4A3AFF'
+                });
+                return;
+            }
+
+            if (!isEdit && !imageFile) {
+                Swal.fire({
+                    title: 'Validation Error!',
+                    text: 'Please select an image for the dish',
+                    icon: 'error',
+                    confirmButtonColor: '#4A3AFF'
+                });
+                return;
+            }
+
+            // Prepare FormData for file upload
+            const uploadFormData = new FormData();
+            uploadFormData.append('Id', dishId);
+            uploadFormData.append('Name', dishName.trim());
+            uploadFormData.append('CategoryId', categorySelect.value);
+            uploadFormData.append('CategoryName', categoryName);
+            uploadFormData.append('Description', formData.get('Description') || '');
+            uploadFormData.append('Price', price);
+            uploadFormData.append('IsActive', document.getElementById('isActive').checked);
+
+            if (imageFile) {
+                uploadFormData.append('ImageFile', imageFile);
+            }
+
+            const url = isEdit ? `/Owner/Dishes/Edit/${dishId}` : '/Owner/Dishes/Create';
+
+            Swal.fire({
+                title: 'Processing...',
+                text: isEdit ? 'Updating dish...' : 'Creating dish...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            fetch(url, {
+                method: 'POST',
+                body: uploadFormData
+            })
+            .then(response => response.json())
+            .then(result => {
+                Swal.close();
+
+                if (result.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: result.message,
+                        icon: 'success',
+                        confirmButtonColor: '#4A3AFF'
+                    }).then(() => {
+                        bootstrap.Modal.getInstance(document.getElementById('dishModal')).hide();
+                        location.reload();
+                    });
+                } else {
+                    let errorMessage = 'An error occurred';
+                    if (result.errors && result.errors.length > 0) {
+                        errorMessage = result.errors.join('<br>');
+                    } else if (result.message) {
+                        errorMessage = result.message;
+                    }
+
+                    Swal.fire({
+                        title: 'Error!',
+                        html: errorMessage,
+                        icon: 'error',
+                        confirmButtonColor: '#4A3AFF'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.close();
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'An error occurred while saving the dish',
+                    icon: 'error',
+                    confirmButtonColor: '#4A3AFF'
+                });
+            });
+        });
+
+        // Handle modal close event to reset form
+        document.getElementById('dishModal').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('dishForm').reset();
+            document.getElementById('dishId').value = '0';
+            document.getElementById('categoryName').value = '';
+            removeImage(); // Reset image upload area
+        });
+
+        // Auto-resize textarea
+        document.getElementById('description').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+
+        // Format price input
+        document.getElementById('price').addEventListener('input', function() {
+            let value = this.value;
+            value = value.replace(/[^0-9.]/g, '');
+            const parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+            if (parts[1] && parts[1].length > 2) {
+                value = parts[0] + '.' + parts[1].substring(0, 2);
+            }
+            this.value = value;
+        });
+    </script>
 }

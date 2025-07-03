@@ -7,9 +7,8 @@
         public decimal Profit { get; set; }   
     }
 
-    public class DashboardViewModel : IOwnerViewModel
+    public class DashboardViewModel
     {
-        public Guid? OwnerId { get; set; }
         public List<DailyFinanceViewModel> DailyFinances { get; set; } = new();
     }
 }

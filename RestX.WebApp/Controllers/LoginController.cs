@@ -18,8 +18,7 @@ namespace RestX.WebApp.Controllers
         }
 
         [HttpGet]
-        [Route("Login/Login")]
-        public IActionResult Login()
+        public IActionResult Index()
         {
             return View();
         }

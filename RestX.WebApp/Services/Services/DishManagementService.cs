@@ -15,12 +15,12 @@ namespace RestX.WebApp.Services.Services
         private readonly IFileService _fileService;
 
         public DishManagementService(
-            IRepository Repo, 
+            IRepository repo, 
             IDishService dishService, 
             ICategoryService categoryService, 
             IFileService fileService,
             IHttpContextAccessor httpContextAccessor)
-            : base(Repo, httpContextAccessor)
+            : base(repo, httpContextAccessor)
         {
             _dishService = dishService;
             _categoryService = categoryService;

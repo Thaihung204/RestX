@@ -6,7 +6,7 @@ namespace RestX.WebApp.Services.Services
 {
     public class TableService : BaseService, ITableService
     {
-        public TableService(IRepository Repo, IHttpContextAccessor httpContextAccessor) : base(Repo, httpContextAccessor)
+        public TableService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
         {
         }
 
@@ -17,7 +17,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<List<TableStatusViewModel>> GetAllTablesByOwnerIdAsync(Guid? guid, CancellationToken cancellationToken = default)
         {
-            var tables = await Repo.GetAsync<Table>(
+            var tables = await repo.GetAsync<Table>(
                 filter: t => t.OwnerId == guid,
                 orderBy: q => q.OrderBy(t => t.TableNumber),
                 includeProperties: "TableStatus"
@@ -34,17 +34,17 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<TableStatusViewModel> UpdateTableStatusAsync(int tableId, int newStatusId)
         {
-            var table = await Repo.GetByIdAsync<Table>(tableId);
+            var table = await repo.GetByIdAsync<Table>(tableId);
             if (table == null)
             {
                 return null;
             }
 
             table.TableStatusId = newStatusId;
-            Repo.Update(table);
-            await Repo.SaveAsync();
+            repo.Update(table);
+            await repo.SaveAsync();
 
-            var updatedTable = await Repo.GetOneAsync<Table>(
+            var updatedTable = await repo.GetOneAsync<Table>(
                 filter: t => t.Id == tableId,
                 includeProperties: "TableStatus"
             );

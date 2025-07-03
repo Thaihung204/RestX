@@ -5610,7 +5610,7 @@
   content: "\f03a";
 }
 
-.ti-file-Report:before {
+.ti-file-report:before {
   content: "\eded";
 }
 
@@ -7902,7 +7902,7 @@
   content: "\ec9a";
 }
 
-.ti-message-Report:before {
+.ti-message-report:before {
   content: "\ec9b";
 }
 
@@ -9270,27 +9270,27 @@
   content: "\f422";
 }
 
-.ti-Report:before {
+.ti-report:before {
   content: "\eece";
 }
 
-.ti-Report-analytics:before {
+.ti-report-analytics:before {
   content: "\eecb";
 }
 
-.ti-Report-medical:before {
+.ti-report-medical:before {
   content: "\eecc";
 }
 
-.ti-Report-money:before {
+.ti-report-money:before {
   content: "\eecd";
 }
 
-.ti-Report-off:before {
+.ti-report-off:before {
   content: "\f18f";
 }
 
-.ti-Report-search:before {
+.ti-report-search:before {
   content: "\ef84";
 }
 

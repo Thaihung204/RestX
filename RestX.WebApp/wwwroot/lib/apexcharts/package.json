@@ -2,7 +2,7 @@
   "name": "apexcharts",
   "version": "3.35.2",
   "description": "A JavaScript Chart Library",
-  "Repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/apexcharts/apexcharts.js.git"
   },

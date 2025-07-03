@@ -9,7 +9,7 @@
     "README.md"
   ],
   "author": "Adrien Denat from a fork by Jonathan Nicol",
-  "Repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/grsmto/simplebar.git",
     "directory": "packages/simplebar"

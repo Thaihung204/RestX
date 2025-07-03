@@ -9,7 +9,7 @@ namespace RestX.WebApp.Services.Services
     public class CartService : BaseService, ICartService
     {
         private readonly IHttpContextAccessor httpContextAccessor;
-        public CartService(IRepository Repo, IHttpContextAccessor httpContextAccessor) : base(Repo, httpContextAccessor)
+        public CartService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
         {
             this.httpContextAccessor = httpContextAccessor;
         }

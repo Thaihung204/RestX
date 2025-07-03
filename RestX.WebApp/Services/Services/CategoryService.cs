@@ -5,7 +5,7 @@ namespace RestX.WebApp.Services.Services
 {
     public class CategoryService : BaseService, ICategoryService
     {
-        public CategoryService(IRepository Repo, IHttpContextAccessor httpContextAccessor) : base(Repo, httpContextAccessor)
+        public CategoryService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
         {
         }
 
@@ -28,14 +28,14 @@ namespace RestX.WebApp.Services.Services
                 Name = categoryName.Trim()
             };
 
-            var result = await Repo.CreateAsync(category, userId);
-            await Repo.SaveAsync();
+            var result = await repo.CreateAsync(category, userId);
+            await repo.SaveAsync();
             return (int)result;
         }
 
         public async Task<Category?> GetCategoryByNameAsync(string name)
         {
-            var categories = await Repo.GetAsync<Category>(c => c.Name.ToLower() == name.ToLower().Trim());
+            var categories = await repo.GetAsync<Category>(c => c.Name.ToLower() == name.ToLower().Trim());
             return categories.FirstOrDefault();
         }
     }

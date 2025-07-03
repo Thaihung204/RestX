@@ -9,11 +9,11 @@ namespace RestX.WebApp.Services.Services
 {
     public class DishService : BaseService, IDishService
     {
-        public DishService(IRepository Repo, IHttpContextAccessor httpContextAccessor) : base(Repo, httpContextAccessor) { }
+        public DishService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor) { }
 
         public async Task<List<Dish>> GetDishesByOwnerIdAsync(Guid ownerId)
         {
-            var dishes = await Repo.GetAsync<Dish>(
+            var dishes = await repo.GetAsync<Dish>(
                 filter: d => d.OwnerId == ownerId && d.IsActive == true,
                 includeProperties: "Category,File"
             );
@@ -22,7 +22,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<Dish?> GetDishByIdAsync(int id)
         {
-            var dishes = await Repo.GetAsync<Dish>(
+            var dishes = await repo.GetAsync<Dish>(
                 filter: d => d.Id == id,
                 includeProperties: "Category,File"
             );
@@ -33,22 +33,22 @@ namespace RestX.WebApp.Services.Services
         {
             if (entity.Id == 0)
             {
-                var result = await Repo.CreateAsync(entity, userId);
-                await Repo.SaveAsync();
+                var result = await repo.CreateAsync(entity, userId);
+                await repo.SaveAsync();
                 return (int)result;
             }
             else
             {
-                Repo.Update(entity, userId);
-                await Repo.SaveAsync();
+                repo.Update(entity, userId);
+                await repo.SaveAsync();
                 return entity.Id;
             }
         }
 
         public async Task DeleteDishAsync(int id)
         {
-            Repo.Delete<Dish>(id);
-            await Repo.SaveAsync();
+            repo.Delete<Dish>(id);
+            await repo.SaveAsync();
         }
     }
 }

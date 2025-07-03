@@ -11,8 +11,8 @@ namespace RestX.WebApp.Services.Services
     {
         private readonly IWebHostEnvironment _environment;
 
-        public FileService(IRepository Repo, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment environment) 
-            : base(Repo, httpContextAccessor) 
+        public FileService(IRepository repo, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment environment) 
+            : base(repo, httpContextAccessor) 
         {
             _environment = environment;
         }
@@ -26,31 +26,31 @@ namespace RestX.WebApp.Services.Services
                 Url = url
             };
 
-            await Repo.CreateAsync(file, userId);
-            await Repo.SaveAsync();
+            await repo.CreateAsync(file, userId);
+            await repo.SaveAsync();
             return file.Id;
         }
 
         public async Task<Models.File?> GetFileByIdAsync(Guid fileId)
         {
-            return await Repo.GetByIdAsync<Models.File>(fileId);
+            return await repo.GetByIdAsync<Models.File>(fileId);
         }
 
         public async Task UpdateFileAsync(Guid fileId, string name, string url, string userId)
         {
-            var file = await Repo.GetByIdAsync<Models.File>(fileId);
+            var file = await repo.GetByIdAsync<Models.File>(fileId);
             if (file != null)
             {
                 file.Name = name;
                 file.Url = url;
-                Repo.Update(file, userId);
-                await Repo.SaveAsync();
+                repo.Update(file, userId);
+                await repo.SaveAsync();
             }
         }
 
         public async Task DeleteFileAsync(Guid fileId)
         {
-            var file = await Repo.GetByIdAsync<Models.File>(fileId);
+            var file = await repo.GetByIdAsync<Models.File>(fileId);
             if (file != null)
             {
                 // Delete physical file if it exists
@@ -63,8 +63,8 @@ namespace RestX.WebApp.Services.Services
                     }
                 }
 
-                Repo.Delete(file);
-                await Repo.SaveAsync();
+                repo.Delete(file);
+                await repo.SaveAsync();
             }
         }
 
@@ -77,8 +77,8 @@ namespace RestX.WebApp.Services.Services
                 {
                     existingFile.Name = name;
                     existingFile.Url = url;
-                    Repo.Update(existingFile, userId);
-                    await Repo.SaveAsync();
+                    repo.Update(existingFile, userId);
+                    await repo.SaveAsync();
                     return existingFile;
                 }
             }
@@ -90,8 +90,8 @@ namespace RestX.WebApp.Services.Services
                 Url = url
             };
 
-            await Repo.CreateAsync(newFile, userId);
-            await Repo.SaveAsync();
+            await repo.CreateAsync(newFile, userId);
+            await repo.SaveAsync();
             return newFile;
         }
 
@@ -165,8 +165,8 @@ namespace RestX.WebApp.Services.Services
                 Url = filePath
             };
 
-            await Repo.CreateAsync(file, userId);
-            await Repo.SaveAsync();
+            await repo.CreateAsync(file, userId);
+            await repo.SaveAsync();
             return file;
         }
 

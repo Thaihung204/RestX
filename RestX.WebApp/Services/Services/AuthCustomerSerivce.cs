@@ -8,8 +8,8 @@ namespace RestX.WebApp.Services.Services
     public class AuthCustomerService : BaseService, IAuthCustomerService
     {
         private readonly IHttpContextAccessor httpContextAccessor;
-        public AuthCustomerService(IRepository repo, IHttpContextAccessor httpContextAccessor)
-            : base(repo, httpContextAccessor)
+        public AuthCustomerService(IRepository Repo, IHttpContextAccessor httpContextAccessor)
+            : base(Repo, httpContextAccessor)
         {
             this.httpContextAccessor = httpContextAccessor;
         }

@@ -5,7 +5,7 @@ namespace RestX.WebApp.Services.Services
 {
     public class OwnerService : BaseService, IOwnerService
     {
-        public OwnerService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
+        public OwnerService(IRepository Repo, IHttpContextAccessor httpContextAccessor) : base(Repo, httpContextAccessor)
         {
         }
 

@@ -24,14 +24,9 @@ namespace RestX.WebApp.Services.Services
         protected Guid OwnerId => RestaurantContext.OwnerId;
         protected int TableId => RestaurantContext.TableId;
 
-        public BaseService(IRepository repo)
+        public BaseService(IRepository Repo, IHttpContextAccessor httpContextAccessor)
         {
-            this.repo = repo;
-        }
-
-        public BaseService(IRepository repo, IHttpContextAccessor httpContextAccessor)
-        {
-            this.Repo = repo;
+            this.Repo = Repo;
             _httpContextAccessor = httpContextAccessor;
         }
     }

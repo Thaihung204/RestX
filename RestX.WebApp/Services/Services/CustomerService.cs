@@ -5,7 +5,7 @@ namespace RestX.WebApp.Services.Services
 {
     public class CustomerService : BaseService, ICustomerService
     {
-        public CustomerService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
+        public CustomerService(IRepository Repo, IHttpContextAccessor httpContextAccessor) : base(Repo, httpContextAccessor)
         {
         }
 

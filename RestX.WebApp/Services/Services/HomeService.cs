@@ -8,7 +8,7 @@ namespace RestX.WebApp.Services.Services
         private readonly IOwnerService ownerService;
         private readonly ITableService tableService;
 
-        public HomeService(IOwnerService ownerService, ITableService tableService, IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
+        public HomeService(IOwnerService ownerService, ITableService tableService, IRepository Repo, IHttpContextAccessor httpContextAccessor) : base(Repo, httpContextAccessor)
         {
             this.ownerService = ownerService;
             this.tableService = tableService;

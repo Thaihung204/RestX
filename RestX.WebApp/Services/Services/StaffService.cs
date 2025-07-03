@@ -9,13 +9,13 @@ namespace RestX.WebApp.Services.Services
 {
     public class StaffService : BaseService, IStaffService
     {
-        public StaffService(IRepository repo) : base(repo)
+        public StaffService(IRepository Repo, IHttpContextAccessor httpContextAccessor) : base(Repo, httpContextAccessor)
         {
         }
 
         public async Task<StaffProfileViewModel> GetStaffByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var staff = await repo.GetByIdAsync<Staff>(id);
+            var staff = await Repo.GetByIdAsync<Staff>(id);
 
             var staffViewModel = new StaffProfileViewModel
             {

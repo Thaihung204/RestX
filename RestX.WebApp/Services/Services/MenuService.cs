@@ -8,7 +8,7 @@ namespace RestX.WebApp.Services.Services
         private readonly IDishService _dishService;
         private readonly ICategoryService _categoryService;
 
-        public MenuService(IRepository repo, IDishService dishService, ICategoryService categoryService, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
+        public MenuService(IRepository Repo, IDishService dishService, ICategoryService categoryService, IHttpContextAccessor httpContextAccessor) : base(Repo, httpContextAccessor)
         {
             _dishService = dishService;
             _categoryService = categoryService;

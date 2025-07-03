@@ -16,11 +16,11 @@ namespace RestX.WebApp.Services.Services
         private readonly IIngredientImportService _ingredientImportService;
 
         public DashboardService(
-            IRepository repo,
+            IRepository Repo,
             IHttpContextAccessor httpContextAccessor,
             IOrderDetailService orderDetailService,
             IIngredientImportService ingredientImportService
-        ) : base(repo, httpContextAccessor)
+        ) : base(Repo, httpContextAccessor)
         {
             _orderDetailService = orderDetailService;
             _ingredientImportService = ingredientImportService;

@@ -22,7 +22,7 @@ namespace RestX.WebApp
             });
             builder.Services.AddScoped<IOwnerService, OwnerService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
-            builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXDbContext>>();
+            builder.Services.AddScoped<IRepository, EntityFrameworkRepository<RestXRestaurantManagementContext>>();
             builder.Services.AddScoped<IDishService, DishService>();
             builder.Services.AddScoped<IHomeService, HomeService>();
             builder.Services.AddScoped<ITableService, TableService>();
@@ -55,7 +55,7 @@ namespace RestX.WebApp
             });
 
             // Configure the new Code First DbContext
-            builder.Services.AddDbContext<RestXDbContext>(options =>
+            builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"),
                     sqlOptions =>

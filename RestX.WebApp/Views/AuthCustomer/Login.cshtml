@@ -1,183 +1,224 @@
 ﻿@model RestX.WebApp.Models.ViewModels.LoginViewModel
 @{
     ViewData["Title"] = "Đăng nhập";
-    Layout = "_Layout";
+    Layout = null;
     var tableId = ViewBag.TableId as int?;
 }
 
-<style>
-    body {
-        background-color: #f4f4f4;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RestX.WebApp</title>
 
-    .login-container {
-        max-width: 400px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .login-header {
-        text-align: left;
-        margin-bottom: 25px;
-    }
+        body {
+            background-color: #f4f4f4;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            margin: 20px;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-header {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+            .login-header h1 {
+                font-size: 24px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 8px;
+            }
+
+            .login-header p {
+                color: #666;
+                font-size: 14px;
+                margin: 0;
+            }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+            .form-control:focus {
+                border-color: #f0ad4e;
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(240, 173, 78, 0.2);
+            }
+
+        .text-danger {
+            font-size: 14px;
+            margin-top: 5px;
+            color: #dc3545;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #f0ad4e;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+            .btn-submit:hover {
+                background-color: #ec971f;
+            }
+
+            .btn-submit:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #f0ad4e;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+            .back-link:hover {
+                text-decoration: underline;
+                color: #ec971f;
+            }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .points-info {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+            .points-info .icon {
+                font-size: 24px;
+                margin-bottom: 8px;
+                display: block;
+            }
+
+            .points-info p {
+                margin: 0;
+                color: #666;
+                font-size: 14px;
+            }
+
+        .d-none {
+            display: none;
+        }
+
+        /* Responsive */
+        @@media (max-width: 480px) {
+            .login-container
+
+        {
+            margin: 10px;
+            padding: 20px;
+        }
 
         .login-header h1 {
-            font-size: 24px;
-            font-weight: 600;
-            color: #333;
+            font-size: 20px;
         }
 
-        .login-header p {
-            color: #666;
-            margin-top: 8px;
-            font-size: 14px;
         }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <a href="@Url.Action("Index", "Home", new { ownerId = Model.OwnerId, tableId = tableId ?? 1 })"
+           class="back-link">← Quay lại trang chủ</a>
 
-    .form-group {
-        margin-bottom: 20px;
-    }
+        <div class="login-header">
+            <h1>Đăng nhập</h1>
+            <p>Nhập thông tin để tích lũy điểm và nhận ưu đãi</p>
+        </div>
 
-    .form-control {
-        width: 100%;
-        padding: 12px 15px;
-        font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-sizing: border-box;
-        transition: border-color 0.2s;
-    }
+        <div class="points-info">
+            <span class="icon">🎁</span>
+            <p>Đăng nhập để tích lũy điểm và nhận những ưu đãi hấp dẫn!</p>
+        </div>
 
-        .form-control:focus {
-            border-color: #f0ad4e;
-            outline: none;
-        }
+        <form asp-controller="AuthCustomer" asp-action="Login" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@(tableId ?? 1)" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="OwnerId" />
+            <input type="hidden" asp-for="ReturnUrl" />
 
-    .text-danger {
-        font-size: 14px;
-        margin-top: 5px;
-    }
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    .btn-submit {
-        width: 100%;
-        padding: 14px;
-        font-size: 18px;
-        font-weight: bold;
-        color: #fff;
-        background-color: #f0ad4e;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
+            <div class="form-group">
+                <label asp-for="Phone" class="d-none"></label>
+                <input asp-for="Phone" class="form-control" placeholder="Số điện thoại *" type="tel" required />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
 
-        .btn-submit:hover {
-            background-color: #ec971f;
-        }
+            <div class="form-group">
+                <label asp-for="Name" class="d-none"></label>
+                <input asp-for="Name" class="form-control" placeholder="Tên của bạn" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
 
-        .btn-submit:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-    .back-link {
-        display: inline-block;
-        margin-bottom: 20px;
-        color: #f0ad4e;
-        text-decoration: none;
-        font-size: 14px;
-    }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-    /* Bỏ mũi tên tăng giảm của input type number */
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-    input[type=number] {
-        -moz-appearance: textfield;
-    }
-
-    .points-info {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
-        .points-info .icon {
-            font-size: 24px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .points-info p {
-            margin: 0;
-            color: #666;
-            font-size: 14px;
-        }
-</style>
-
-<div class="login-container">
-    <!-- Back link -->
-    <a href="@Url.Action("Index", "Home", new { ownerId = Model.OwnerId, tableId = tableId ?? 1 })"
-       class="back-link">← Quay lại trang chủ</a>
-
-    <div class="login-header">
-        <h1>Đăng nhập</h1>
-        <p>Nhập thông tin để tích lũy điểm và nhận ưu đãi</p>
+            <div class="form-group">
+                <button type="submit" class="btn-submit" id="submitBtn">Tiếp tục</button>
+            </div>
+        </form>
     </div>
 
-    <!-- Points info -->
-    <div class="points-info">
-        <span class="icon">🎁</span>
-        <p>Đăng nhập để tích lũy điểm và nhận những ưu đãi hấp dẫn!</p>
-    </div>
+    <script>
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = 'Đang xử lý...';
+            this.closest('form').submit();
+        });
 
-    <form asp-controller="AuthCustomer" asp-action="Login" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@(tableId ?? 1)" method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="OwnerId" />
-        <input type="hidden" asp-for="ReturnUrl" />
-
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-        <div class="form-group">
-            <label asp-for="Phone" class="d-none"></label>
-            <input asp-for="Phone" class="form-control" placeholder="Số điện thoại *" type="tel" required />
-            <span asp-validation-for="Phone" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Name" class="d-none"></label>
-            <input asp-for="Name" class="form-control" placeholder="Tên của bạn" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <button type="submit" class="btn-submit" id="submitBtn">Tiếp tục</button>
-        </div>
-    </form>
-</div>
-
-<script>
-    // Disable submit button after click to prevent double submission
-    document.getElementById('submitBtn').addEventListener('click', function() {
-        this.disabled = true;
-        this.innerHTML = 'Đang xử lý...';
-        this.closest('form').submit();
-    });
-
-    // Re-enable submit button if validation fails
-    window.addEventListener('load', function() {
-        document.getElementById('submitBtn').disabled = false;
-        document.getElementById('submitBtn').innerHTML = 'Tiếp tục';
-    });
-</script>
+        window.addEventListener('load', function() {
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').innerHTML = 'Tiếp tục';
+        });
+    </script>
+</body>
+</html>

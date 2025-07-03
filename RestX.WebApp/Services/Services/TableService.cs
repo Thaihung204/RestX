@@ -17,7 +17,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<List<TableStatusViewModel>> GetAllTablesByOwnerIdAsync(Guid? guid, CancellationToken cancellationToken = default)
         {
-            var tables = await repo.GetAsync<Table>(
+            var tables = await Repo.GetAsync<Table>(
                 filter: t => t.OwnerId == guid,
                 orderBy: q => q.OrderBy(t => t.TableNumber),
                 includeProperties: "TableStatus"
@@ -34,17 +34,17 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<TableStatusViewModel> UpdateTableStatusAsync(int tableId, int newStatusId)
         {
-            var table = await repo.GetByIdAsync<Table>(tableId);
+            var table = await Repo.GetByIdAsync<Table>(tableId);
             if (table == null)
             {
                 return null;
             }
 
             table.TableStatusId = newStatusId;
-            repo.Update(table);
-            await repo.SaveAsync();
+            Repo.Update(table);
+            await Repo.SaveAsync();
 
-            var updatedTable = await repo.GetOneAsync<Table>(
+            var updatedTable = await Repo.GetOneAsync<Table>(
                 filter: t => t.Id == tableId,
                 includeProperties: "TableStatus"
             );

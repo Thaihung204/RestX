@@ -28,14 +28,14 @@ namespace RestX.WebApp.Services.Services
                 Name = categoryName.Trim()
             };
 
-            var result = await repo.CreateAsync(category, userId);
-            await repo.SaveAsync();
+            var result = await Repo.CreateAsync(category, userId);
+            await Repo.SaveAsync();
             return (int)result;
         }
 
         public async Task<Category?> GetCategoryByNameAsync(string name)
         {
-            var categories = await repo.GetAsync<Category>(c => c.Name.ToLower() == name.ToLower().Trim());
+            var categories = await Repo.GetAsync<Category>(c => c.Name.ToLower() == name.ToLower().Trim());
             return categories.FirstOrDefault();
         }
     }

@@ -18,7 +18,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<List<OrderDetail>> GetOrderDetailsByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default)
         {
-            var orderDetails = await repo.GetAsync<OrderDetail>(od => od.Order.OwnerId == ownerId, includeProperties: "Order");
+            var orderDetails = await Repo.GetAsync<OrderDetail>(od => od.Order.OwnerId == ownerId, includeProperties: "Order");
             return orderDetails.ToList();
         }
     }

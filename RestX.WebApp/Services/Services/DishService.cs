@@ -13,7 +13,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<List<Dish>> GetDishesByOwnerIdAsync(Guid ownerId)
         {
-            var dishes = await repo.GetAsync<Dish>(
+            var dishes = await Repo.GetAsync<Dish>(
                 filter: d => d.OwnerId == ownerId && d.IsActive == true,
                 includeProperties: "Category,File"
             );
@@ -22,7 +22,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<Dish?> GetDishByIdAsync(int id)
         {
-            var dishes = await repo.GetAsync<Dish>(
+            var dishes = await Repo.GetAsync<Dish>(
                 filter: d => d.Id == id,
                 includeProperties: "Category,File"
             );
@@ -33,22 +33,22 @@ namespace RestX.WebApp.Services.Services
         {
             if (entity.Id == 0)
             {
-                var result = await repo.CreateAsync(entity, userId);
-                await repo.SaveAsync();
+                var result = await Repo.CreateAsync(entity, userId);
+                await Repo.SaveAsync();
                 return (int)result;
             }
             else
             {
-                repo.Update(entity, userId);
-                await repo.SaveAsync();
+                Repo.Update(entity, userId);
+                await Repo.SaveAsync();
                 return entity.Id;
             }
         }
 
         public async Task DeleteDishAsync(int id)
         {
-            repo.Delete<Dish>(id);
-            await repo.SaveAsync();
+            Repo.Delete<Dish>(id);
+            await Repo.SaveAsync();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<List<IngredientImport>> GetIngredientImportsByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default)
         {
-            var imports = await repo.GetAsync<IngredientImport>(i => i.Ingredient.OwnerId == ownerId, includeProperties: "Ingredient");
+            var imports = await Repo.GetAsync<IngredientImport>(i => i.Ingredient.OwnerId == ownerId, includeProperties: "Ingredient");
             return imports.ToList();
         }
     }

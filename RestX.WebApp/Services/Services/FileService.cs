@@ -26,31 +26,31 @@ namespace RestX.WebApp.Services.Services
                 Url = url
             };
 
-            await repo.CreateAsync(file, userId);
-            await repo.SaveAsync();
+            await Repo.CreateAsync(file, userId);
+            await Repo.SaveAsync();
             return file.Id;
         }
 
         public async Task<Models.File?> GetFileByIdAsync(Guid fileId)
         {
-            return await repo.GetByIdAsync<Models.File>(fileId);
+            return await Repo.GetByIdAsync<Models.File>(fileId);
         }
 
         public async Task UpdateFileAsync(Guid fileId, string name, string url, string userId)
         {
-            var file = await repo.GetByIdAsync<Models.File>(fileId);
+            var file = await Repo.GetByIdAsync<Models.File>(fileId);
             if (file != null)
             {
                 file.Name = name;
                 file.Url = url;
-                repo.Update(file, userId);
-                await repo.SaveAsync();
+                Repo.Update(file, userId);
+                await Repo.SaveAsync();
             }
         }
 
         public async Task DeleteFileAsync(Guid fileId)
         {
-            var file = await repo.GetByIdAsync<Models.File>(fileId);
+            var file = await Repo.GetByIdAsync<Models.File>(fileId);
             if (file != null)
             {
                 // Delete physical file if it exists
@@ -63,8 +63,8 @@ namespace RestX.WebApp.Services.Services
                     }
                 }
 
-                repo.Delete(file);
-                await repo.SaveAsync();
+                Repo.Delete(file);
+                await Repo.SaveAsync();
             }
         }
 
@@ -77,8 +77,8 @@ namespace RestX.WebApp.Services.Services
                 {
                     existingFile.Name = name;
                     existingFile.Url = url;
-                    repo.Update(existingFile, userId);
-                    await repo.SaveAsync();
+                    Repo.Update(existingFile, userId);
+                    await Repo.SaveAsync();
                     return existingFile;
                 }
             }
@@ -90,8 +90,8 @@ namespace RestX.WebApp.Services.Services
                 Url = url
             };
 
-            await repo.CreateAsync(newFile, userId);
-            await repo.SaveAsync();
+            await Repo.CreateAsync(newFile, userId);
+            await Repo.SaveAsync();
             return newFile;
         }
 
@@ -165,8 +165,8 @@ namespace RestX.WebApp.Services.Services
                 Url = filePath
             };
 
-            await repo.CreateAsync(file, userId);
-            await repo.SaveAsync();
+            await Repo.CreateAsync(file, userId);
+            await Repo.SaveAsync();
             return file;
         }
 

@@ -65,7 +65,7 @@ namespace RestX.WebApp
                             maxRetryDelay: TimeSpan.FromDays(1),
                             errorNumbersToAdd: null);
                     });
-                
+
                 // Enable sensitive data logging in development
                 if (builder.Environment.IsDevelopment())
                 {

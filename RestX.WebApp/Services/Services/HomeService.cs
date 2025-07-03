@@ -17,7 +17,7 @@ namespace RestX.WebApp.Services.Services
         public async Task<HomeViewModel> GetHomeViewsAsync(CancellationToken cancellationToken = default)
         {
             var owner = await ownerService.GetOwnerByIdAsync(OwnerId);
-            var table = await tableService.GetTableByIdAsync(TableId);
+            var table = await tableService.GetTableByIdAsync(TableId, cancellationToken);
 
             var homeViewModel = new HomeViewModel
             {

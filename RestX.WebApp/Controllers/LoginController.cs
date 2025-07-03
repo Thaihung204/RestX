@@ -16,7 +16,10 @@ namespace RestX.WebApp.Controllers
         {
             this.loginService = loginService;
         }
-        public IActionResult Index()
+
+        [HttpGet]
+        [Route("Login/Login")]
+        public IActionResult Login()
         {
             return View();
         }
@@ -52,7 +55,7 @@ namespace RestX.WebApp.Controllers
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
                 await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    CookieAuthenticationDefaults.AuthenticationScheme, 
                     new ClaimsPrincipal(claimsIdentity));
 
                 if (account.Role == "Staff")

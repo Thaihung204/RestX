@@ -11,7 +11,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<List<Category>> GetCategoriesAsync()
         {
-            var categories = await repo.GetAllAsync<Category>();
+            var categories = await Repo.GetAllAsync<Category>();
             return categories.ToList();
         }
 

@@ -488,7 +488,9 @@ namespace RestX.WebApp.Migrations.RestXRestaurantManagement
             modelBuilder.Entity("RestX.WebApp.Models.Order", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -545,7 +547,9 @@ namespace RestX.WebApp.Migrations.RestXRestaurantManagement
             modelBuilder.Entity("RestX.WebApp.Models.OrderDetail", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)

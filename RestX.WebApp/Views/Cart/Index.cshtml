@@ -116,6 +116,16 @@
     }
 </style>
 
+<button type="button" class="btn btn-primary" id="liveToastBtn" hidden>Show live toast</button>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3 top-0 end-0">
+    <div id="liveToast" class="toast broder border-danger bg-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body text-danger">
+            @ViewBag.Message
+        </div>
+    </div>
+</div>
+
 <div class="order-card">
     <div class="order-header">
         <a asp-controller="Menu" asp-action="Index" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@Model.TableId"><</a>
@@ -146,9 +156,15 @@
         <span>0 đ</span>
     </div>
 
-    <button class="confirm-button">Xác nhận gửi yêu cầu gọi món</button>
+    <form asp-action="IndexPost" asp-controller="Cart" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@Model.TableId" method="post">
+        <input type="hidden" name="OwnerId" value="@Model.OwnerId" />
+        <input type="hidden" name="TableId" value="@Model.TableId" />
+        <input type="hidden" name="DishListJson" value="@Model.DishListJson" />
+        <button type="submit" class="confirm-button">Xác nhận gửi yêu cầu gọi món</button>
+    </form>
 </div>
 
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
 <script>
     // RX-06
     const itemInfo = document.getElementsByClassName("item-info");
@@ -240,5 +256,22 @@
     function removeDisableConfirmBtn() {
         confirmButton.disabled = false;
         confirmButton.style.backgroundColor = "rgb(247, 148, 30)";
+    }
+
+    //RX-14
+
+    const toastTrigger = document.getElementById('liveToastBtn')
+    const toastLiveExample = document.getElementById('liveToast')
+
+    if (toastTrigger) {
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+        toastTrigger.addEventListener('click', () => {
+            toastBootstrap.show()
+        })
+    }
+
+    @if (!string.IsNullOrEmpty(ViewBag.Message as string))
+    {
+        @:toastTrigger.click();
     }
 </script>

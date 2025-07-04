@@ -2,22 +2,78 @@
 @using System.Text.Json
 
 @{
-    ViewData["Title"] = "Owner Page";
+    ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_OwnerLayout.cshtml";
 }
 
-<div class="container-fluid">
+<div class="owner-fade-in">
+    <div class="owner-page-header">
+        <h1 class="owner-page-title">
+            <i class="bi bi-speedometer2 me-2" style="color: var(--owner-primary);"></i>
+            Dashboard
+        </h1>
+        <div class="owner-header-actions">
+            <span class="owner-greeting">
+                <i class="bi bi-sun-fill me-1" style="color: var(--owner-primary);"></i>
+                Good evening, Owner!
+            </span>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="owner-stat-card">
+                <div class="owner-stat-number">$36,358</div>
+                <div class="owner-stat-label">
+                    <i class="bi bi-currency-dollar me-1"></i>
+                    Total Revenue
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="owner-stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="owner-stat-number">+9%</div>
+                <div class="owner-stat-label">
+                    <i class="bi bi-arrow-up-circle me-1"></i>
+                    Growth Rate
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="owner-stat-card" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
+                <div class="owner-stat-number">1,234</div>
+                <div class="owner-stat-label">
+                    <i class="bi bi-people me-1"></i>
+                    Total Orders
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="owner-stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <div class="owner-stat-number">$6,820</div>
+                <div class="owner-stat-label">
+                    <i class="bi bi-calendar-month me-1"></i>
+                    Monthly Earnings
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--  Row 1 -->
     <div class="row">
-        <div class="col-lg-8 d-flex align-items-strech">
-            <div class="card w-100">
-                <div class="card-body">
-                    <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
-                        <div class="mb-3 mb-sm-0">
-                            <h5 class="card-title fw-semibold">Profit Overview</h5>
+        <div class="col-lg-8 d-flex align-items-stretch">
+            <div class="owner-card w-100">
+                <div class="owner-card-header">
+                    <div class="d-sm-flex d-block align-items-center justify-content-between">
+                        <div>
+                            <h5 class="mb-0">
+                                <i class="bi bi-bar-chart-line me-2"></i>
+                                Profit Overview
+                            </h5>
                         </div>
                         <div>
-                            <select class="form-select">
+                            <select class="owner-form-control">
                                 <option value="1">March 2025</option>
                                 <option value="2">April 2025</option>
                                 <option value="3">May 2025</option>
@@ -25,35 +81,40 @@
                             </select>
                         </div>
                     </div>
+                </div>
+                <div class="owner-card-body">
                     <div id="chart"></div>
                 </div>
             </div>
         </div>
         <div class="col-lg-4">
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-12 mb-3">
                     <!-- Yearly Breakup -->
-                    <div class="card overflow-hidden">
-                        <div class="card-body p-4">
-                            <h5 class="card-title mb-9 fw-semibold">Yearly Breakup</h5>
+                    <div class="owner-card">
+                        <div class="owner-card-body">
+                            <h5 class="mb-3">
+                                <i class="bi bi-pie-chart me-2"></i>
+                                Yearly Breakup
+                            </h5>
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h4 class="fw-semibold mb-3">$36,358</h4>
+                                    <h4 class="fw-bold mb-3 text-primary">$36,358</h4>
                                     <div class="d-flex align-items-center mb-3">
-                                        <span class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
-                                            <i class="ti ti-arrow-up-left text-success"></i>
+                                        <span class="me-2 rounded-circle bg-success d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                            <i class="bi bi-arrow-up text-white"></i>
                                         </span>
-                                        <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                                        <p class="fs-3 mb-0">last year</p>
+                                        <span class="text-success me-1 fw-bold">+9%</span>
+                                        <span class="text-muted">last year</span>
                                     </div>
                                     <div class="d-flex align-items-center">
                                         <div class="me-4">
-                                            <span class="round-8 bg-primary rounded-circle me-2 d-inline-block"></span>
-                                            <span class="fs-2">2023</span>
+                                            <span class="rounded-circle d-inline-block me-2" style="width: 8px; height: 8px; background: var(--owner-primary);"></span>
+                                            <span class="text-muted">2023</span>
                                         </div>
                                         <div>
-                                            <span class="round-8 bg-light-primary rounded-circle me-2 d-inline-block"></span>
-                                            <span class="fs-2">2023</span>
+                                            <span class="rounded-circle d-inline-block me-2" style="width: 8px; height: 8px; background: var(--owner-primary-light);"></span>
+                                            <span class="text-muted">2024</span>
                                         </div>
                                     </div>
                                 </div>
@@ -68,24 +129,27 @@
                 </div>
                 <div class="col-lg-12">
                     <!-- Monthly Earnings -->
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row alig n-items-start">
+                    <div class="owner-card">
+                        <div class="owner-card-body">
+                            <div class="row align-items-start">
                                 <div class="col-8">
-                                    <h5 class="card-title mb-9 fw-semibold"> Monthly Earnings </h5>
-                                    <h4 class="fw-semibold mb-3">$6,820</h4>
-                                    <div class="d-flex align-items-center pb-1">
-                                        <span class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center">
-                                            <i class="ti ti-arrow-down-right text-danger"></i>
+                                    <h5 class="mb-3">
+                                        <i class="bi bi-cash-coin me-2"></i>
+                                        Monthly Earnings
+                                    </h5>
+                                    <h4 class="fw-bold mb-3 text-success">$6,820</h4>
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-2 rounded-circle bg-warning d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                            <i class="bi bi-arrow-up text-white"></i>
                                         </span>
-                                        <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                                        <p class="fs-3 mb-0">last year</p>
+                                        <span class="text-warning me-1 fw-bold">+9%</span>
+                                        <span class="text-muted">last month</span>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="d-flex justify-content-end">
-                                        <div class="text-white bg-secondary rounded-circle p-6 d-flex align-items-center justify-content-center">
-                                            <i class="ti ti-currency-dollar fs-6"></i>
+                                        <div class="text-white rounded-circle p-3 d-flex align-items-center justify-content-center" style="background: var(--owner-primary); width: 48px; height: 48px;">
+                                            <i class="bi bi-currency-dollar"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -97,168 +161,127 @@
             </div>
         </div>
     </div>
-    <div class="row">
+
+    <div class="row mt-4">
         <div class="col-lg-4 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-body p-4">
-                    <div class="mb-4">
-                        <h5 class="card-title fw-semibold">Recent Transactions</h5>
+            <div class="owner-card w-100">
+                <div class="owner-card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history me-2"></i>
+                        Recent Activity
+                    </h5>
+                </div>
+                <div class="owner-card-body">
+                    <div class="timeline-widget">
+                        <div class="timeline-item d-flex mb-3">
+                            <div class="timeline-time text-muted flex-shrink-0">09:30</div>
+                            <div class="timeline-badge mx-3">
+                                <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background: var(--owner-primary);"></span>
+                            </div>
+                            <div class="timeline-desc">Payment received from John Doe of $385.90</div>
+                        </div>
+                        <div class="timeline-item d-flex mb-3">
+                            <div class="timeline-time text-muted flex-shrink-0">10:00</div>
+                            <div class="timeline-badge mx-3">
+                                <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background: #007bff;"></span>
+                            </div>
+                            <div class="timeline-desc">
+                                <strong>New order placed</strong><br>
+                                <a href="#" class="text-primary">#ML-3467</a>
+                            </div>
+                        </div>
+                        <div class="timeline-item d-flex mb-3">
+                            <div class="timeline-time text-muted flex-shrink-0">12:00</div>
+                            <div class="timeline-badge mx-3">
+                                <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background: #28a745;"></span>
+                            </div>
+                            <div class="timeline-desc">Payment processed of $64.95</div>
+                        </div>
+                        <div class="timeline-item d-flex mb-3">
+                            <div class="timeline-time text-muted flex-shrink-0">02:30</div>
+                            <div class="timeline-badge mx-3">
+                                <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background: #ffc107;"></span>
+                            </div>
+                            <div class="timeline-desc">
+                                <strong>New customer registered</strong><br>
+                                Welcome bonus applied
+                            </div>
+                        </div>
                     </div>
-                    <ul class="timeline-widget mb-0 position-relative mb-n5">
-                        <li class="timeline-item d-flex position-relative overflow-hidden">
-                            <div class="timeline-time text-dark flex-shrink-0 text-end">09:30</div>
-                            <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                <span class="timeline-badge border-2 border border-primary flex-shrink-0 my-8"></span>
-                                <span class="timeline-badge-border d-block flex-shrink-0"></span>
-                            </div>
-                            <div class="timeline-desc fs-3 text-dark mt-n1">Payment received from John Doe of $385.90</div>
-                        </li>
-                        <li class="timeline-item d-flex position-relative overflow-hidden">
-                            <div class="timeline-time text-dark flex-shrink-0 text-end">10:00 am</div>
-                            <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                <span class="timeline-badge border-2 border border-info flex-shrink-0 my-8"></span>
-                                <span class="timeline-badge-border d-block flex-shrink-0"></span>
-                            </div>
-                            <div class="timeline-desc fs-3 text-dark mt-n1 fw-semibold">
-                                New sale recorded <a href="javascript:void(0)" class="text-primary d-block fw-normal">#ML-3467</a>
-                            </div>
-                        </li>
-                        <li class="timeline-item d-flex position-relative overflow-hidden">
-                            <div class="timeline-time text-dark flex-shrink-0 text-end">12:00 am</div>
-                            <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                <span class="timeline-badge border-2 border border-success flex-shrink-0 my-8"></span>
-                                <span class="timeline-badge-border d-block flex-shrink-0"></span>
-                            </div>
-                            <div class="timeline-desc fs-3 text-dark mt-n1">Payment was made of $64.95 to Michael</div>
-                        </li>
-                        <li class="timeline-item d-flex position-relative overflow-hidden">
-                            <div class="timeline-time text-dark flex-shrink-0 text-end">09:30 am</div>
-                            <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                <span class="timeline-badge border-2 border border-warning flex-shrink-0 my-8"></span>
-                                <span class="timeline-badge-border d-block flex-shrink-0"></span>
-                            </div>
-                            <div class="timeline-desc fs-3 text-dark mt-n1 fw-semibold">
-                                New sale recorded <a href="javascript:void(0)" class="text-primary d-block fw-normal">#ML-3467</a>
-                            </div>
-                        </li>
-                        <li class="timeline-item d-flex position-relative overflow-hidden">
-                            <div class="timeline-time text-dark flex-shrink-0 text-end">09:30 am</div>
-                            <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                <span class="timeline-badge border-2 border border-danger flex-shrink-0 my-8"></span>
-                                <span class="timeline-badge-border d-block flex-shrink-0"></span>
-                            </div>
-                            <div class="timeline-desc fs-3 text-dark mt-n1 fw-semibold">
-                                New arrival recorded
-                            </div>
-                        </li>
-                        <li class="timeline-item d-flex position-relative overflow-hidden">
-                            <div class="timeline-time text-dark flex-shrink-0 text-end">12:00 am</div>
-                            <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                <span class="timeline-badge border-2 border border-success flex-shrink-0 my-8"></span>
-                            </div>
-                            <div class="timeline-desc fs-3 text-dark mt-n1">Payment Done</div>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>
         <div class="col-lg-8 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-body p-4">
-                    <h5 class="card-title fw-semibold mb-4">Recent Transactions</h5>
+            <div class="owner-card w-100">
+                <div class="owner-card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-receipt me-2"></i>
+                        Recent Orders
+                    </h5>
+                </div>
+                <div class="owner-card-body">
                     <div class="table-responsive">
-                        <table class="table text-nowrap mb-0 align-middle">
-                            <thead class="text-dark fs-4">
+                        <table class="owner-table table">
+                            <thead>
                                 <tr>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-0">Id</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-0">Assigned</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-0">Name</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-0">Priority</h6>
-                                    </th>
-                                    <th class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-0">Budget</h6>
-                                    </th>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Status</th>
+                                    <th>Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="border-bottom-0"><h6 class="fw-semibold mb-0">1</h6></td>
-                                    <td class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-1">Sunil Joshi</h6>
-                                        <span class="fw-normal">Web Designer</span>
-                                    </td>
-                                    <td class="border-bottom-0">
-                                        <p class="mb-0 fw-normal">Elite Admin</p>
-                                    </td>
-                                    <td class="border-bottom-0">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="badge bg-primary rounded-3 fw-semibold">Low</span>
+                                    <td><strong>#1001</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="~/images/profile/user-1.jpg" class="rounded-circle me-2" width="32" height="32" alt="">
+                                            <div>
+                                                <div class="fw-bold">John Smith</div>
+                                                <small class="text-muted">Table 5</small>
+                                            </div>
                                         </div>
                                     </td>
-                                    <td class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-0 fs-4">$3.9</h6>
+                                    <td>3 items</td>
+                                    <td>
+                                        <span class="owner-badge owner-badge-success">Completed</span>
                                     </td>
+                                    <td><strong>$45.90</strong></td>
                                 </tr>
                                 <tr>
-                                    <td class="border-bottom-0"><h6 class="fw-semibold mb-0">2</h6></td>
-                                    <td class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-1">Andrew McDownland</h6>
-                                        <span class="fw-normal">Project Manager</span>
-                                    </td>
-                                    <td class="border-bottom-0">
-                                        <p class="mb-0 fw-normal">Real Homes WP Theme</p>
-                                    </td>
-                                    <td class="border-bottom-0">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="badge bg-secondary rounded-3 fw-semibold">Medium</span>
+                                    <td><strong>#1002</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="~/images/profile/user-2.jpg" class="rounded-circle me-2" width="32" height="32" alt="">
+                                            <div>
+                                                <div class="fw-bold">Sarah Johnson</div>
+                                                <small class="text-muted">Table 12</small>
+                                            </div>
                                         </div>
                                     </td>
-                                    <td class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-0 fs-4">$24.5k</h6>
+                                    <td>2 items</td>
+                                    <td>
+                                        <span class="owner-badge owner-badge-warning">Preparing</span>
                                     </td>
+                                    <td><strong>$32.50</strong></td>
                                 </tr>
                                 <tr>
-                                    <td class="border-bottom-0"><h6 class="fw-semibold mb-0">3</h6></td>
-                                    <td class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-1">Christopher Jamil</h6>
-                                        <span class="fw-normal">Project Manager</span>
-                                    </td>
-                                    <td class="border-bottom-0">
-                                        <p class="mb-0 fw-normal">MedicalPro WP Theme</p>
-                                    </td>
-                                    <td class="border-bottom-0">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="badge bg-danger rounded-3 fw-semibold">High</span>
+                                    <td><strong>#1003</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="~/images/profile/user-3.jpg" class="rounded-circle me-2" width="32" height="32" alt="">
+                                            <div>
+                                                <div class="fw-bold">Mike Davis</div>
+                                                <small class="text-muted">Table 8</small>
+                                            </div>
                                         </div>
                                     </td>
-                                    <td class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-0 fs-4">$12.8k</h6>
+                                    <td>5 items</td>
+                                    <td>
+                                        <span class="owner-badge owner-badge-success">Completed</span>
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td class="border-bottom-0"><h6 class="fw-semibold mb-0">4</h6></td>
-                                    <td class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-1">Nirav Joshi</h6>
-                                        <span class="fw-normal">Frontend Engineer</span>
-                                    </td>
-                                    <td class="border-bottom-0">
-                                        <p class="mb-0 fw-normal">Hosting Press HTML</p>
-                                    </td>
-                                    <td class="border-bottom-0">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="badge bg-success rounded-3 fw-semibold">Critical</span>
-                                        </div>
-                                    </td>
-                                    <td class="border-bottom-0">
-                                        <h6 class="fw-semibold mb-0 fs-4">$2.4k</h6>
-                                    </td>
+                                    <td><strong>$78.25</strong></td>
                                 </tr>
                             </tbody>
                         </table>

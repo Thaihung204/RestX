@@ -7,7 +7,7 @@ public partial class Dish : Entity<int>
 {
     public Guid OwnerId { get; set; }
 
-    public Guid FileId { get; set; }
+    public Guid? FileId { get; set; }
 
     public int CategoryId { get; set; }
 
@@ -21,11 +21,11 @@ public partial class Dish : Entity<int>
 
     public virtual Owner Owner { get; set; } = null!;
 
-    public virtual File File { get; set; } = null!;
+    public virtual File? File { get; set; } = null!;
 
-    public virtual Category Category { get; set; } = null!;
+    public virtual Category? Category { get; set; } = null!;
 
-    public virtual ICollection<DishIngredient> DishIngredients { get; set; } = new List<DishIngredient>();
+    public virtual ICollection<DishIngredient>? DishIngredients { get; set; } = new List<DishIngredient>();
 
-    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public virtual ICollection<OrderDetail>? OrderDetails { get; set; } = new List<OrderDetail>();
 }

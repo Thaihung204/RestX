@@ -36,6 +36,7 @@
     <Folder Include="Views\CustomerManagerment\" />
     <Folder Include="Views\Customer\" />
     <Folder Include="wwwroot\microsoft\signalr\" />
+    <Folder Include="wwwroot\UpLoads\Dishes\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,7 +6,7 @@ namespace RestX.WebApp.Services.Services
 {
     public class LoginService : BaseService, ILoginService
     {
-        public LoginService(IRepository repo) : base(repo)
+        public LoginService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
         {
         }
 

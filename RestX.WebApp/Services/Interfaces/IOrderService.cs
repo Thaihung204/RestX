@@ -1,4 +1,4 @@
-﻿using RestX.WebApp.Models.ViewModels;
+using RestX.WebApp.Models.ViewModels;
 
 namespace RestX.WebApp.Services.Interfaces
 {

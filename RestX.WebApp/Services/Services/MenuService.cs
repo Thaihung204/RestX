@@ -16,9 +16,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<MenuViewModel> GetMenuViewModelAsync(CancellationToken cancellationToken = default)
         {
-            var dishes = (await _dishService.GetDishesAsync())
-                .Where(d => d.IsActive == true && d.OwnerId == OwnerId)
-                .ToList();
+            var dishes = await _dishService.GetDishesByOwnerIdAsync(OwnerId);
             var categories = await _categoryService.GetCategoriesAsync();
 
             var model = new MenuViewModel

@@ -26,7 +26,7 @@ namespace RestX.WebApp.Services.Services
 
         public BaseService(IRepository repo)
         {
-            this.repo = repo;
+            this.Repo = repo;
         }
 
         public BaseService(IRepository repo, IHttpContextAccessor httpContextAccessor)

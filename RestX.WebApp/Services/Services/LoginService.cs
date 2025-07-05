@@ -12,7 +12,7 @@ namespace RestX.WebApp.Services.Services
 
         public Task<Account> GetAccountByUsernameAsync(string username, string password, CancellationToken cancellationToken)
         {
-            return repo.GetFirstAsync<Account>(
+            return Repo.GetFirstAsync<Account>(
                 filter: acc => acc.Username == username && acc.Password == password,
                 includeProperties: "Staff,Owner"
                 );

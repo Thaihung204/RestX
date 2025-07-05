@@ -11,13 +11,13 @@ using RestX.WebApp.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDistributedMemoryCache(); 
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    
+
     options.IdleTimeout = TimeSpan.FromMinutes(60);
     options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true; 
+    options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -45,8 +45,8 @@ builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddCookie(options =>
 {
-options.LoginPath = "/Login/Login";
-options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+    options.LoginPath = "/Login/Login";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
 });
 
 builder.Services.AddAutoMapper(typeof(Program));
@@ -60,7 +60,7 @@ builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
                 maxRetryDelay: TimeSpan.FromSeconds(30),
                 errorNumbersToAdd: null);
         });
-                
+
     if (builder.Environment.IsDevelopment())
     {
         options.EnableSensitiveDataLogging();
@@ -98,12 +98,12 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
-                                                                
+
 app.Use(async (context, next) =>
 {
     if (context.Request.Path == "/")
     {
-        
+
         context.Response.Redirect("/Home/Index/550E8400-E29B-41D4-A716-446655440040/1");
         return;
     }

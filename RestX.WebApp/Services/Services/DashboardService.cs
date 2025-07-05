@@ -22,8 +22,8 @@ namespace RestX.WebApp.Services.Services
             IIngredientImportService ingredientImportService
         ) : base(repo, httpContextAccessor)
         {
-            orderDetailService = orderDetailService;
-            ingredientImportService = ingredientImportService;
+            this.orderDetailService = orderDetailService;
+            this.ingredientImportService = ingredientImportService;
         }
 
         public async Task<Dictionary<DateTime, decimal>> GetCostByDateAsync(Guid ownerId, CancellationToken cancellationToken = default)

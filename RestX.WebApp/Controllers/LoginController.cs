@@ -18,14 +18,13 @@ namespace RestX.WebApp.Controllers
         }
 
         [HttpGet]
-        [Route("Login/Login")]
-        public IActionResult Login()
+        public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password, CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(string username, string password, CancellationToken cancellationToken)
         {
             try
             {
@@ -47,6 +46,9 @@ namespace RestX.WebApp.Controllers
                 if (account.StaffId.HasValue)
                 {
                     claims.Add(new Claim("StaffId", account.StaffId.Value.ToString()));
+                } else if (account.OwnerId.HasValue)
+                {
+                    claims.Add(new Claim("OwnerId", account.OwnerId.Value.ToString()));
                 }
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -61,8 +63,9 @@ namespace RestX.WebApp.Controllers
                 }
                 else if (account.Role == "Owner")
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("DashBoard", "Owner");
                 }
+
 
                 return RedirectToAction("Index", "Home");
             }
@@ -76,7 +79,7 @@ namespace RestX.WebApp.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "Login");
+            return RedirectToAction("Index", "Login");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

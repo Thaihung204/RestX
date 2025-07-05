@@ -15,11 +15,6 @@ namespace RestX.WebApp.Services
             this.context = context;
         }
 
-        //public void SetCommandTimeout(int timeout)
-        //{
-        //    this.context.Database.SetCommandTimeout(timeout);
-        //}
-
         protected virtual IQueryable<TEntity> GetQueryable<TEntity>(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,

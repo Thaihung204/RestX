@@ -15,7 +15,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<StaffProfileViewModel> GetStaffByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var staff = await repo.GetByIdAsync<Staff>(id);
+            var staff = await Repo.GetByIdAsync<Staff>(id);
 
             var staffViewModel = new StaffProfileViewModel
             {

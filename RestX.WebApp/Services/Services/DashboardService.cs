@@ -12,8 +12,8 @@ namespace RestX.WebApp.Services.Services
 {
     public class DashboardService : BaseService, IDashboardService
     {
-        private readonly IOrderDetailService _orderDetailService;
-        private readonly IIngredientImportService _ingredientImportService;
+        private readonly IOrderDetailService orderDetailService;
+        private readonly IIngredientImportService ingredientImportService;
 
         public DashboardService(
             IRepository repo,
@@ -22,13 +22,13 @@ namespace RestX.WebApp.Services.Services
             IIngredientImportService ingredientImportService
         ) : base(repo, httpContextAccessor)
         {
-            _orderDetailService = orderDetailService;
-            _ingredientImportService = ingredientImportService;
+            orderDetailService = orderDetailService;
+            ingredientImportService = ingredientImportService;
         }
 
         public async Task<Dictionary<DateTime, decimal>> GetCostByDateAsync(Guid ownerId, CancellationToken cancellationToken = default)
         {
-            var imports = await _ingredientImportService.GetIngredientImportsByOwnerIdAsync(ownerId, cancellationToken);
+            var imports = await ingredientImportService.GetIngredientImportsByOwnerIdAsync(ownerId, cancellationToken);
             return imports
                 .Where(i => i.Time.HasValue)
                 .GroupBy(i => i.Time.Value.Date)
@@ -40,7 +40,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<Dictionary<DateTime, decimal>> GetProfitByDateAsync(Guid ownerId, CancellationToken cancellationToken = default)
         {
-            var orderDetails = await _orderDetailService.GetOrderDetailsByOwnerIdAsync(ownerId, cancellationToken);
+            var orderDetails = await orderDetailService.GetOrderDetailsByOwnerIdAsync(ownerId, cancellationToken);
             return orderDetails
                 .Where(od => od.Order != null && od.Order.Time.HasValue)
                 .GroupBy(od => od.Order.Time.Value.Date)

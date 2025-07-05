@@ -9,12 +9,12 @@ namespace RestX.WebApp.Services.Services
 {
     public class FileService : BaseService, IFileService
     {
-        private readonly IWebHostEnvironment _environment;
+        private readonly IWebHostEnvironment environment;
 
         public FileService(IRepository repo, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment environment) 
             : base(repo, httpContextAccessor) 
         {
-            _environment = environment;
+            environment = environment;
         }
 
         public async Task<Guid> CreateFileAsync(string name, string url, string userId)
@@ -56,7 +56,7 @@ namespace RestX.WebApp.Services.Services
                 // Delete physical file if it exists
                 if (!string.IsNullOrEmpty(file.Url) && file.Url.StartsWith("~/"))
                 {
-                    var physicalPath = Path.Combine(_environment.WebRootPath, file.Url.Replace("~/", "").Replace("/", Path.DirectorySeparatorChar.ToString()));
+                    var physicalPath = Path.Combine(environment.WebRootPath, file.Url.Replace("~/", "").Replace("/", Path.DirectorySeparatorChar.ToString()));
                     if (System.IO.File.Exists(physicalPath))
                     {
                         System.IO.File.Delete(physicalPath);
@@ -107,7 +107,7 @@ namespace RestX.WebApp.Services.Services
                 throw new ArgumentException("Invalid file type. Only image files are allowed.");
 
             var fileName = GetDishImagePath(ownerName, dishName, extension);
-            var uploadsFolder = Path.Combine(_environment.WebRootPath, "Uploads", "DishesImage");
+            var uploadsFolder = Path.Combine(environment.WebRootPath, "Uploads", "DishesImage");
             var filePath = Path.Combine(uploadsFolder, fileName);
 
             Directory.CreateDirectory(uploadsFolder);
@@ -132,7 +132,7 @@ namespace RestX.WebApp.Services.Services
                 if (string.IsNullOrEmpty(filePath))
                     return false;
 
-                var physicalPath = Path.Combine(_environment.WebRootPath, filePath.Replace("~/", "").Replace("/", Path.DirectorySeparatorChar.ToString()));
+                var physicalPath = Path.Combine(environment.WebRootPath, filePath.Replace("~/", "").Replace("/", Path.DirectorySeparatorChar.ToString()));
                 
                 if (System.IO.File.Exists(physicalPath))
                 {

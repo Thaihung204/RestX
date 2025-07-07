@@ -13,7 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Đăng nhập SSH và deploy
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
@@ -21,8 +20,8 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: 22
+          shell: cmd  # hoặc powershell nếu thích
           script: |
             cd C:\Users\ADMIN\source\repos\RestX
             git pull origin master
-            docker compose down
-            docker compose up -d --build
+            docker-compose up -d --build web

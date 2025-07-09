@@ -10,9 +10,8 @@ namespace RestX.WebApp.Services.Interfaces
     {
         Task<List<Dish>> GetDishesByOwnerIdAsync(Guid ownerId);
         Task<Dish?> GetDishByIdAsync(int id);
-        Task<DishViewModel?> GetDishViewModelByIdAsync(int id); // Thêm method này
-
-        Task<int?> UpsertDishAsync(DishRequest entity, Guid ownerId, int? id = null);
+        Task<DishViewModel?> GetDishViewModelByIdAsync(int id);
+        Task<int?> UpsertDishAsync(DishRequest request, Guid ownerId);
         Task DeleteDishAsync(int id);
     }
 }

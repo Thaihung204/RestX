@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RestX.WebApp.Models;
+using RestX.WebApp.Models.DTO;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
 using RestX.WebApp.Services.Services;
@@ -110,35 +111,17 @@ namespace RestX.WebApp.Controllers
             {
                 var ownerId = GetOwnerIdFromClaim();
 
-                bool isEdit = (id.HasValue && id.Value > 0) || (request.Id.HasValue && request.Id.Value > 0);
-                int? dishId = id ?? request.Id;
-
-                if (isEdit && ModelState.ContainsKey("ImageFile"))
-                {
-                    ModelState.Remove("ImageFile");
-                }
-
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
-                    return Json(new { success = false, errors });
-                }
-
-                var resultDishId = await dishService.UpsertDishAsync(request, ownerId, dishId);
+                var resultDishId = await dishService.UpsertDishAsync(request, ownerId);
 
                 if (resultDishId == null)
-                {
-                    string errorMessage = isEdit ? "Dish not found." : "Owner not found.";
-                    return Json(new { success = false, message = errorMessage });
-                }
+                    return Json(new { success = false, message = "Operation failed." });
 
-                string successMessage = isEdit ? "Dish updated successfully!" : "Dish created successfully!";
-                return Json(new { success = true, message = successMessage, dishId = resultDishId });
+                string operation = request.Id.HasValue && request.Id.Value > 0 ? "updated" : "created";
+                return Json(new { success = true, message = $"Dish {operation} successfully!", dishId = resultDishId });
             }
             catch (Exception ex)
             {
-                string operation = (id.HasValue && id.Value > 0) ? "updating" : "creating";
-                this.exceptionHandler.RaiseException(ex, $"An error occurred while {operation} the dish.");
+                this.exceptionHandler.RaiseException(ex, "An error occurred while saving the dish.");
                 return Json(new { success = false, message = ex.Message });
             }
         }
@@ -177,7 +160,30 @@ namespace RestX.WebApp.Controllers
             }
         }
 
-        
+        [HttpPost("Categories/Create")]
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto request)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request.Name))
+                    return Json(new { success = false, message = "Category name is required." });
+
+                var ownerId = GetOwnerIdFromClaim();
+                var categoryId = await categoryService.CreateCategoryAsync(request, ownerId);
+
+                return Json(new { success = true, message = "Category created successfully!", categoryId });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while creating category.");
+                return Json(new { success = false, message = "An error occurred while creating category." });
+            }
+        }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

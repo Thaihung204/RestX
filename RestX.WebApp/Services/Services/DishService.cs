@@ -2,10 +2,6 @@
 using RestX.WebApp.Models;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RestX.WebApp.Services.Services
 {
@@ -15,7 +11,7 @@ namespace RestX.WebApp.Services.Services
         private readonly IFileService fileService;
         private readonly IMapper mapper;
 
-        public DishService(IRepository repo, IHttpContextAccessor httpContextAccessor,IOwnerService ownerService, IFileService fileService, IMapper mapper) : base(repo, httpContextAccessor) 
+        public DishService(IRepository repo, IHttpContextAccessor httpContextAccessor, IOwnerService ownerService, IFileService fileService, IMapper mapper) : base(repo, httpContextAccessor)
         {
             this.ownerService = ownerService;
             this.fileService = fileService;
@@ -28,7 +24,7 @@ namespace RestX.WebApp.Services.Services
                 filter: d => d.OwnerId == ownerId && d.IsActive == true,
                 includeProperties: "Category,File"
             );
-            return dishes.ToList();
+            return dishes.OrderBy(d => d.Name).ToList();
         }
 
         public async Task<Dish?> GetDishByIdAsync(int id)
@@ -42,18 +38,20 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<DishViewModel?> GetDishViewModelByIdAsync(int id)
         {
-            var dish = await GetDishByIdAsync(id); // Tái sử dụng method có sẵn
+            var dish = await GetDishByIdAsync(id);
             if (dish == null) return null;
 
             return mapper.Map<DishViewModel>(dish);
         }
 
-        public async Task<int?> UpsertDishAsync(DishRequest request, Guid ownerId, int? id = null)
+        public async Task<int?> UpsertDishAsync(DishRequest request, Guid ownerId)
         {
             Dish dish;
-            if (id.HasValue && id.Value > 0)
+            bool isEdit = request.Id.HasValue && request.Id.Value > 0;
+
+            if (isEdit)
             {
-                dish = await GetDishByIdAsync(id.Value);
+                dish = await GetDishByIdAsync(request.Id.Value);
                 if (dish == null)
                     return null;
                 mapper.Map(request, dish);

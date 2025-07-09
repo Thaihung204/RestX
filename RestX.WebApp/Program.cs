@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using RestX.WebApp.Filters;
+using RestX.WebApp.Hubs;
 using RestX.WebApp.Models;
 using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
+using RestX.WebApp.Services.Mappings;
 using RestX.WebApp.Services.Services;
-using RestX.WebApp.Hubs;
 using RestX.WebApp.Services.SignalRLab;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +27,7 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add<RestaurantContextFilterAttribute>();
 });
 builder.Services.AddSignalR();
-
+builder.Services.AddAutoMapper(typeof(StaffMappingProfile));
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOwnerService, OwnerService>();
 builder.Services.AddScoped<IAuthCustomerService, AuthCustomerService>();
@@ -45,6 +46,7 @@ builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
 builder.Services.AddScoped<IIngredientImportService, IngredientImportService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IDishManagementService, DishManagementService>();
+builder.Services.AddScoped<IStaffManagementService, StaffManagementService>();
 builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddAutoMapper(typeof(Program));
@@ -73,59 +75,59 @@ builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"));
 });
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options =>
-            {
-                options.LoginPath = "/Login";
-                options.ExpireTimeSpan = TimeSpan.FromDays(1);
-            });
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login";
+        options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    });
 
-            builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(Program));
 
-            // File upload configuration
-            builder.Services.Configure<FormOptions>(options =>
-            {
-                options.ValueLengthLimit = int.MaxValue;
-                options.MultipartBodyLengthLimit = int.MaxValue;
-                options.MultipartHeadersLengthLimit = int.MaxValue;
-            });
+// File upload configuration
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartBodyLengthLimit = int.MaxValue;
+    options.MultipartHeadersLengthLimit = int.MaxValue;
+});
 
-            // Configure the new Code First DbContext
-            builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"),
-                    sqlOptions =>
-                    {
-                        sqlOptions.EnableRetryOnFailure(
-                            maxRetryCount: 5,
-                            maxRetryDelay: TimeSpan.FromDays(1),
-                            errorNumbersToAdd: null);
-                    });
+// Configure the new Code First DbContext
+builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"),
+        sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromDays(1),
+                errorNumbersToAdd: null);
+        });
 
-                // Enable sensitive data logging in development
-                if (builder.Environment.IsDevelopment())
-                {
-                    options.EnableSensitiveDataLogging();
-                    options.EnableDetailedErrors();
-                }
-            });
-            // Buld port 5000
-            //builder.WebHost.UseUrls("https://0.0.0.0:5000");
-            // Keep the old DbContext for compatibility during migration
-            builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"));
-            });
+    // Enable sensitive data logging in development
+    if (builder.Environment.IsDevelopment())
+    {
+        options.EnableSensitiveDataLogging();
+        options.EnableDetailedErrors();
+    }
+});
+// Buld port 5000
+//builder.WebHost.UseUrls("https://0.0.0.0:5000");
+// Keep the old DbContext for compatibility during migration
+builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"));
+});
 
-            var app = builder.Build();
+var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
 
 //if (app.Environment.IsDevelopment())
 //{

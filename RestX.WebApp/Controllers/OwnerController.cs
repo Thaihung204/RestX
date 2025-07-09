@@ -19,18 +19,21 @@ namespace RestX.WebApp.Controllers
     {
         private readonly IDashboardService dashboardService;
         private readonly IDishManagementService dishManagementService;
+        private readonly IStaffManagementService staffManagementService;
         private readonly IDishService dishService;
         private readonly ICategoryService categoryService;
 
         public OwnerController(
             IDashboardService dashboardService,
             IDishManagementService dishManagementService,
+            IStaffManagementService staffManagementService,
             IDishService dishService,
             ICategoryService categoryService,
             IExceptionHandler exceptionHandler) : base(exceptionHandler)
         {
             this.dashboardService = dashboardService;
             this.dishManagementService = dishManagementService;
+            this.staffManagementService = staffManagementService;
             this.categoryService = categoryService;
             this.dishService = dishService;
         }
@@ -86,6 +89,26 @@ namespace RestX.WebApp.Controllers
             }
         }
 
+        [HttpGet("Staff")]
+        public async Task<IActionResult> StaffManagement(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var ownerId = GetOwnerIdFromClaim();
+                var model = await staffManagementService.GetStaffManagementViewModelAsync(ownerId);
+                return View(model);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while loading staff management.");
+                return View("Error");
+            }
+        }
+
         [HttpGet("Categories")]
         public async Task<IActionResult> GetCategories()
         {
@@ -103,8 +126,8 @@ namespace RestX.WebApp.Controllers
         }
 
         [HttpPost("Dishes/Upsert")]
-        [HttpPost("Dishes/Create")]   
-        [HttpPost("Dishes/Edit/{id:int?}")]   
+        [HttpPost("Dishes/Create")]
+        [HttpPost("Dishes/Edit/{id:int?}")]
         public async Task<IActionResult> UpsertDish([FromForm] DishRequest request, int? id = null)
         {
             try
@@ -125,7 +148,6 @@ namespace RestX.WebApp.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
-
 
         [HttpPost("Dishes/Delete/{id:int}")]
         public async Task<IActionResult> DeleteDish(int id)
@@ -184,11 +206,75 @@ namespace RestX.WebApp.Controllers
             }
         }
 
+        [HttpPost("Staff/Upsert")]
+        public async Task<IActionResult> UpsertStaff([FromForm] StaffRequest request)
+        {
+            try
+            {
+                var ownerId = GetOwnerIdFromClaim();
+                var resultStaffId = await staffManagementService.UpsertStaffAsync(request, ownerId);
+
+                if (resultStaffId == null)
+                    return Json(new { success = false, message = "Operation failed." });
+
+                string operation = request.Id.HasValue && request.Id.Value != Guid.Empty ? "updated" : "created";
+                return Json(new { success = true, message = $"Staff {operation} successfully!", staffId = resultStaffId });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while saving staff.");
+                return Json(new { success = false, message = "An error occurred while saving staff." });
+            }
+        }
+
+        [HttpGet("Staff/Detail/{id:guid}")]
+        public async Task<IActionResult> StaffDetail(Guid id)
+        {
+            try
+            {
+                var staffViewModel = await staffManagementService.GetStaffViewModelByIdAsync(id);
+                if (staffViewModel == null)
+                    return Json(new { success = false, message = "Staff not found." });
+
+                return Json(new { success = true, data = staffViewModel });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while loading staff detail.");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost("Staff/Delete/{id:guid}")]
+        public async Task<IActionResult> DeleteStaff(Guid id)
+        {
+            try
+            {
+                var result = await staffManagementService.DeleteStaffAsync(id);
+                if (result)
+                    return Json(new { success = true, message = "Staff deleted successfully!" });
+                else
+                    return Json(new { success = false, message = "Staff not found." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // SỬA: Trả về lỗi cụ thể từ service
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while deleting staff.");
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
     }
-
 }

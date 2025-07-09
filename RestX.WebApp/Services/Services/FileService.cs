@@ -10,30 +10,13 @@ namespace RestX.WebApp.Services.Services
     public class FileService : BaseService, IFileService
     {
         private readonly IWebHostEnvironment environment;
+        private readonly IOwnerService ownerService;
 
-        public FileService(IRepository repo, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment environment) 
+        public FileService(IRepository repo, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment environment,IOwnerService ownerService) 
             : base(repo, httpContextAccessor) 
         {
-            environment = environment;
-        }
-
-        public async Task<Guid> CreateFileAsync(string name, string url, string userId)
-        {
-            var file = new Models.File
-            {
-                Id = Guid.NewGuid(),
-                Name = name,
-                Url = url
-            };
-
-            await Repo.CreateAsync(file, userId);
-            await Repo.SaveAsync();
-            return file.Id;
-        }
-
-        public async Task<Models.File?> GetFileByIdAsync(Guid fileId)
-        {
-            return await Repo.GetByIdAsync<Models.File>(fileId);
+            this.environment = environment;
+            this.ownerService = ownerService;
         }
 
         public async Task UpdateFileAsync(Guid fileId, string name, string url, string userId)
@@ -68,33 +51,6 @@ namespace RestX.WebApp.Services.Services
             }
         }
 
-        public async Task<Models.File?> CreateOrUpdateFileAsync(Guid? existingFileId, string name, string url, string userId)
-        {
-            if (existingFileId.HasValue)
-            {
-                var existingFile = await GetFileByIdAsync(existingFileId.Value);
-                if (existingFile != null)
-                {
-                    existingFile.Name = name;
-                    existingFile.Url = url;
-                    Repo.Update(existingFile, userId);
-                    await Repo.SaveAsync();
-                    return existingFile;
-                }
-            }
-
-            var newFile = new Models.File
-            {
-                Id = Guid.NewGuid(),
-                Name = name,
-                Url = url
-            };
-
-            await Repo.CreateAsync(newFile, userId);
-            await Repo.SaveAsync();
-            return newFile;
-        }
-
         public async Task<string> UploadDishImageAsync(IFormFile file, string ownerName, string dishName)
         {
             if (file == null || file.Length == 0)
@@ -123,31 +79,7 @@ namespace RestX.WebApp.Services.Services
             }
 
             return $"~/Uploads/DishesImage/{fileName}";
-        }
-
-        public async Task<bool> DeleteDishImageAsync(string filePath)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(filePath))
-                    return false;
-
-                var physicalPath = Path.Combine(environment.WebRootPath, filePath.Replace("~/", "").Replace("/", Path.DirectorySeparatorChar.ToString()));
-                
-                if (System.IO.File.Exists(physicalPath))
-                {
-                    System.IO.File.Delete(physicalPath);
-                    return true;
-                }
-                
-                return false;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
+        }       
         public string GetDishImagePath(string ownerName, string dishName, string extension)
         {
             var sanitizedOwnerName = SanitizeFileName(ownerName);
@@ -156,8 +88,9 @@ namespace RestX.WebApp.Services.Services
             return $"Dish-{sanitizedOwnerName}-{sanitizedDishName}{extension}";
         }
 
-        public async Task<Models.File> CreateFileFromUploadAsync(string filePath, string fileName, string userId)
+        public async Task<Models.File> CreateFileFromUploadAsync(string filePath, string fileName, Guid ownerId)
         {
+            var ownerName = (await ownerService.GetOwnerByIdAsync(ownerId)).Name;
             var file = new Models.File
             {
                 Id = Guid.NewGuid(),
@@ -165,7 +98,7 @@ namespace RestX.WebApp.Services.Services
                 Url = filePath
             };
 
-            await Repo.CreateAsync(file, userId);
+            await Repo.CreateAsync(file, ownerName);
             await Repo.SaveAsync();
             return file;
         }

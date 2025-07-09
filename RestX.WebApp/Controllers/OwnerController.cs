@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RestX.WebApp.Models;
+using RestX.WebApp.Models.DTO;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
+using RestX.WebApp.Services.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,34 +14,28 @@ using System.Threading.Tasks;
 
 namespace RestX.WebApp.Controllers
 {
-    
+    [Route("Owner")]
     public class OwnerController : BaseController
     {
         private readonly IDashboardService dashboardService;
         private readonly IDishManagementService dishManagementService;
+        private readonly IStaffManagementService staffManagementService;
         private readonly IDishService dishService;
         private readonly ICategoryService categoryService;
-        private readonly IFileService fileService;
-        private readonly IOwnerService ownerService;
-        private readonly IMapper mapper;
 
         public OwnerController(
             IDashboardService dashboardService,
             IDishManagementService dishManagementService,
+            IStaffManagementService staffManagementService,
             IDishService dishService,
             ICategoryService categoryService,
-            IFileService fileService,
-            IOwnerService ownerService,
-            IMapper mapper,
             IExceptionHandler exceptionHandler) : base(exceptionHandler)
         {
             this.dashboardService = dashboardService;
             this.dishManagementService = dishManagementService;
+            this.staffManagementService = staffManagementService;
             this.categoryService = categoryService;
             this.dishService = dishService;
-            this.fileService = fileService;
-            this.ownerService = ownerService;
-            this.mapper = mapper;
         }
 
         private Guid GetOwnerIdFromClaim()
@@ -53,7 +49,7 @@ namespace RestX.WebApp.Controllers
         }
 
         [HttpGet]
-        [Route("Owner/DashBoard")]
+        [Route("DashBoard")]
         public async Task<IActionResult> DashBoard(CancellationToken cancellationToken)
         {
             try
@@ -73,7 +69,7 @@ namespace RestX.WebApp.Controllers
             }
         }
 
-        [HttpGet("Owner/Dishes")]
+        [HttpGet("Dishes")]
         public async Task<IActionResult> DishesManagement(CancellationToken cancellationToken)
         {
             try
@@ -93,13 +89,34 @@ namespace RestX.WebApp.Controllers
             }
         }
 
-        [HttpGet("Owner/Categories")]
+        [HttpGet("Staff")]
+        public async Task<IActionResult> StaffManagement(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var ownerId = GetOwnerIdFromClaim();
+                var model = await staffManagementService.GetStaffManagementViewModelAsync(ownerId);
+                return View(model);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while loading staff management.");
+                return View("Error");
+            }
+        }
+
+        [HttpGet("Categories")]
         public async Task<IActionResult> GetCategories()
         {
             try
             {
                 var categories = await categoryService.GetCategoriesAsync();
-                return Json(new { success = true, data = categories });
+                var data = categories.Select(c => new { id = c.Id, name = c.Name }).ToList();
+                return Json(new { success = true, data });
             }
             catch (Exception ex)
             {
@@ -108,132 +125,36 @@ namespace RestX.WebApp.Controllers
             }
         }
 
-        [HttpPost("Owner/Categories/Create")]
-        public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequest request)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(request.Name))
-                {
-                    return Json(new { success = false, message = "Category name is required." });
-                }
-
-                var categoryId = await categoryService.CreateCategoryAsync(request.Name, User.Identity?.Name ?? "system");
-                var category = await categoryService.GetCategoriesAsync();
-                var newCategory = category.FirstOrDefault(c => c.Id == categoryId);
-
-                return Json(new { 
-                    success = true, 
-                    message = "Category created successfully!", 
-                    data = newCategory 
-                });
-            }
-            catch (Exception ex)
-            {
-                this.exceptionHandler.RaiseException(ex, "An error occurred while creating the category.");
-                return Json(new { success = false, message = "An error occurred while creating the category." });
-            }
-        }
-
-        [HttpPost("Owner/Dishes/Create")]
-        public async Task<IActionResult> CreateDish([FromForm] CreateDishRequest request)
+        [HttpPost("Dishes/Upsert")]
+        [HttpPost("Dishes/Create")]
+        [HttpPost("Dishes/Edit/{id:int?}")]
+        public async Task<IActionResult> UpsertDish([FromForm] DishRequest request, int? id = null)
         {
             try
             {
                 var ownerId = GetOwnerIdFromClaim();
-                var userId = User.Identity?.Name ?? "system";
 
-                // Validate request using model state
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
-                    return Json(new { success = false, errors = errors });
-                }
+                var resultDishId = await dishService.UpsertDishAsync(request, ownerId);
 
-                // Get owner information for file naming
-                var owner = await ownerService.GetOwnerByIdAsync(ownerId);
-                if (owner == null)
-                {
-                    return Json(new { success = false, message = "Owner not found." });
-                }
+                if (resultDishId == null)
+                    return Json(new { success = false, message = "Operation failed." });
 
-                // 1. Upload image and create File entity
-                var imageUrl = await fileService.UploadDishImageAsync(request.ImageFile, owner.Name, request.Name);
-                var fileEntity = await fileService.CreateFileFromUploadAsync(imageUrl, request.ImageFile.FileName, userId);
-
-                // 2. Map DTO to Dish entity using AutoMapper
-                var dishEntity = mapper.Map<Dish>(request);
-
-                // 3. Set additional properties not handled by AutoMapper
-                dishEntity.OwnerId = ownerId;
-                dishEntity.FileId = fileEntity.Id;
-
-                // 4. Create dish using IDishService
-                var dishId = await dishService.UpsertDishAsync(dishEntity, userId);
-
-                return Json(new { success = true, message = "Dish created successfully!", dishId = dishId });
+                string operation = request.Id.HasValue && request.Id.Value > 0 ? "updated" : "created";
+                return Json(new { success = true, message = $"Dish {operation} successfully!", dishId = resultDishId });
             }
             catch (Exception ex)
             {
-                this.exceptionHandler.RaiseException(ex, "An error occurred while creating the dish.");
+                this.exceptionHandler.RaiseException(ex, "An error occurred while saving the dish.");
                 return Json(new { success = false, message = ex.Message });
             }
         }
 
-        [HttpGet("Owner/Dishes/GetDish/{id:int}")]
-        public async Task<IActionResult> GetDish(int id)
-        {
-            try
-            {
-                var model = await dishManagementService.GetDishViewModelByIdAsync(id);
-                if (model == null)
-                {
-                    return Json(new { success = false, message = "Dish not found." });
-                }
-
-                return Json(new { success = true, data = model });
-            }
-            catch (Exception ex)
-            {
-                this.exceptionHandler.RaiseException(ex, "An error occurred while loading dish data.");
-                return Json(new { success = false, message = "Failed to load dish data." });
-            }
-        }
-
-        [HttpPost("Owner/Dishes/Edit/{id:int}")]
-        public async Task<IActionResult> EditDish(int id, [FromBody] DishViewModel model)
-        {
-            try
-            {
-                model.Id = id;
-                var ownerId = GetOwnerIdFromClaim();
-
-                if (ModelState.IsValid)
-                {
-                    await dishManagementService.UpsertDishAsync(model, ownerId, User.Identity?.Name ?? "system");
-                    return Json(new { success = true, message = "Dish updated successfully!" });
-                }
-
-                var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
-                return Json(new { success = false, errors = errors });
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Json(new { success = false, message = "You are not authorized to perform this action." });
-            }
-            catch (Exception ex)
-            {
-                this.exceptionHandler.RaiseException(ex, "An error occurred while updating the dish.");
-                return Json(new { success = false, message = "An error occurred while updating the dish." });
-            }
-        }
-
-        [HttpPost("Owner/Dishes/Delete/{id:int}")]
+        [HttpPost("Dishes/Delete/{id:int}")]
         public async Task<IActionResult> DeleteDish(int id)
         {
             try
             {
-                await dishManagementService.DeleteDishAsync(id);
+                await dishService.DeleteDishAsync(id);
                 return Json(new { success = true, message = "Dish deleted successfully!" });
             }
             catch (Exception ex)
@@ -243,14 +164,117 @@ namespace RestX.WebApp.Controllers
             }
         }
 
+        [HttpGet("Dishes/Detail/{id:int}")]
+        public async Task<IActionResult> DishDetail(int id)
+        {
+            try
+            {
+                var dishViewModel = await dishService.GetDishViewModelByIdAsync(id);
+                if (dishViewModel == null)
+                    return Json(new { success = false, message = "Dish not found." });
+
+                return Json(new { success = true, data = dishViewModel });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while loading dish detail.");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost("Categories/Create")]
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto request)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request.Name))
+                    return Json(new { success = false, message = "Category name is required." });
+
+                var ownerId = GetOwnerIdFromClaim();
+                var categoryId = await categoryService.CreateCategoryAsync(request, ownerId);
+
+                return Json(new { success = true, message = "Category created successfully!", categoryId });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while creating category.");
+                return Json(new { success = false, message = "An error occurred while creating category." });
+            }
+        }
+
+        [HttpPost("Staff/Upsert")]
+        public async Task<IActionResult> UpsertStaff([FromForm] StaffRequest request)
+        {
+            try
+            {
+                var ownerId = GetOwnerIdFromClaim();
+                var resultStaffId = await staffManagementService.UpsertStaffAsync(request, ownerId);
+
+                if (resultStaffId == null)
+                    return Json(new { success = false, message = "Operation failed." });
+
+                string operation = request.Id.HasValue && request.Id.Value != Guid.Empty ? "updated" : "created";
+                return Json(new { success = true, message = $"Staff {operation} successfully!", staffId = resultStaffId });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while saving staff.");
+                return Json(new { success = false, message = "An error occurred while saving staff." });
+            }
+        }
+
+        [HttpGet("Staff/Detail/{id:guid}")]
+        public async Task<IActionResult> StaffDetail(Guid id)
+        {
+            try
+            {
+                var staffViewModel = await staffManagementService.GetStaffViewModelByIdAsync(id);
+                if (staffViewModel == null)
+                    return Json(new { success = false, message = "Staff not found." });
+
+                return Json(new { success = true, data = staffViewModel });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while loading staff detail.");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost("Staff/Delete/{id:guid}")]
+        public async Task<IActionResult> DeleteStaff(Guid id)
+        {
+            try
+            {
+                var result = await staffManagementService.DeleteStaffAsync(id);
+                if (result)
+                    return Json(new { success = true, message = "Staff deleted successfully!" });
+                else
+                    return Json(new { success = false, message = "Staff not found." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // SỬA: Trả về lỗi cụ thể từ service
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while deleting staff.");
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-    }
-
-    public class CreateCategoryRequest
-    {
-        public string Name { get; set; } = string.Empty;
     }
 }

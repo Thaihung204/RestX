@@ -16,7 +16,7 @@
                 <i class="bi bi-search owner-search-icon"></i>
                 <input type="text" class="owner-search-input" id="searchInput" placeholder="Search dishes...">
             </div>
-            <button class="owner-btn owner-btn-primary" id="btnAddDish">
+            <button class="owner-btn owner-btn-primary" id="btnAddDish" data-bs-toggle="modal" data-bs-target="#dishModal">
                 <i class="bi bi-plus-lg"></i>
                 Add Dish
             </button>
@@ -59,7 +59,7 @@
                                 <tr class="dish-row owner-slide-in">
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="@dish.ImageUrl" class="rounded me-3" width="48" height="48" style="object-fit: cover;" alt="@dish.Name">
+                                            <img src="@(Url.Content(dish.ImageUrl))" class="rounded me-3" width="48" height="48" style="object-fit: cover;" alt="@dish.Name">
                                             <div>
                                                 <div class="fw-bold">@dish.Name</div>
                                                 @if (!string.IsNullOrEmpty(dish.Description))
@@ -148,78 +148,76 @@
             <form id="dishForm">
                 <div class="modal-body" style="padding: 2rem;">
                     <input type="hidden" id="dishId" name="Id" value="0">
-
-                    <div class="owner-form-group">
-                        <label for="dishName" class="owner-form-label">
-                            <i class="bi bi-card-text me-1"></i>
-                            Dish Name *
-                        </label>
-                        <input type="text" class="owner-form-control" id="dishName" name="Name" required>
-                    </div>
-
-                    <div class="owner-form-group">
-                        <label for="categorySelect" class="owner-form-label">
-                            <i class="bi bi-tag me-1"></i>
-                            Category *
-                        </label>
-                        <div class="d-flex gap-2">
-                            <select class="owner-form-control" id="categorySelect" name="CategoryId" required onchange="handleCategoryChange()">
-                                <option value="">Select Category</option>
-                            </select>
-                            <button type="button" class="owner-btn owner-btn-secondary px-3" onclick="showAddCategoryDialog()" title="Add New Category">
-                                <i class="bi bi-plus"></i>
-                            </button>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="dishName" class="owner-form-label">
+                                <i class="bi bi-card-text me-1"></i>
+                                Dish Name *
+                            </label>
+                            <input type="text" class="owner-form-control" id="dishName" name="Name" required>
                         </div>
-                        <input type="hidden" id="categoryName" name="CategoryName">
-                    </div>
-
-                    <div class="owner-form-group">
-                        <label for="description" class="owner-form-label">
-                            <i class="bi bi-card-text me-1"></i>
-                            Description
-                        </label>
-                        <textarea class="owner-form-control" id="description" name="Description" rows="3" style="resize: vertical;"></textarea>
-                    </div>
-
-                    <div class="owner-form-group">
-                        <label for="price" class="owner-form-label">
-                            <i class="bi bi-currency-dollar me-1"></i>
-                            Price *
-                        </label>
-                        <input type="number" step="0.01" class="owner-form-control" id="price" name="Price" required>
-                    </div>
-
-                    <div class="owner-form-group">
-                        <label for="imageFile" class="owner-form-label">
-                            <i class="bi bi-image me-1"></i>
-                            Dish Image *
-                        </label>
-                        <div class="image-upload-container">
-                            <div class="image-preview" id="imagePreview" style="display: none;">
-                                <img id="previewImg" src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: var(--owner-radius-small); object-fit: cover;">
-                                <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeImage()">
-                                    <i class="bi bi-x-circle"></i>
-                                    Remove Image
+                        <div class="col-md-6 mb-3">
+                            <label for="categorySelect" class="owner-form-label">
+                                <i class="bi bi-tag me-1"></i>
+                                Category *
+                            </label>
+                            <div class="d-flex gap-2">
+                                <select class="owner-form-control" id="categorySelect" name="CategoryId" required onchange="handleCategoryChange()">
+                                    <option value="">Select Category</option>
+                                </select>
+                                <button type="button" class="owner-btn owner-btn-secondary px-3" onclick="showAddCategoryDialog()" title="Add New Category">
+                                    <i class="bi bi-plus"></i>
                                 </button>
                             </div>
-                            <div class="file-upload-area" id="fileUploadArea" style="border: 2px dashed var(--owner-border); border-radius: var(--owner-radius-small); padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
-                                <input type="file" class="owner-form-control" id="imageFile" name="ImageFile" accept="image/*" required style="display: none;" onchange="handleImageUpload(this)">
-                                <div class="upload-placeholder" onclick="document.getElementById('imageFile').click()">
-                                    <i class="bi bi-cloud-upload" style="font-size: 2rem; color: var(--owner-primary);"></i>
-                                    <p class="mt-2 mb-1 fw-bold">Click to upload dish image</p>
-                                    <small class="text-muted">JPG, PNG, GIF, WEBP (Max 5MB)</small>
+                            <input type="hidden" id="categoryName" name="CategoryName">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="description" class="owner-form-label">
+                                <i class="bi bi-card-text me-1"></i>
+                                Description
+                            </label>
+                            <textarea class="owner-form-control" id="description" name="Description" rows="2" style="resize: vertical;"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="price" class="owner-form-label">
+                                <i class="bi bi-currency-dollar me-1"></i>
+                                Price (VNĐ) *
+                            </label>
+                            <input type="number" step="0.01" class="owner-form-control" id="price" name="Price" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="imageFile" class="owner-form-label">
+                                <i class="bi bi-image me-1"></i>
+                                Dish Image *
+                            </label>
+                            <div class="image-upload-container">
+                                <div class="image-preview" id="imagePreview" style="display: none;">
+                                    <img id="previewImg" src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: var(--owner-radius-small); object-fit: cover;">
+                                    <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeImage()">
+                                        <i class="bi bi-x-circle"></i>
+                                        Remove Image
+                                    </button>
+                                </div>
+                                <div class="file-upload-area" id="fileUploadArea" style="border: 2px dashed var(--owner-border); border-radius: var(--owner-radius-small); padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                                    <input type="file" class="owner-form-control" id="imageFile" name="ImageFile" accept="image/*" required style="display: none;" onchange="handleImageUpload(this)">
+                                    <div class="upload-placeholder" onclick="document.getElementById('imageFile').click()">
+                                        <i class="bi bi-cloud-upload" style="font-size: 2rem; color: var(--owner-primary);"></i>
+                                        <p class="mt-2 mb-1 fw-bold">Click to upload dish image</p>
+                                        <small class="text-muted">JPG, PNG, GIF, WEBP (Max 5MB)</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="owner-form-group">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="isActive" name="IsActive" checked>
-                            <label class="form-check-label" for="isActive">
-                                <i class="bi bi-toggle-on me-1"></i>
-                                Active Status
-                            </label>
+                        <div class="col-md-12 mb-2">
+                            <div class="owner-form-group d-flex align-items-center" style="gap: 12px;">
+                                <label class="owner-switch mb-0">
+                                    <input type="checkbox" id="isActive" name="IsActive" checked>
+                                    <span class="owner-slider"></span>
+                                </label>
+                                <label class="form-check-label mb-0" for="isActive" style="font-weight: 400; font-size: 1.05rem;">
+                                    Active Status
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -242,23 +240,42 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let categories = [];
+        let currentOwnerName = '@User.Identity.Name';
+        let currentDish = null;
 
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             await loadCategories();
-
-            // Add hover effects to file upload area
-            const fileUploadArea = document.getElementById('fileUploadArea');
-            fileUploadArea.addEventListener('mouseenter', function() {
-                this.style.borderColor = 'var(--owner-primary)';
-                this.style.backgroundColor = 'rgba(255, 152, 0, 0.05)';
-            });
-            fileUploadArea.addEventListener('mouseleave', function() {
-                this.style.borderColor = 'var(--owner-border)';
-                this.style.backgroundColor = 'transparent';
-            });
+            bindFormEvents();
         });
 
-        // Load categories from API
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const keyword = this.value.trim().toLowerCase();
+            const rows = document.querySelectorAll('#dishesTable tbody tr.dish-row');
+            let found = 0;
+
+            rows.forEach(row => {
+                const name = row.querySelector('td:nth-child(1) .fw-bold')?.textContent.toLowerCase() || '';
+                const desc = row.querySelector('td:nth-child(1) small')?.textContent.toLowerCase() || '';
+                const category = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+
+                if (
+                    name.includes(keyword) ||
+                    desc.includes(keyword) ||
+                    category.includes(keyword)
+                ) {
+                    row.style.display = '';
+                    found++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            const noDishesRow = document.getElementById('noDishesRow');
+            if (noDishesRow) noDishesRow.style.display = found === 0 && keyword === '' ? '' : 'none';
+
+            document.getElementById('noSearchResults').style.display = (found === 0 && keyword !== '') ? '' : 'none';
+        });
+
         async function loadCategories() {
             try {
                 const response = await fetch('/Owner/Categories');
@@ -268,17 +285,14 @@
                     populateCategoryDropdown();
                 }
             } catch (error) {
-                console.error('Error loading categories:', error);
+                console.error('Lỗi tải danh mục:', error);
             }
         }
 
-        // Populate category dropdown
         function populateCategoryDropdown() {
             const categorySelect = document.getElementById('categorySelect');
             if (!categorySelect) return;
-
-            categorySelect.innerHTML = '<option value="">Select Category</option>';
-
+            categorySelect.innerHTML = '<option value="">Select options</option>';
             categories.forEach(category => {
                 const option = document.createElement('option');
                 option.value = category.id;
@@ -287,50 +301,238 @@
             });
         }
 
-        // Handle category selection
+        async function showAddCategoryDialog() {
+            const { value: categoryName } = await Swal.fire({
+                title: 'Thêm danh mục mới',
+                input: 'text',
+                inputPlaceholder: 'Nhập tên danh mục',
+                showCancelButton: true,
+                confirmButtonColor: '#ff9800',
+                confirmButtonText: 'Thêm',
+                cancelButtonText: 'Hủy',
+                inputValidator: (value) => {
+                    if (!value || value.trim() === '') return 'Tên danh mục không được để trống!';
+                    if (categories.some(c => c.name.toLowerCase() === value.toLowerCase().trim())) return 'Danh mục đã tồn tại!';
+                }
+            });
+            if (categoryName) {
+                const res = await fetch('/Owner/Categories/Create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ Name: categoryName.trim() })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    await loadCategories();
+                    Swal.fire('Thành công', 'Đã thêm danh mục mới!', 'success');
+                } else {
+                    Swal.fire('Lỗi', result.message || 'Không thể thêm danh mục', 'error');
+                }
+            }
+        }
+
         function handleCategoryChange() {
             const categorySelect = document.getElementById('categorySelect');
             const categoryNameInput = document.getElementById('categoryName');
-
             if (categorySelect.value) {
                 const selectedCategory = categories.find(c => c.id == categorySelect.value);
-                if (selectedCategory) {
-                    categoryNameInput.value = selectedCategory.name;
-                }
+                if (selectedCategory) categoryNameInput.value = selectedCategory.name;
             } else {
                 categoryNameInput.value = '';
             }
         }
 
-        // Show add category dialog
-        async function showAddCategoryDialog() {
-            const { value: categoryName } = await Swal.fire({
-                title: 'Add New Category',
-                input: 'text',
-                inputPlaceholder: 'Enter category name',
-                showCancelButton: true,
-                confirmButtonColor: '#ff9800',
-                confirmButtonText: 'Add Category',
-                cancelButtonText: 'Cancel',
-                customClass: {
-                    popup: 'owner-swal-popup'
-                },
-                inputValidator: (value) => {
-                    if (!value || value.trim() === '') {
-                        return 'Category name is required!';
-                    }
-                    if (categories.some(c => c.name.toLowerCase() === value.toLowerCase().trim())) {
-                        return 'Category already exists!';
-                    }
-                }
-            });
+        async function handleImageUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+                Swal.fire('Lỗi', 'Ảnh vượt quá 5MB!', 'error');
+                input.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('imagePreview').style.display = 'block';
+                document.getElementById('previewImg').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            document.getElementById('fileUploadArea').style.display = 'none';
+        }
 
-            if (categoryName) {
-                await createCategory(categoryName.trim());
+        function removeImage() {
+            document.getElementById('imageFile').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('previewImg').src = '';
+            document.getElementById('fileUploadArea').style.display = 'block';
+        }
+
+        function bindFormEvents() {
+            document.getElementById('dishForm').onsubmit = async function (e) {
+                e.preventDefault();
+                await saveDish();
+            };
+        }
+
+        function showDishModal(title, dish = null) {
+            document.getElementById('dishModalLabel').innerHTML = `<i class="bi bi-plus-circle me-2" style="color: var(--owner-primary);"></i> ${title}`;
+            resetDishForm();
+            if (dish) fillDishForm(dish);
+            var dishModal = new bootstrap.Modal(document.getElementById('dishModal'));
+            dishModal.show();
+        }
+
+        function resetDishForm() {
+            document.getElementById('dishId').value = 0;
+            document.getElementById('dishName').value = '';
+            document.getElementById('categorySelect').value = '';
+            document.getElementById('categoryName').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('isActive').checked = true;
+            document.getElementById('imageFile').setAttribute('required', 'required');
+            removeImage();
+        }
+
+        function fillDishForm(dish) {
+            console.log('Filling form with dish data:', dish);
+
+            document.getElementById('dishId').value = dish.id;
+            document.getElementById('dishName').value = dish.name;
+            document.getElementById('categorySelect').value = dish.categoryId;
+            document.getElementById('categoryName').value = dish.categoryName;
+            document.getElementById('description').value = dish.description || '';
+            document.getElementById('price').value = dish.price;
+            document.getElementById('isActive').checked = dish.isActive;
+
+            const imageFileInput = document.getElementById('imageFile');
+            if (dish.imageUrl) {
+                document.getElementById('imagePreview').style.display = 'block';
+                document.getElementById('previewImg').src = dish.imageUrl;
+                document.getElementById('fileUploadArea').style.display = 'none';
+                imageFileInput.removeAttribute('required');
+            } else {
+                removeImage();
+                imageFileInput.setAttribute('required', 'required');
             }
         }
 
-        // Rest of the JavaScript functions remain the same but with updated styling...
-        // (The complete JavaScript would be too long for this response, but follows the same pattern)
+        async function saveDish() {
+            const id = document.getElementById('dishId').value;
+            const name = document.getElementById('dishName').value.trim();
+            const categoryId = document.getElementById('categorySelect').value;
+            const description = document.getElementById('description').value.trim();
+            const price = document.getElementById('price').value;
+            const isActive = document.getElementById('isActive').checked;
+            const imageFile = document.getElementById('imageFile').files[0];
+
+            if (!name || !categoryId || !price) {
+                Swal.fire('Lỗi', 'Vui lòng nhập đầy đủ thông tin bắt buộc!', 'error');
+                return;
+            }
+
+            // Validate image cho create
+            if (id == 0 && !imageFile) {
+                Swal.fire('Lỗi', 'Vui lòng chọn ảnh món ăn!', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            if (id != 0) formData.append('Id', id);
+            formData.append('Name', name);
+            formData.append('CategoryId', categoryId);
+            formData.append('Description', description);
+            formData.append('Price', price);
+            formData.append('IsActive', isActive);
+
+            if (imageFile) {
+                formData.append('ImageFile', imageFile);
+            }
+
+            // Sử dụng route mới thống nhất
+            const url = '/Owner/Dishes/Upsert';
+
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await res.json();
+                if (result.success) {
+                    Swal.fire('Thành công', result.message, 'success').then(() => location.reload());
+                } else {
+                    if (result.errors) {
+                        const errorList = Array.isArray(result.errors) ? result.errors.join('\n') : result.errors;
+                        Swal.fire('Lỗi', errorList, 'error');
+                    } else {
+                        Swal.fire('Lỗi', result.message || 'Không thể lưu món ăn!', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving dish:', error);
+                Swal.fire('Lỗi', 'Có lỗi xảy ra khi lưu món ăn!', 'error');
+            }
+        }
+
+        async function viewDish(id) {
+            const res = await fetch(`/Owner/Dishes/Detail/${id}`);
+            const result = await res.json();
+            if (result.success) {
+                const dish = result.data;
+                let html = `
+                    <div class="text-center mb-3">
+                        <img src="${dish.imageUrl}" alt="${dish.name}" style="max-width:200px;max-height:200px;border-radius:8px;object-fit:cover;">
+                    </div>
+                    <table class="table table-bordered">
+                        <tr><th>Tên món</th><td>${dish.name}</td></tr>
+                        <tr><th>Danh mục</th><td>${dish.categoryName}</td></tr>
+                        <tr><th>Giá</th><td>${Number(dish.price).toLocaleString('vi-VN')} VNĐ</td></tr>
+                        <tr><th>Trạng thái</th><td>${dish.isActive ? 'Đang bán' : 'Ngừng bán'}</td></tr>
+                        <tr><th>Mô tả</th><td>${dish.description || ''}</td></tr>
+                    </table>
+                `;
+                Swal.fire({
+                    title: 'Chi tiết món ăn',
+                    html: html,
+                    width: 600,
+                    showCloseButton: true,
+                    confirmButtonText: 'Đóng'
+                });
+            } else {
+                Swal.fire('Lỗi', result.message || 'Không tìm thấy món ăn!', 'error');
+            }
+        }
+
+        async function editDish(id) {
+            const res = await fetch(`/Owner/Dishes/Detail/${id}`);
+            const result = await res.json();
+            if (result.success) {
+                showDishModal('Cập nhật món ăn', result.data);
+            } else {
+                Swal.fire('Lỗi', result.message || 'Không tìm thấy món ăn!', 'error');
+            }
+        }
+
+        async function deleteDish(id, name) {
+            const confirm = await Swal.fire({
+                title: 'Xác nhận xóa',
+                text: `Bạn có chắc chắn muốn xóa món "${name}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonText: 'Hủy',
+                confirmButtonText: 'Xóa'
+            });
+            if (confirm.isConfirmed) {
+                const res = await fetch(`/Owner/Dishes/Delete/${id}`, { method: 'POST' });
+                const result = await res.json();
+                if (result.success) {
+                    Swal.fire('Đã xóa!', 'Món ăn đã được xóa.', 'success')
+                        .then(() => location.reload());
+                } else {
+                    Swal.fire('Lỗi', result.message || 'Không thể xóa món ăn!', 'error');
+                }
+            }
+        }
     </script>
 }

@@ -716,7 +716,7 @@
                     const dish = result.data;
                     const html = `
                         <div class="text-center mb-3">
-                            <img src="${dish.imageUrl || '/images/no-image.png'}" alt="${dish.name}"
+                            <img src="${dish.imageUrl ? dish.imageUrl.startsWith('~') ? dish.imageUrl.replace('~', '') : dish.imageUrl : '/images/no-image.png'}" alt="${dish.name}"
                                  style="max-width:200px;max-height:200px;border-radius:8px;object-fit:cover;">
                         </div>
                         <table class="table table-bordered">
@@ -725,6 +725,8 @@
                             <tr><th>Price</th><td>${Number(dish.price).toLocaleString('vi-VN')} VNĐ</td></tr>
                             <tr><th>Status</th><td>${dish.isActive ? 'Active' : 'Inactive'}</td></tr>
                             <tr><th>Description</th><td>${dish.description || 'No description'}</td></tr>
+                            <tr><th>Created At</th><td>${dish.createdDate ? new Date(dish.createdDate).toLocaleString() : ''}</td></tr>
+                            <tr><th>Updated At</th><td>${dish.modifiedDate ? new Date(dish.modifiedDate).toLocaleString() : ''}</td></tr>
                         </table>
                     `;
                     Swal.fire({

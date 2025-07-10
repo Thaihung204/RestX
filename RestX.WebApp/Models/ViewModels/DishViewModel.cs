@@ -13,10 +13,12 @@ namespace RestX.WebApp.Models.ViewModels
         public decimal Price { get; set; }
         public string? ImageUrl { get; set; }
         public bool? IsActive { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
     }
     public class DishRequest
     {
-        public int? Id { get; set; } // Thêm Id property
+        public int? Id { get; set; } 
 
         [Required(ErrorMessage = "Dish name is required")]
         [MaxLength(100, ErrorMessage = "Dish name cannot exceed 100 characters")]
@@ -34,7 +36,6 @@ namespace RestX.WebApp.Models.ViewModels
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal Price { get; set; }
 
-        // Không required - sẽ validate trong controller
         public IFormFile? ImageFile { get; set; }
 
         public bool IsActive { get; set; } = true;

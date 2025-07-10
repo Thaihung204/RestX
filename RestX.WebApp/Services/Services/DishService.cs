@@ -1,15 +1,22 @@
-﻿using RestX.WebApp.Models;
+﻿using AutoMapper;
+using RestX.WebApp.Models;
+using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RestX.WebApp.Services.Services
 {
     public class DishService : BaseService, IDishService
     {
-        public DishService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor) { }
+        private readonly IOwnerService ownerService;
+        private readonly IFileService fileService;
+        private readonly IMapper mapper;
+
+        public DishService(IRepository repo, IHttpContextAccessor httpContextAccessor, IOwnerService ownerService, IFileService fileService, IMapper mapper) : base(repo, httpContextAccessor)
+        {
+            this.ownerService = ownerService;
+            this.fileService = fileService;
+            this.mapper = mapper;
+        }
 
         public async Task<List<Dish>> GetDishesByOwnerIdAsync(Guid ownerId)
         {
@@ -17,7 +24,7 @@ namespace RestX.WebApp.Services.Services
                 filter: d => d.OwnerId == ownerId && d.IsActive == true,
                 includeProperties: "Category,File"
             );
-            return dishes.ToList();
+            return dishes.OrderBy(d => d.Name).ToList();
         }
 
         public async Task<Dish?> GetDishByIdAsync(int id)
@@ -29,24 +36,65 @@ namespace RestX.WebApp.Services.Services
             return dishes.FirstOrDefault();
         }
 
-        public async Task<int> UpsertDishAsync(Dish entity, string userId)
+        public async Task<DishViewModel?> GetDishViewModelByIdAsync(int id)
         {
-            if (entity.Id == 0)
+            var dish = await GetDishByIdAsync(id);
+            if (dish == null) return null;
+
+            return mapper.Map<DishViewModel>(dish);
+        }
+
+        public async Task<int?> UpsertDishAsync(DishRequest request, Guid ownerId)
+        {
+            Dish dish;
+            bool isEdit = request.Id.HasValue && request.Id.Value > 0;
+
+            if (isEdit)
             {
-                var result = await Repo.CreateAsync(entity, userId);
+                dish = await GetDishByIdAsync(request.Id.Value);
+                if (dish == null)
+                    return null;
+                mapper.Map(request, dish);
+                dish.OwnerId = ownerId;
+            }
+            else
+            {
+                dish = mapper.Map<Dish>(request);
+                dish.OwnerId = ownerId;
+            }
+
+            if (request.ImageFile != null && request.ImageFile.Length > 0)
+            {
+                var owner = await ownerService.GetOwnerByIdAsync(ownerId);
+                var imageUrl = await fileService.UploadDishImageAsync(request.ImageFile, owner.Name, request.Name);
+                var file = await fileService.CreateFileFromUploadAsync(imageUrl, request.ImageFile.FileName, ownerId);
+                dish.FileId = file.Id;
+            }
+
+            var ownerName = (await ownerService.GetOwnerByIdAsync(ownerId))?.Name;
+            if (dish.Id == 0)
+            {
+                var result = await Repo.CreateAsync(dish, ownerName);
                 await Repo.SaveAsync();
                 return (int)result;
             }
             else
             {
-                Repo.Update(entity, userId);
+                Repo.Update(dish, ownerName);
                 await Repo.SaveAsync();
-                return entity.Id;
+                return dish.Id;
             }
         }
 
         public async Task DeleteDishAsync(int id)
         {
+            var dish = await GetDishByIdAsync(id);
+
+            if (dish?.FileId.HasValue == true)
+            {
+                await fileService.DeleteFileAsync(dish.FileId.Value);
+            }
+
             Repo.Delete<Dish>(id);
             await Repo.SaveAsync();
         }

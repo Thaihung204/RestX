@@ -21,18 +21,21 @@ namespace RestX.WebApp.Controllers
         private readonly IDishManagementService dishManagementService;
         private readonly IDishService dishService;
         private readonly ICategoryService categoryService;
+        private readonly ICustomerService customerService;
 
         public OwnerController(
             IDashboardService dashboardService,
             IDishManagementService dishManagementService,
             IDishService dishService,
             ICategoryService categoryService,
+            ICustomerService customerService,
             IExceptionHandler exceptionHandler) : base(exceptionHandler)
         {
             this.dashboardService = dashboardService;
             this.dishManagementService = dishManagementService;
             this.categoryService = categoryService;
             this.dishService = dishService;
+            this.customerService = customerService;
         }
 
         private Guid GetOwnerIdFromClaim()
@@ -181,6 +184,69 @@ namespace RestX.WebApp.Controllers
             {
                 this.exceptionHandler.RaiseException(ex, "An error occurred while creating category.");
                 return Json(new { success = false, message = "An error occurred while creating category." });
+            }
+        }
+
+        [HttpGet("Customers")]
+        public async Task<IActionResult> CustomersManagement()
+        {
+            try
+            {
+                var ownerId = GetOwnerIdFromClaim();
+                var customers = await customerService.GetCustomersByOwnerIdAsync(ownerId);
+                var model = new CustomersManagementViewModel { Customers = customers };
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while loading customers.");
+                return View("Error");
+            }
+        }
+
+        [HttpGet("Customers/Detail/{id:guid}")]
+        public async Task<IActionResult> CustomerDetail(Guid id)
+        {
+            var customer = await customerService.GetCustomerByIdAsync(id);
+            if (customer == null)
+                return Json(new { success = false, message = "Customer not found." });
+            return Json(new { success = true, data = customer });
+        }
+
+        [HttpPost("Customers/Upsert")]
+        public async Task<IActionResult> UpsertCustomer([FromForm] CustomerViewModel model)
+        {
+            try
+            {
+                var ownerId = GetOwnerIdFromClaim();
+                var resultId = await customerService.UpsertCustomerAsync(model, ownerId);
+                if (resultId == null)
+                    return Json(new { success = false, message = "Operation failed." });
+
+                string operation = model.Id != Guid.Empty ? "updated" : "created";
+                return Json(new { success = true, message = $"Customer {operation} successfully!", customerId = resultId });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while saving the customer.");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost("Customers/Delete/{id:guid}")]
+        public async Task<IActionResult> DeleteCustomer(Guid id)
+        {
+            try
+            {
+                var result = await customerService.DeleteCustomerAsync(id);
+                if (!result)
+                    return Json(new { success = false, message = "Customer not found." });
+                return Json(new { success = true, message = "Customer deleted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while deleting the customer.");
+                return Json(new { success = false, message = ex.Message });
             }
         }
 

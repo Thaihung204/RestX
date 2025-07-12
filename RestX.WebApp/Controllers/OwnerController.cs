@@ -21,6 +21,7 @@ namespace RestX.WebApp.Controllers
         private readonly ICategoryService categoryService;
         private readonly IFileService fileService;
         private readonly IOwnerService ownerService;
+        private readonly ITableService tableService;
         private readonly IMapper mapper;
 
         public OwnerController(
@@ -30,6 +31,7 @@ namespace RestX.WebApp.Controllers
             ICategoryService categoryService,
             IFileService fileService,
             IOwnerService ownerService,
+            ITableService tableService,
             IMapper mapper,
             IExceptionHandler exceptionHandler) : base(exceptionHandler)
         {
@@ -39,6 +41,7 @@ namespace RestX.WebApp.Controllers
             this.dishService = dishService;
             this.fileService = fileService;
             this.ownerService = ownerService;
+            this.tableService = tableService;
             this.mapper = mapper;
         }
 
@@ -240,6 +243,26 @@ namespace RestX.WebApp.Controllers
             {
                 this.exceptionHandler.RaiseException(ex, "An error occurred while deleting the dish.");
                 return Json(new { success = false, message = "An error occurred while deleting the dish." });
+            }
+        }
+
+        [HttpGet("Owner/Qr")]
+        public async Task<IActionResult> TableQrCode(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var ownerId = GetOwnerIdFromClaim();
+                var model = await tableService.GetTablesByOwnerIdAsync(ownerId);
+                return View(model);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while loading dishes management.");
+                return View("Error");
             }
         }
 

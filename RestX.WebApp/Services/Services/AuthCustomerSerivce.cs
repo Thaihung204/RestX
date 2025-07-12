@@ -63,7 +63,15 @@ namespace RestX.WebApp.Services.Services
 
             return customer;
         }
+        public async Task<Customer?> FindCustomerByPhoneAsync(string phone, Guid ownerId, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(phone) || ownerId == Guid.Empty)
+                return null;
 
+            return await Repo.GetFirstAsync<Customer>(
+                c => c.Phone == phone && c.OwnerId == ownerId && c.IsActive == true
+            );
+        }
         private async Task<Customer> CreateNewCustomerAsync(LoginViewModel model, CancellationToken cancellationToken)
         {
             var newCustomer = new Customer
@@ -81,6 +89,11 @@ namespace RestX.WebApp.Services.Services
             await Repo.CreateAsync<Customer>(newCustomer, newCustomer.Id.ToString());
             httpContextAccessor.HttpContext.Session.SetString("CustomerId", newCustomer.Id.ToString());
             return newCustomer;
+        }
+
+        public Task<Customer> FindCustomerByPhoneAsync(LoginViewModel model, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

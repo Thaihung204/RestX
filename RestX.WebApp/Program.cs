@@ -11,13 +11,13 @@ using RestX.WebApp.Services.SignalRLab;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDistributedMemoryCache(); 
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    
+
     options.IdleTimeout = TimeSpan.FromMinutes(60);
     options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true; 
+    options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -140,12 +140,12 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
-                                                                
+
 app.Use(async (context, next) =>
 {
     if (context.Request.Path == "/")
     {
-        
+
         context.Response.Redirect("/Home/Index/550E8400-E29B-41D4-A716-446655440040/1");
         return;
     }

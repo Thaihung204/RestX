@@ -9,6 +9,7 @@ using System.Linq;
 namespace RestX.WebApp.Controllers
 {
     [Authorize(Roles = "Staff")]
+
     public class StaffController : BaseController
     {
         public IMenuService menuService { get; }
@@ -59,13 +60,7 @@ namespace RestX.WebApp.Controllers
         {
             try
             {
-                var staffIdClaim = User.Claims.FirstOrDefault(c => c.Type == "StaffId");
-                if (staffIdClaim == null || !Guid.TryParse(staffIdClaim.Value, out Guid staffId))
-                {
-                    return Unauthorized("Staff ID not found in claims.");
-                }
-
-                var staff = await staffService.GetStaffByIdAsync(staffId, cancellationToken);
+                var staff = await staffService.GetStaffByIdAsync(cancellationToken);
                 var model = await tableService.GetAllTablesByOwnerIdAsync(staff.OwnerId, cancellationToken);
                 return View(model);
             }
@@ -82,12 +77,7 @@ namespace RestX.WebApp.Controllers
         {
             try
             {
-                var staffIdClaim = User.Claims.FirstOrDefault(c => c.Type == "StaffId");
-                if (staffIdClaim == null || !Guid.TryParse(staffIdClaim.Value, out Guid staffId))
-                {
-                    return Unauthorized("Staff ID not found in claims.");
-                }
-                var staff = await staffService.GetStaffByIdAsync(staffId, cancellationToken);
+                var staff = await staffService.GetStaffByIdAsync(cancellationToken);
 
                 if (staff == null)
                 {

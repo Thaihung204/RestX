@@ -8,8 +8,8 @@ namespace RestX.WebApp.Services.Interfaces
 {
     public interface IDashboardService
     {
-        Task<Dictionary<DateTime, decimal>> GetCostByDateAsync(Guid ownerId, CancellationToken cancellationToken = default);
-        Task<Dictionary<DateTime, decimal>> GetProfitByDateAsync(Guid ownerId, CancellationToken cancellationToken = default);
-        Task<DashboardViewModel> GetDashboardViewModelAsync(Guid ownerId, CancellationToken cancellationToken = default);
+        Task<Dictionary<DateTime, decimal>> GetCostByDateAsync(CancellationToken cancellationToken = default);
+        Task<Dictionary<DateTime, decimal>> GetProfitByDateAsync(CancellationToken cancellationToken = default);
+        Task<DashboardViewModel> GetDashboardViewModelAsync(CancellationToken cancellationToken = default);
     }
 }

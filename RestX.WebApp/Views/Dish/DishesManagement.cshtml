@@ -466,7 +466,7 @@
 
         async function loadCategories() {
             try {
-                const response = await fetch('/Owner/Categories');
+                const response = await fetch('/Category/Index');
                 const result = await response.json();
                 if (result.success) {
                     categories = result.data;
@@ -516,7 +516,7 @@
             }
 
             try {
-                const res = await fetch('/Owner/Categories/Create', {
+                const res = await fetch('/Category/Create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ Name: categoryName })
@@ -683,7 +683,7 @@
                 formData.append('ImageFile', imageFile);
             }
 
-            const url = '/Owner/Dishes/Upsert';
+            const url = '/Dish/Upsert';
 
             try {
                 const response = await fetch(url, {
@@ -709,7 +709,7 @@
 
         async function viewDish(id) {
             try {
-                const response = await fetch(`/Owner/Dishes/Detail/${id}`);
+                const response = await fetch(`/Dish/Detail/${id}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -747,7 +747,7 @@
 
         async function editDish(id) {
             try {
-                const response = await fetch(`/Owner/Dishes/Detail/${id}`);
+                const response = await fetch(`/Dish/Detail/${id}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -774,7 +774,7 @@
 
             if (confirm.isConfirmed) {
                 try {
-                    const response = await fetch(`/Owner/Dishes/Delete/${id}`, { method: 'POST' });
+                    const response = await fetch(`/Dish/Delete/${id}`, { method: 'POST' });
                     const result = await response.json();
 
                     if (result.success) {

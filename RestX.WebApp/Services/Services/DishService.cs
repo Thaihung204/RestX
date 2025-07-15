@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
+using RestX.WebApp.Helper;
 using RestX.WebApp.Models;
 using RestX.WebApp.Models.ViewModels;
-using RestX.WebApp.Services.Interfaces;
 using RestX.WebApp.Services;
+using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Services.Services
 {
@@ -19,8 +20,9 @@ namespace RestX.WebApp.Services.Services
             this.mapper = mapper;
         }
 
-        public async Task<List<Dish>> GetDishesByOwnerIdAsync(Guid ownerId)
+        public async Task<List<Dish>> GetDishesByOwnerIdAsync()
         {
+            var ownerId = UserHelper.GetCurrentOwnerId();
             var dishes = await Repo.GetAsync<Dish>(
                 filter: d => d.OwnerId == ownerId && d.IsActive == true,
                 includeProperties: "Category,File"
@@ -45,8 +47,9 @@ namespace RestX.WebApp.Services.Services
             return mapper.Map<DishViewModel>(dish);
         }
 
-        public async Task<int> UpsertDishAsync(DataTransferObjects.Dish request, Guid ownerId)
+        public async Task<int> UpsertDishAsync(DataTransferObjects.Dish request)
         {
+            var ownerId = UserHelper.GetCurrentOwnerId();
             Dish dish;
             bool isEdit = request.Id.HasValue && request.Id.Value > 0;
 

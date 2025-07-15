@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using RestX.WebApp.Filters;
+using RestX.WebApp.Helper;
+using RestX.WebApp.Hubs;
 using RestX.WebApp.Models;
 using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
 using RestX.WebApp.Services.Services;
-using RestX.WebApp.Hubs;
 using RestX.WebApp.Services.SignalRLab;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -117,20 +118,17 @@ builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("RestX"));
             });
 
-            var app = builder.Build();
+var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
 
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseHttpsRedirection(); // Chỉ redirect khi dev
-//}
+UserHelper.HttpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 
 app.UseStaticFiles();
 app.UseRouting();
@@ -139,6 +137,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.Use(async (context, next) =>

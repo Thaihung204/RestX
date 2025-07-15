@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
+using RestX.WebApp.Helper;
 
 namespace RestX.WebApp.Services.Services
 {
@@ -23,9 +24,9 @@ namespace RestX.WebApp.Services.Services
             this.mapper = mapper;
         }
 
-        public async Task<DishesManagementViewModel> GetDishesManagementViewModelAsync(Guid ownerId)
+        public async Task<DishesManagementViewModel> GetDishesAsync()
         {
-            var dishes = await dishService.GetDishesByOwnerIdAsync(ownerId);
+            var dishes = await dishService.GetDishesByOwnerIdAsync();
             var categories = await categoryService.GetCategoriesAsync();
 
             return new DishesManagementViewModel

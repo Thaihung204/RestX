@@ -6,7 +6,7 @@ namespace RestX.WebApp.Services.Interfaces
     public interface ICategoryService
     {
         Task<List<Category>> GetCategoriesAsync();
-        Task<int> CreateCategoryAsync(DataTransferObjects.Category request, Guid ownerId);
+        Task<int> CreateCategoryAsync(DataTransferObjects.Category request);
         Task<Category?> GetCategoryByNameAsync(string name);
     }
 }

@@ -8,6 +8,6 @@ namespace RestX.WebApp.Services.Interfaces
 {
     public interface IIngredientImportService
     {
-        Task<List<IngredientImport>> GetIngredientImportsByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default);
+        Task<List<IngredientImport>> GetIngredientImportsByOwnerIdAsync(CancellationToken cancellationToken = default);
     }
 }

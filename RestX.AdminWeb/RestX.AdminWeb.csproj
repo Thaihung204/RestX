@@ -23,4 +23,8 @@
     <Content Remove="wwwroot\css\site.css" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Model\ContentViewModels\" />
+  </ItemGroup>
+
 </Project>

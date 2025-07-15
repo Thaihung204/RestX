@@ -26,9 +26,9 @@ namespace RestX.WebApp.Services.Services
             this.ingredientImportService = ingredientImportService;
         }
 
-        public async Task<Dictionary<DateTime, decimal>> GetCostByDateAsync(Guid ownerId, CancellationToken cancellationToken = default)
+        public async Task<Dictionary<DateTime, decimal>> GetCostByDateAsync(CancellationToken cancellationToken = default)
         {
-            var imports = await ingredientImportService.GetIngredientImportsByOwnerIdAsync(ownerId, cancellationToken);
+            var imports = await ingredientImportService.GetIngredientImportsByOwnerIdAsync(cancellationToken);
             return imports
                 .Where(i => i.Time.HasValue)
                 .GroupBy(i => i.Time.Value.Date)
@@ -38,9 +38,9 @@ namespace RestX.WebApp.Services.Services
                 );
         }
 
-        public async Task<Dictionary<DateTime, decimal>> GetProfitByDateAsync(Guid ownerId, CancellationToken cancellationToken = default)
+        public async Task<Dictionary<DateTime, decimal>> GetProfitByDateAsync(CancellationToken cancellationToken = default)
         {
-            var orderDetails = await orderDetailService.GetOrderDetailsByOwnerIdAsync(ownerId, cancellationToken);
+            var orderDetails = await orderDetailService.GetOrderDetailsByOwnerIdAsync(cancellationToken);
             return orderDetails
                 .Where(od => od.Order != null && od.Order.Time.HasValue)
                 .GroupBy(od => od.Order.Time.Value.Date)
@@ -50,9 +50,9 @@ namespace RestX.WebApp.Services.Services
                 );
         }
 
-        public async Task<DashboardViewModel> GetDashboardViewModelAsync(Guid ownerId, CancellationToken cancellationToken = default)
+        public async Task<DashboardViewModel> GetDashboardViewModelAsync(CancellationToken cancellationToken = default)
         {
-            var profitByDate = await GetProfitByDateAsync(ownerId, cancellationToken);
+            var profitByDate = await GetProfitByDateAsync(cancellationToken);
 
             var dailyFinances = profitByDate.OrderBy(x => x.Key)
                 .Select(x => new DailyFinanceViewModel

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RestX.WebApp.Models;
 using RestX.WebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
+using RestX.WebApp.Helper;
 
 namespace RestX.WebApp.Services.Services
 {
@@ -16,8 +17,9 @@ namespace RestX.WebApp.Services.Services
         {
         }
 
-        public async Task<List<OrderDetail>> GetOrderDetailsByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default)
+        public async Task<List<OrderDetail>> GetOrderDetailsByOwnerIdAsync(CancellationToken cancellationToken = default)
         {
+            var ownerId = UserHelper.GetCurrentOwnerId();
             var orderDetails = await Repo.GetAsync<OrderDetail>(od => od.Order.OwnerId == ownerId, includeProperties: "Order");
             return orderDetails.ToList();
         }

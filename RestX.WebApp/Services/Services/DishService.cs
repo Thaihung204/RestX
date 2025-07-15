@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using RestX.WebApp.Helper;
 using RestX.WebApp.Models;
 using RestX.WebApp.Models.ViewModels;
+using RestX.WebApp.Services;
 using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Services.Services
@@ -18,8 +20,9 @@ namespace RestX.WebApp.Services.Services
             this.mapper = mapper;
         }
 
-        public async Task<List<Dish>> GetDishesByOwnerIdAsync(Guid ownerId)
+        public async Task<List<Dish>> GetDishesByOwnerIdAsync()
         {
+            var ownerId = UserHelper.GetCurrentOwnerId();
             var dishes = await Repo.GetAsync<Dish>(
                 filter: d => d.OwnerId == ownerId && d.IsActive == true,
                 includeProperties: "Category,File"
@@ -27,7 +30,7 @@ namespace RestX.WebApp.Services.Services
             return dishes.OrderBy(d => d.Name).ToList();
         }
 
-        public async Task<Dish?> GetDishByIdAsync(int id)
+        public async Task<Dish> GetDishByIdAsync(int id)
         {
             var dishes = await Repo.GetAsync<Dish>(
                 filter: d => d.Id == id,
@@ -36,7 +39,7 @@ namespace RestX.WebApp.Services.Services
             return dishes.FirstOrDefault();
         }
 
-        public async Task<DishViewModel?> GetDishViewModelByIdAsync(int id)
+        public async Task<DishViewModel> GetDishViewModelByIdAsync(int id)
         {
             var dish = await GetDishByIdAsync(id);
             if (dish == null) return null;
@@ -44,16 +47,15 @@ namespace RestX.WebApp.Services.Services
             return mapper.Map<DishViewModel>(dish);
         }
 
-        public async Task<int?> UpsertDishAsync(DishRequest request, Guid ownerId)
+        public async Task<int> UpsertDishAsync(DataTransferObjects.Dish request)
         {
+            var ownerId = UserHelper.GetCurrentOwnerId();
             Dish dish;
             bool isEdit = request.Id.HasValue && request.Id.Value > 0;
 
             if (isEdit)
             {
                 dish = await GetDishByIdAsync(request.Id.Value);
-                if (dish == null)
-                    return null;
                 mapper.Map(request, dish);
                 dish.OwnerId = ownerId;
             }

@@ -16,7 +16,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<MenuViewModel> GetMenuViewModelAsync(CancellationToken cancellationToken = default)
         {
-            var dishes = await _dishService.GetDishesByOwnerIdAsync(OwnerId);
+            var dishes = await _dishService.GetDishesByOwnerIdAsync();
             var categories = await _categoryService.GetCategoriesAsync();
 
             var model = new MenuViewModel

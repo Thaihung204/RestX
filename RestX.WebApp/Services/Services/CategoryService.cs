@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using RestX.WebApp.Helper;
 using RestX.WebApp.Models;
-using RestX.WebApp.Models.DTO;
 using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Services.Services
@@ -21,8 +21,9 @@ namespace RestX.WebApp.Services.Services
             return categories.ToList();
         }
 
-        public async Task<int> CreateCategoryAsync(CategoryDto request, Guid ownerId)
+        public async Task<int> CreateCategoryAsync(DataTransferObjects.Category request)
         {
+            var ownerId = UserHelper.GetCurrentOwnerId();
             var userName = (await ownerService.GetOwnerByIdAsync(ownerId))?.Name;
             var existingCategory = await GetCategoryByNameAsync(request.Name);
             if (existingCategory != null)

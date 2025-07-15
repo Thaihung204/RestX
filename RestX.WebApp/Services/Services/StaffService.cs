@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using RestX.WebApp.Helper;
 using RestX.WebApp.Models;
 using RestX.WebApp.Models.Home;
 using RestX.WebApp.Models.ViewModels;
@@ -13,10 +14,10 @@ namespace RestX.WebApp.Services.Services
         {
         }
 
-        public async Task<StaffProfileViewModel> GetStaffByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<StaffProfileViewModel> GetStaffByIdAsync(CancellationToken cancellationToken = default)
         {
+            var id = UserHelper.GetCurrentStaffId;
             var staff = await Repo.GetByIdAsync<Staff>(id);
-
             var staffViewModel = new StaffProfileViewModel
             {
                 OwnerId = staff.OwnerId,

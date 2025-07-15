@@ -8,7 +8,6 @@ namespace RestX.WebApp.Services.Interfaces
     {
         Task DeleteFileAsync(Guid fileId);
         Task<string> UploadDishImageAsync(IFormFile file, string ownerName, string dishName);
-        string GetDishImagePath(string ownerName, string dishName, string extension);
         Task<Models.File> CreateFileFromUploadAsync(string filePath, string fileName, Guid userId);
     }
 }

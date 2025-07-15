@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using RestX.WebApp.Models;
-using RestX.WebApp.Models.DTO;
 using RestX.WebApp.Models.ViewModels;
+using RestX.WebApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +17,8 @@ namespace RestX.WebApp.Services.Helper
             CreateMap<Dish, DishViewModel>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : ""))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.File != null ? src.File.Url : ""));
-            CreateMap<DishRequest, Dish>().ReverseMap();
-            CreateMap<Category, CategoryDto>().ReverseMap();
+            CreateMap<DataTransferObjects.Dish, Dish>().ReverseMap();
+            CreateMap<DataTransferObjects.Category, Category>().ReverseMap();
             CreateMap<CustomerViewModel, Customer>().ReverseMap();
         }
     }

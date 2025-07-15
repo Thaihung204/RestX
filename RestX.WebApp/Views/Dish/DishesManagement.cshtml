@@ -466,7 +466,7 @@
 
         async function loadCategories() {
             try {
-                const response = await fetch('/Owner/Categories');
+                const response = await fetch('/Category/Index');
                 const result = await response.json();
                 if (result.success) {
                     categories = result.data;
@@ -516,7 +516,7 @@
             }
 
             try {
-                const res = await fetch('/Owner/Categories/Create', {
+                const res = await fetch('/Category/Create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ Name: categoryName })
@@ -683,7 +683,7 @@
                 formData.append('ImageFile', imageFile);
             }
 
-            const url = '/Owner/Dishes/Upsert';
+            const url = '/Dish/Upsert';
 
             try {
                 const response = await fetch(url, {
@@ -709,14 +709,14 @@
 
         async function viewDish(id) {
             try {
-                const response = await fetch(`/Owner/Dishes/Detail/${id}`);
+                const response = await fetch(`/Dish/Detail/${id}`);
                 const result = await response.json();
 
                 if (result.success) {
                     const dish = result.data;
                     const html = `
                         <div class="text-center mb-3">
-                            <img src="${dish.imageUrl || '/images/no-image.png'}" alt="${dish.name}"
+                            <img src="${dish.imageUrl ? dish.imageUrl.startsWith('~') ? dish.imageUrl.replace('~', '') : dish.imageUrl : '/images/no-image.png'}" alt="${dish.name}"
                                  style="max-width:200px;max-height:200px;border-radius:8px;object-fit:cover;">
                         </div>
                         <table class="table table-bordered">
@@ -725,6 +725,8 @@
                             <tr><th>Price</th><td>${Number(dish.price).toLocaleString('vi-VN')} VNĐ</td></tr>
                             <tr><th>Status</th><td>${dish.isActive ? 'Active' : 'Inactive'}</td></tr>
                             <tr><th>Description</th><td>${dish.description || 'No description'}</td></tr>
+                            <tr><th>Created At</th><td>${dish.createdDate ? new Date(dish.createdDate).toLocaleString() : ''}</td></tr>
+                            <tr><th>Updated At</th><td>${dish.modifiedDate ? new Date(dish.modifiedDate).toLocaleString() : ''}</td></tr>
                         </table>
                     `;
                     Swal.fire({
@@ -745,7 +747,7 @@
 
         async function editDish(id) {
             try {
-                const response = await fetch(`/Owner/Dishes/Detail/${id}`);
+                const response = await fetch(`/Dish/Detail/${id}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -772,7 +774,7 @@
 
             if (confirm.isConfirmed) {
                 try {
-                    const response = await fetch(`/Owner/Dishes/Delete/${id}`, { method: 'POST' });
+                    const response = await fetch(`/Dish/Delete/${id}`, { method: 'POST' });
                     const result = await response.json();
 
                     if (result.success) {

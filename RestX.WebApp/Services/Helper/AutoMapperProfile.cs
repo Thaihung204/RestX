@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using RestX.WebApp.Models;
 using RestX.WebApp.Models.ViewModels;
+using RestX.WebApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +14,11 @@ namespace RestX.WebApp.Services.Helper
     {
         public AutoMapperProfile()
         {
-            CreateMap<Dish, DishViewModel>().ReverseMap();
-            CreateMap<CreateDishRequest, Dish>().ReverseMap();
-            CreateMap<EditDishRequest, Dish>().ReverseMap();
-            // CreateMap<Source, Destination>();
-            // CreateMap<Destination, Source>();
-            // CreateMap<Source, Destination>().ReverseMap();
+            CreateMap<Dish, DishViewModel>()
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : ""))
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.File != null ? src.File.Url : ""));
+            CreateMap<DataTransferObjects.Dish, Dish>().ReverseMap();
+            CreateMap<DataTransferObjects.Category, Category>().ReverseMap();
         }
     }
 }

@@ -1,16 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RestX.WebApp.Models;
-using RestX.WebApp.Models.DTO;
-using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
-using RestX.WebApp.Services.Services;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RestX.WebApp.Controllers
 {
@@ -102,10 +93,9 @@ namespace RestX.WebApp.Controllers
             }
         }
 
-        [HttpPost("Dishes/Upsert")]
-        [HttpPost("Dishes/Create")]   
-        [HttpPost("Dishes/Edit/{id:int?}")]   
-        public async Task<IActionResult> UpsertDish([FromForm] DishRequest request, int? id = null)
+        [HttpPost("Dishes/Upsert")] 
+        [HttpPost("Dishes/Upsert/{id:int?}")]
+        public async Task<IActionResult> UpsertDish([FromForm] Services.DataTransferObjects.Dish request, int? id = null)
         {
             try
             {
@@ -161,7 +151,7 @@ namespace RestX.WebApp.Controllers
         }
 
         [HttpPost("Categories/Create")]
-        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto request)
+        public async Task<IActionResult> CreateCategory([FromBody] Services.DataTransferObjects.Category request)
         {
             try
             {

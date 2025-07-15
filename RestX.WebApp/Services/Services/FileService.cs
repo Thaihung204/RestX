@@ -12,7 +12,7 @@ namespace RestX.WebApp.Services.Services
         private readonly IWebHostEnvironment environment;
         private readonly IOwnerService ownerService;
 
-        public FileService(IRepository repo, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment environment,IOwnerService ownerService) 
+        public FileService(IRepository repo, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment environment, IOwnerService ownerService) 
             : base(repo, httpContextAccessor) 
         {
             this.environment = environment;
@@ -62,7 +62,7 @@ namespace RestX.WebApp.Services.Services
             if (!allowedExtensions.Contains(extension))
                 throw new ArgumentException("Invalid file type. Only image files are allowed.");
 
-            var fileName = GetDishImagePath(ownerName, dishName, extension);
+            var fileName = CreateDishImagePath(ownerName, dishName, extension);
             var uploadsFolder = Path.Combine(environment.WebRootPath, "Uploads", "DishesImage");
             var filePath = Path.Combine(uploadsFolder, fileName);
 
@@ -79,8 +79,9 @@ namespace RestX.WebApp.Services.Services
             }
 
             return $"~/Uploads/DishesImage/{fileName}";
-        }       
-        public string GetDishImagePath(string ownerName, string dishName, string extension)
+        }
+        #region private
+        private string CreateDishImagePath(string ownerName, string dishName, string extension)
         {
             var sanitizedOwnerName = SanitizeFileName(ownerName);
             var sanitizedDishName = SanitizeFileName(dishName);
@@ -88,6 +89,17 @@ namespace RestX.WebApp.Services.Services
             return $"Dish-{sanitizedOwnerName}-{sanitizedDishName}{extension}";
         }
 
+        private string SanitizeFileName(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return "Unknown";
+
+            var invalidChars = Path.GetInvalidFileNameChars();
+            var sanitized = new string(fileName.Where(c => !invalidChars.Contains(c)).ToArray());
+            return sanitized.Replace(" ", "_").Replace("-", "_");
+        }
+
+        #endregion
         public async Task<Models.File> CreateFileFromUploadAsync(string filePath, string fileName, Guid ownerId)
         {
             var ownerName = (await ownerService.GetOwnerByIdAsync(ownerId)).Name;
@@ -99,18 +111,7 @@ namespace RestX.WebApp.Services.Services
             };
 
             await Repo.CreateAsync(file, ownerName);
-            await Repo.SaveAsync();
             return file;
-        }
-
-        private string SanitizeFileName(string fileName)
-        {
-            if (string.IsNullOrEmpty(fileName))
-                return "Unknown";
-
-            var invalidChars = Path.GetInvalidFileNameChars();
-            var sanitized = new string(fileName.Where(c => !invalidChars.Contains(c)).ToArray());
-            return sanitized.Replace(" ", "_").Replace("-", "_");
         }
     }
 }

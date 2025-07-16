@@ -1,4 +1,5 @@
-﻿using RestX.WebApp.Models.ViewModels;
+﻿using RestX.WebApp.Helper;
+using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Services.Services
@@ -16,12 +17,12 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<MenuViewModel> GetMenuViewModelAsync(CancellationToken cancellationToken = default)
         {
-            var dishes = await _dishService.GetAllDishesByOwnerIdAsync();
+            var dishes = await _dishService.GetDishesByOwnerIdAsync();
             var categories = await _categoryService.GetCategoriesAsync();
 
             var model = new MenuViewModel
             {
-                OwnerId = OwnerId,
+                OwnerId = UserHelper.GetCurrentOwnerId(),
                 TableId = TableId,
                 Categories = categories
                     .OrderBy(c => c.Name)

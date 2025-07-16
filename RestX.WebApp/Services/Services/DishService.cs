@@ -22,19 +22,9 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<List<Dish>> GetDishesByOwnerIdAsync()
         {
-            var ownerId = OwnerId; // Use BaseService OwnerId instead of UserHelper
+            var ownerId = UserHelper.GetCurrentOwnerId();
             var dishes = await Repo.GetAsync<Dish>(
                 filter: d => d.OwnerId == ownerId && d.IsActive == true,
-                includeProperties: "Category,File"
-            );
-            return dishes.OrderBy(d => d.Name).ToList();
-        }
-
-        public async Task<List<Dish>> GetAllDishesByOwnerIdAsync()
-        {
-            var ownerId = OwnerId;
-            var dishes = await Repo.GetAsync<Dish>(
-                filter: d => d.OwnerId == ownerId,
                 includeProperties: "Category,File"
             );
             return dishes.OrderBy(d => d.Name).ToList();
@@ -59,7 +49,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<int> UpsertDishAsync(DataTransferObjects.Dish request)
         {
-            var ownerId = OwnerId;
+            var ownerId = UserHelper.GetCurrentOwnerId();
             Dish dish;
             bool isEdit = request.Id.HasValue && request.Id.Value > 0;
 
@@ -115,7 +105,7 @@ namespace RestX.WebApp.Services.Services
         {
             try
             {
-                var ownerId = OwnerId;
+                var ownerId = UserHelper.GetCurrentOwnerId();
                 Console.WriteLine($"DishService: OwnerId={ownerId}, DishId={dishId}, IsActive={isActive}");
                 
                 var dish = await GetDishByIdAsync(dishId);

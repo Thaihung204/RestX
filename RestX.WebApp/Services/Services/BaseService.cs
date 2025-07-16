@@ -22,6 +22,7 @@ namespace RestX.WebApp.Services.Services
         }
 
         protected Guid OwnerId => RestaurantContext.OwnerId;
+        protected Guid? StaffId => RestaurantContext.StaffId;
         protected int TableId => RestaurantContext.TableId;
 
         public BaseService(IRepository repo)

@@ -12,9 +12,16 @@
             Customers Management
         </h1>
         <div class="owner-header-actions">
+            <div class="owner-search-container ms-2">
+                <select id="searchField" class="owner-form-control" style="width: 140px;">
+                    <option value="name">Name</option>
+                    <option value="phone">Phone</option>
+                    <option value="point">Point</option>
+                </select>
+            </div>
             <div class="owner-search-container">
                 <i class="bi bi-search owner-search-icon"></i>
-                <input type="text" class="owner-search-input" id="searchInput" placeholder="Search customers...">
+                <input type="text" class="owner-search-input" id="searchInput" placeholder="Search...">
             </div>
             <button class="owner-btn owner-btn-primary" id="btnAddCustomer" data-bs-toggle="modal" data-bs-target="#customerModal">
                 <i class="bi bi-plus-lg"></i>
@@ -162,6 +169,7 @@
             bindCustomerFormEvents();
             initializeCustomerData();
             document.getElementById('searchInput').addEventListener('input', searchCustomers);
+            document.getElementById('searchField').addEventListener('change', searchCustomers);
         });
 
         function initializeCustomerData() {
@@ -170,14 +178,22 @@
         }
 
         function searchCustomers() {
-            const keyword = this.value.trim().toLowerCase();
+            const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+            const field = document.getElementById('searchField').value;
             const rows = document.querySelectorAll('#customersTable tbody tr.customer-row');
             let found = 0;
 
             rows.forEach(row => {
-                const name = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
-                const phone = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
-                if (name.includes(keyword) || phone.includes(keyword)) {
+                let value = '';
+                if (field === 'name') {
+                    value = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
+                } else if (field === 'phone') {
+                    value = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+                } else if (field === 'point') {
+                    value = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
+                }
+
+                if (value.includes(keyword)) {
                     row.style.display = '';
                     found++;
                 } else {
@@ -240,7 +256,7 @@
             formData.append('IsActive', isActive);
 
             try {
-                const response = await fetch('/Owner/Customers/Upsert', {
+                const response = await fetch('/Customer/Upsert', {
                     method: 'POST',
                     body: formData
                 });
@@ -257,7 +273,7 @@
 
         async function viewCustomer(id) {
             try {
-                const response = await fetch(`/Owner/Customers/Detail/${id}`);
+                const response = await fetch(`/Customer/Detail/${id}`);
                 const result = await response.json();
                 if (result.success) {
                     const customer = result.data;
@@ -288,7 +304,7 @@
 
         async function editCustomer(id) {
             try {
-                const response = await fetch(`/Owner/Customers/Detail/${id}`);
+                const response = await fetch(`/Customer/Detail/${id}`);
                 const result = await response.json();
                 if (result.success) {
                     showCustomerModal('Edit Customer', result.data);
@@ -313,7 +329,7 @@
 
             if (confirm.isConfirmed) {
                 try {
-                    const response = await fetch(`/Owner/Customers/Delete/${id}`, { method: 'POST' });
+                    const response = await fetch(`/Customer/Delete/${id}`, { method: 'DELETE' });
                     const result = await response.json();
                     if (result.success) {
                         Swal.fire('Deleted!', 'Customer has been deleted.', 'success')

@@ -774,7 +774,7 @@
 
             if (confirm.isConfirmed) {
                 try {
-                    const response = await fetch(`/Dish/Delete/${id}`, { method: 'POST' });
+                    const response = await fetch(`/Dish/Delete/${id}`, { method: 'DELETE' });
                     const result = await response.json();
 
                     if (result.success) {

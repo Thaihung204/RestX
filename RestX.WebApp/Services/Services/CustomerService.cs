@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using RestX.WebApp.Helper;
 using RestX.WebApp.Models;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
@@ -15,8 +16,9 @@ namespace RestX.WebApp.Services.Services
             this.mapper = mapper;
         }
 
-        public async Task<List<CustomerViewModel>> GetCustomersByOwnerIdAsync(Guid ownerId)
+        public async Task<List<CustomerViewModel>> GetCustomersByOwnerIdAsync()
         {
+            var ownerId = UserHelper.GetCurrentOwnerId();
             var customers = await Repo.GetAsync<Customer>(
                 filter: c => c.OwnerId == ownerId,
                 includeProperties: ""
@@ -30,8 +32,9 @@ namespace RestX.WebApp.Services.Services
             return customer == null ? null : mapper.Map<CustomerViewModel>(customer);
         }
 
-        public async Task<Guid?> UpsertCustomerAsync(CustomerViewModel model, Guid ownerId)
+        public async Task<Guid?> UpsertCustomerAsync(CustomerViewModel model)
         {
+            var ownerId = UserHelper.GetCurrentOwnerId();
             Customer? customer = null;
             if (model.Id != Guid.Empty)
             {

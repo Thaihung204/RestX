@@ -8,6 +8,6 @@ namespace RestX.WebApp.Services.Interfaces
 {
     public interface IOrderDetailService
     {
-        Task<List<OrderDetail>> GetOrderDetailsByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default);
+        Task<List<OrderDetail>> GetOrderDetailsByOwnerIdAsync(CancellationToken cancellationToken = default);
     }
 }

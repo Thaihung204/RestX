@@ -19,6 +19,7 @@ namespace RestX.WebApp.Services.Helper
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.File != null ? src.File.Url : ""));
             CreateMap<DataTransferObjects.Dish, Dish>().ReverseMap();
             CreateMap<DataTransferObjects.Category, Category>().ReverseMap();
+            CreateMap<CustomerViewModel, Customer>().ReverseMap();
         }
     }
 }

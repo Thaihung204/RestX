@@ -2,6 +2,7 @@
 using RestX.WebApp.Models;
 using RestX.WebApp.Services.Interfaces;
 using System.Diagnostics;
+using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Helper;
 
 namespace RestX.WebApp.Controllers
@@ -16,11 +17,11 @@ namespace RestX.WebApp.Controllers
         {
             this.dashboardService = dashboardService;
         }
-        
+
         public async Task<IActionResult> DashBoard(CancellationToken cancellationToken)
         {
             try
-            { 
+            {
                 var model = await dashboardService.GetDashboardViewModelAsync(cancellationToken);
                 return View(model);
             }

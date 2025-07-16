@@ -1,4 +1,4 @@
-using RestX.WebApp.Models;
+using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
 using System;
 using System.IO;
@@ -47,7 +47,6 @@ namespace RestX.WebApp.Services.Services
                 }
 
                 Repo.Delete(file);
-                await Repo.SaveAsync();
             }
         }
 

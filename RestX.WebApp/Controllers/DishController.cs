@@ -60,7 +60,7 @@ namespace RestX.WebApp.Controllers
             }
         }
 
-        [HttpPost("Delete/{id:int}")]
+        [HttpDelete("Delete/{id:int}")]
         public async Task<IActionResult> DeleteDish(int id)
         {
             try

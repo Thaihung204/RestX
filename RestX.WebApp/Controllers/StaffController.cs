@@ -15,12 +15,14 @@ namespace RestX.WebApp.Controllers
         public IMenuService menuService { get; }
         private readonly IStaffService staffService;
         private readonly ITableService tableService;
+        private readonly IDishService dishService;
 
-        public StaffController(IMenuService menuService, IStaffService staffService, ITableService tableService, IExceptionHandler exceptionHandler) : base(exceptionHandler)
+        public StaffController(IMenuService menuService, IStaffService staffService, ITableService tableService, IDishService dishService, IExceptionHandler exceptionHandler) : base(exceptionHandler)
         {
             this.menuService = menuService;
             this.staffService = staffService;
             this.tableService = tableService;
+            this.dishService = dishService;
         }
 
         [HttpGet]
@@ -44,6 +46,7 @@ namespace RestX.WebApp.Controllers
         {
             try
             {
+                staffService.GetCurrentStaff(cancellationToken).Wait();
                 var model = await menuService.GetMenuViewModelAsync(cancellationToken);
                 return View(model);
             }
@@ -60,7 +63,7 @@ namespace RestX.WebApp.Controllers
         {
             try
             {
-                var staff = await staffService.GetStaffByIdAsync(cancellationToken);
+                var staff = await staffService.GetCurrentStaff(cancellationToken);
                 var model = await tableService.GetAllTablesByOwnerIdAsync(staff.OwnerId, cancellationToken);
                 return View(model);
             }
@@ -77,7 +80,7 @@ namespace RestX.WebApp.Controllers
         {
             try
             {
-                var staff = await staffService.GetStaffByIdAsync(cancellationToken);
+                var staff = await staffService.GetStaffProfileAsync(cancellationToken);
 
                 if (staff == null)
                 {
@@ -93,10 +96,45 @@ namespace RestX.WebApp.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("Staff/UpdateDishAvailability")]
+        public async Task<IActionResult> UpdateDishAvailability([FromBody] UpdateDishAvailabilityRequest request)
+        {
+            try
+            {
+                Console.WriteLine($"Received request: DishId={request.DishId}, IsActive={request.IsActive}");
+                
+                var success = await dishService.UpdateDishAvailabilityAsync(request.DishId, request.IsActive);
+                
+                Console.WriteLine($"Update result: {success}");
+                
+                if (success)
+                {
+                    return Json(new { success = true, message = "Dish availability updated successfully." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Failed to update dish availability. Dish not found or access denied." });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception in UpdateDishAvailability: {ex.Message}");
+                this.exceptionHandler.RaiseException(ex, $"An error occurred while updating dish availability for DishId: {request.DishId}");
+                return Json(new { success = false, message = "An unexpected error occurred. Please try again later." });
+            }
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+    }
+
+    public class UpdateDishAvailabilityRequest
+    {
+        public int DishId { get; set; }
+        public bool IsActive { get; set; }
     }
 }

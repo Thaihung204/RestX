@@ -16,7 +16,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<MenuViewModel> GetMenuViewModelAsync(CancellationToken cancellationToken = default)
         {
-            var dishes = await _dishService.GetDishesByOwnerIdAsync();
+            var dishes = await _dishService.GetAllDishesByOwnerIdAsync();
             var categories = await _categoryService.GetCategoriesAsync();
 
             var model = new MenuViewModel
@@ -38,7 +38,8 @@ namespace RestX.WebApp.Services.Services
                                 Name = dish.Name,
                                 Description = dish.Description,
                                 Price = dish.Price,
-                                ImageUrl = dish.File?.Url ?? "/images/no-image.png"
+                                ImageUrl = dish.File?.Url ?? "/images/no-image.png",
+                                IsActive = dish.IsActive // Added IsActive property
                             }).ToList()
                     }).ToList()
             };

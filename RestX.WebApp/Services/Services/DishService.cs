@@ -22,9 +22,19 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<List<Dish>> GetDishesByOwnerIdAsync()
         {
-            var ownerId = UserHelper.GetCurrentOwnerId();
+            var ownerId = OwnerId; // Use BaseService OwnerId instead of UserHelper
             var dishes = await Repo.GetAsync<Dish>(
                 filter: d => d.OwnerId == ownerId && d.IsActive == true,
+                includeProperties: "Category,File"
+            );
+            return dishes.OrderBy(d => d.Name).ToList();
+        }
+
+        public async Task<List<Dish>> GetAllDishesByOwnerIdAsync()
+        {
+            var ownerId = OwnerId;
+            var dishes = await Repo.GetAsync<Dish>(
+                filter: d => d.OwnerId == ownerId,
                 includeProperties: "Category,File"
             );
             return dishes.OrderBy(d => d.Name).ToList();
@@ -49,7 +59,7 @@ namespace RestX.WebApp.Services.Services
 
         public async Task<int> UpsertDishAsync(DataTransferObjects.Dish request)
         {
-            var ownerId = UserHelper.GetCurrentOwnerId();
+            var ownerId = OwnerId;
             Dish dish;
             bool isEdit = request.Id.HasValue && request.Id.Value > 0;
 
@@ -99,6 +109,47 @@ namespace RestX.WebApp.Services.Services
 
             Repo.Delete<Dish>(id);
             await Repo.SaveAsync();
+        }
+
+        public async Task<bool> UpdateDishAvailabilityAsync(int dishId, bool isActive)
+        {
+            try
+            {
+                var ownerId = OwnerId;
+                Console.WriteLine($"DishService: OwnerId={ownerId}, DishId={dishId}, IsActive={isActive}");
+                
+                var dish = await GetDishByIdAsync(dishId);
+                
+                if (dish == null)
+                {
+                    Console.WriteLine($"DishService: Dish not found for ID {dishId}");
+                    return false;
+                }
+                
+                Console.WriteLine($"DishService: Found dish '{dish.Name}', OwnerId={dish.OwnerId}");
+                
+                if (dish.OwnerId != ownerId)
+                {
+                    Console.WriteLine($"DishService: Owner mismatch. Dish OwnerId={dish.OwnerId}, Current OwnerId={ownerId}");
+                    return false;
+                }
+
+                dish.IsActive = isActive;
+                var ownerName = (await ownerService.GetOwnerByIdAsync(ownerId))?.Name;
+                Console.WriteLine($"DishService: Updating dish with owner name: {ownerName}");
+                
+                Repo.Update(dish, ownerName);
+                await Repo.SaveAsync();
+                
+                Console.WriteLine($"DishService: Successfully updated dish availability");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"DishService Exception: {ex.Message}");
+                Console.WriteLine($"DishService Stack Trace: {ex.StackTrace}");
+                return false;
+            }
         }
     }
 }

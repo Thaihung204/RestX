@@ -46,7 +46,14 @@ namespace RestX.WebApp.Controllers
                 if (account.StaffId.HasValue)
                 {
                     claims.Add(new Claim("StaffId", account.StaffId.Value.ToString()));
-                } else if (account.OwnerId.HasValue)
+
+                    // Add OwnerId claim for Staff
+                    if (account.Staff != null && account.Staff.OwnerId.HasValue)
+                    {
+                        claims.Add(new Claim("OwnerId", account.Staff.OwnerId.Value.ToString()));
+                    }
+                }
+                else if (account.OwnerId.HasValue)
                 {
                     claims.Add(new Claim("OwnerId", account.OwnerId.Value.ToString()));
                 }

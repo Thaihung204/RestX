@@ -3,24 +3,38 @@ using RestX.WebApp.Helper;
 using RestX.WebApp.Models;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
+using RestX.WebApp.Services.Services;
 using System.Diagnostics;
 
 namespace RestX.WebApp.Controllers
 {
     [Route("Table")]
-    public class TableController : Controller
+    public class TableController : BaseController
     {
         private readonly ITableService tableService;
-        private readonly IExceptionHandler exceptionHandler;
-
-        public TableController(
-            ITableService tableService,
-            IExceptionHandler exceptionHandler)
+        private readonly IHttpContextAccessor httpContextAccessor;
+        public TableController(ITableService tableService,
+                               IHttpContextAccessor httpContextAccessor,
+                               IExceptionHandler exceptionHandler) : base(exceptionHandler)
         {
             this.tableService = tableService;
+            this.httpContextAccessor = httpContextAccessor;
             this.exceptionHandler = exceptionHandler;
         }
 
+        [HttpGet("createqr")]
+        public async Task<IActionResult> TableQrCode(CancellationToken cancellationToken)
+        {
+            try
+            {
+            var user = Helper.UserHelper.HttpContextAccessor.HttpContext?.User;
+            var ownerIdClaim = user?.FindFirst("OwnerId");
+            var ownerIdString = ownerIdClaim.ToString();
+            ownerIdString = ownerIdString.Substring(ownerIdString.IndexOf(": ") + 1);
+            var ownerId = Guid.Parse(ownerIdString);
+            var model = await tableService.GetTablesByOwnerIdAsync(ownerId);
+            return View(model);
+            }
         [HttpGet("Index")]
         public async Task<IActionResult> Index()
         {
@@ -46,6 +60,7 @@ namespace RestX.WebApp.Controllers
             return Json(new { success = true, data = table });
         }
 
+
         [HttpPost("Upsert")]
         public async Task<IActionResult> UpsertTable([FromForm] TableViewModel model)
         {
@@ -54,7 +69,7 @@ namespace RestX.WebApp.Controllers
                 var resultId = await tableService.UpsertTableAsync(model);
                 if (resultId == null)
                     return Json(new { success = false, message = "Operation failed." });
-
+                
                 string operation = model.Id != 0 ? "updated" : "created";
                 return Json(new { success = true, message = $"Table {operation} successfully!", tableId = resultId });
             }

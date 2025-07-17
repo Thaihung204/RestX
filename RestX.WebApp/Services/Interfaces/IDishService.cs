@@ -13,5 +13,6 @@ namespace RestX.WebApp.Services.Interfaces
         Task<DishViewModel> GetDishViewModelByIdAsync(int id);
         Task<int> UpsertDishAsync(DataTransferObjects.Dish request);
         Task DeleteDishAsync(int id);
+        Task<bool> UpdateDishAvailabilityAsync(int dishId, bool isActive); 
     }
 }

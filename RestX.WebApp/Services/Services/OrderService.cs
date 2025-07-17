@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using RestX.WebApp.Models;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
+using RestX.WebApp.Helper;
 
 namespace RestX.WebApp.Services.Services
 {
@@ -47,10 +48,10 @@ namespace RestX.WebApp.Services.Services
             UniversalValue<Guid[]> temp2 = await CreatedOrderDetails(model);
             if (!temp2.ErrorMessage.IsNullOrEmpty())
             {
-                return UniversalValue<Guid>.Success(temp, "Tạo Order thành công, Tạo Order Detail thất bại");
+                return UniversalValue<Guid>.Success(temp, "Có lỗi xảy ra! Vui lòng liên hệ nhân viên!");
             }
 
-            return UniversalValue<Guid>.Success(temp, "Tạo Order thành công, Tạo Order Detail thành công");
+            return UniversalValue<Guid>.Success(temp, "Đặt đơn hàng thành công!\n Xin cảm ơn quý khách!");
         }
 
         public async Task<UniversalValue<Guid[]>> CreatedOrderDetails(CartViewModel model)
@@ -116,6 +117,43 @@ namespace RestX.WebApp.Services.Services
 
 
             return UniversalValue<Guid>.Success(temp, null);
+        }
+
+        public async Task<CustomerRequestViewModel> GetCustomerRequestsByStaffAsync(CancellationToken cancellationToken = default)
+        {
+            var ownerId = UserHelper.GetCurrentOwnerId();
+            
+            var orders = await Repo.GetAsync<Order>(
+                filter: o => o.OwnerId == ownerId && o.IsActive == true,
+                orderBy: q => q.OrderByDescending(o => o.Time),
+                includeProperties: "Customer,Table,OrderStatus,OrderDetails,OrderDetails.Dish"
+            );
+
+            var customerRequestViewModel = new CustomerRequestViewModel
+            {
+                Orders = orders.Select(order => new OrderRequestViewModel
+                {
+                    Id = order.Id,
+                    CustomerName = order.Customer?.Name ?? "Unknown",
+                    CustomerPhone = order.Customer?.Phone ?? "N/A",
+                    TableNumber = order.Table?.TableNumber ?? 0,
+                    OrderStatus = order.OrderStatus?.Name ?? "Unknown",
+                    OrderTime = order.Time,
+                    IsActive = order.IsActive ?? false,
+                    OrderDetails = order.OrderDetails?.Where(od => od.IsActive == true).Select(od => new OrderDetailRequestViewModel
+                    {
+                        Id = od.Id,
+                        DishId = od.DishId,
+                        DishName = od.Dish?.Name ?? "Unknown",
+                        Quantity = od.Quantity,
+                        Price = od.Price,
+                        IsActive = od.IsActive ?? false
+                    }).ToList() ?? new List<OrderDetailRequestViewModel>(),
+                    TotalAmount = order.OrderDetails?.Where(od => od.IsActive == true).Sum(od => od.Quantity * od.Price) ?? 0
+                }).ToList()
+            };
+
+            return customerRequestViewModel;
         }
     }
 }

@@ -6,9 +6,50 @@
     var isLoggedIn = ViewBag.IsLoggedIn as bool? ?? false;
     var customerName = ViewBag.CustomerName as string;
     var customerPhone = ViewBag.CustomerPhone as string;
+    var message = ViewBag.Message as string;
 }
 
 <link rel="stylesheet" href="~/css/index.css" />
+<style>
+    .phone-points.logged-in {
+        background-color: #e8f5e8;
+        border: 1px solid #4caf50;
+    }
+
+    .phone-display {
+        font-weight: bold;
+        color: #2e7d32;
+        margin-left: 10px;
+    }
+
+    .phone-points {
+        display: block;
+        transition: background-color 0.2s;
+    }
+
+        .phone-points:hover:not(.logged-in) {
+            background-color: #f0f8ff;
+        }
+
+    .floating-btn p {
+        background: white;
+        font-size: 15px;
+        color: #ff9800;
+        position: absolute;
+        top: 20%;
+        left: 0;
+        transform: translateX(-105%);
+        background-color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        z-index: 10;
+        max-width: 60vw;
+        width: max-content;
+        border: solid 1px #ff9800;
+        text-align: end;
+        
+    }
+</style>
 
 <div class="container-mobile">
     <!-- Header -->
@@ -84,15 +125,17 @@
             <span class="icon">🧑‍💼</span>
             Ask for service
         </div>
-        <div class="quick-action">
-            <span class="icon">⭐</span>
-            Give feedback
-        </div>
+        <a asp-controller="Ai" asp-action="Index" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@Model.TableId" style="text-decoration: none;">
+            <div class="quick-action">
+                <span class="icon">⭐</span>
+                AI Suggest Dish
+            </div>
+        </a>
     </div>
 
     <!-- Order menu -->
     <a asp-controller="Menu" asp-action="Index" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@Model.TableId"
-       class="order-menu" style="cursor:pointer;">
+       class="order-menu" style="cursor:pointer; text-decoration: none;">
         <span class="icon">🍽️</span>
         View Menu - Order food
         <span class="arrow">&gt;</span>
@@ -100,6 +143,7 @@
 
     <!-- Floating button -->
     <div class="floating-btn">
+        <p style="display: none;">@message</p>
         <span>🔔</span>
     </div>
 
@@ -108,24 +152,11 @@
     </div>
 </div>
 
-<style>
-    .phone-points.logged-in {
-        background-color: #e8f5e8;
-        border: 1px solid #4caf50;
+<script>
+    const floatingBtn = document.getElementsByClassName("floating-btn")[0];
+    const messages = floatingBtn.querySelector("p");
+    if (messages.textContent != "") {
+        messages.style.display = "block";
     }
-
-    .phone-display {
-        font-weight: bold;
-        color: #2e7d32;
-        margin-left: 10px;
-    }
-
-    .phone-points {
-        display: block;
-        transition: background-color 0.2s;
-    }
-
-        .phone-points:hover:not(.logged-in) {
-            background-color: #f0f8ff;
-        }
-</style>
+        
+</script>

@@ -10,6 +10,8 @@ services:
       - ASPNETCORE_URLS=http://+:8081
     depends_on:
       - sqlserver
+    volumes:
+      - ./RestX.WebApp/wwwroot/Uploads:/app/wwwroot/Uploads
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -31,10 +33,10 @@ services:
       - "80:80"
     networks:
       - restx-net
+
 networks:
   restx-net:
     driver: bridge
+
 volumes:
   sql_data:
-
-      

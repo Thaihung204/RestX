@@ -1,4 +1,5 @@
-﻿using RestX.WebApp.Models.ViewModels;
+﻿using RestX.WebApp.Helper;
+using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
 
 namespace RestX.WebApp.Services.Services
@@ -21,7 +22,7 @@ namespace RestX.WebApp.Services.Services
 
             var model = new MenuViewModel
             {
-                OwnerId = OwnerId,
+                OwnerId = UserHelper.GetCurrentOwnerId(),
                 TableId = TableId,
                 Categories = categories
                     .OrderBy(c => c.Name)
@@ -38,7 +39,8 @@ namespace RestX.WebApp.Services.Services
                                 Name = dish.Name,
                                 Description = dish.Description,
                                 Price = dish.Price,
-                                ImageUrl = dish.File?.Url ?? "/images/no-image.png"
+                                ImageUrl = dish.File?.Url ?? "/images/no-image.png",
+                                IsActive = dish.IsActive // Added IsActive property
                             }).ToList()
                     }).ToList()
             };

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using QRCoder;
 using RestX.WebApp.Filters;
 using RestX.WebApp.Helper;
 using RestX.WebApp.Hubs;
@@ -48,6 +49,9 @@ builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IDishManagementService, DishManagementService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddSingleton<QRCodeGenerator>();
+builder.Services.AddScoped<IAiService, AiService>();
+builder.Services.AddHttpClient<IAiService, AiService>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>

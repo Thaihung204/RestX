@@ -5,6 +5,9 @@ using RestX.WebApp.Models;
 using RestX.WebApp.Services.Interfaces;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace RestX.WebApp.Controllers
 {
@@ -29,8 +32,21 @@ namespace RestX.WebApp.Controllers
         [Route("Home/Index/{ownerId:guid}/{tableId:int}")]
         public async Task<IActionResult> Index(Guid ownerId, int tableId, CancellationToken cancellationToken)
         {
+            var message = TempData["Message"];
+            if (message != null)
+                ViewBag.Message = message.ToString();
+
+            var claims = new List<Claim>();
             try
             {
+                claims.Add(new Claim("OwnerId", ownerId.ToString()));
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+
                 // Lấy thông tin trang chủ không cần kiểm tra session
                 var viewModel = await _homeService.GetHomeViewsAsync(cancellationToken);
                 if (viewModel == null)

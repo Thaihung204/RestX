@@ -100,5 +100,46 @@ namespace RestX.WebApp.Services.Services
             Repo.Delete<Dish>(id);
             await Repo.SaveAsync();
         }
+
+        public async Task<bool> UpdateDishAvailabilityAsync(int dishId, bool isActive)
+        {
+            try
+            {
+                var ownerId = UserHelper.GetCurrentOwnerId();
+                Console.WriteLine($"DishService: OwnerId={ownerId}, DishId={dishId}, IsActive={isActive}");
+                
+                var dish = await GetDishByIdAsync(dishId);
+                
+                if (dish == null)
+                {
+                    Console.WriteLine($"DishService: Dish not found for ID {dishId}");
+                    return false;
+                }
+                
+                Console.WriteLine($"DishService: Found dish '{dish.Name}', OwnerId={dish.OwnerId}");
+                
+                if (dish.OwnerId != ownerId)
+                {
+                    Console.WriteLine($"DishService: Owner mismatch. Dish OwnerId={dish.OwnerId}, Current OwnerId={ownerId}");
+                    return false;
+                }
+
+                dish.IsActive = isActive;
+                var ownerName = (await ownerService.GetOwnerByIdAsync(ownerId))?.Name;
+                Console.WriteLine($"DishService: Updating dish with owner name: {ownerName}");
+                
+                Repo.Update(dish, ownerName);
+                await Repo.SaveAsync();
+                
+                Console.WriteLine($"DishService: Successfully updated dish availability");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"DishService Exception: {ex.Message}");
+                Console.WriteLine($"DishService Stack Trace: {ex.StackTrace}");
+                return false;
+            }
+        }
     }
 }

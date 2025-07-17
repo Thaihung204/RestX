@@ -1,4 +1,5 @@
-﻿using RestX.WebApp.Models;
+﻿using RestX.WebApp.Helper;
+using RestX.WebApp.Models;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
 
@@ -19,6 +20,25 @@ namespace RestX.WebApp.Services.Services
         {
             var tables = await Repo.GetAsync<Table>(
                 filter: t => t.OwnerId == guid,
+                orderBy: q => q.OrderBy(t => t.TableNumber),
+                includeProperties: "TableStatus"
+            );
+
+            var tableViewModels = tables.Select(t => new TableStatusViewModel
+            {
+                Id = t.Id,
+                TableNumber = t.TableNumber,
+                TableStatus = t.TableStatus,
+            });
+            return tableViewModels.ToList();
+        }
+
+        public async Task<List<TableStatusViewModel>> GetAllTablesByCurrentStaff(CancellationToken cancellationToken = default)
+        {
+            var ownerId = UserHelper.GetCurrentOwnerId();
+
+            var tables = await Repo.GetAsync<Table>(
+                filter: t => t.OwnerId == ownerId,
                 orderBy: q => q.OrderBy(t => t.TableNumber),
                 includeProperties: "TableStatus"
             );

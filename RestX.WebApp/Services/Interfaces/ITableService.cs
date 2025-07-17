@@ -11,6 +11,7 @@ namespace RestX.WebApp.Services.Interfaces
     {
         public Task<Table> GetTableByIdAsync(int id, CancellationToken cancellationToken = default);
         public Task<List<TableStatusViewModel>> GetAllTablesByOwnerIdAsync(Guid? guid, CancellationToken cancellationToken = default);
+        public Task<List<TableStatusViewModel>> GetAllTablesByCurrentStaff(CancellationToken cancellationToken = default);
         public Task<TableStatusViewModel> UpdateTableStatusAsync(int tableId, int newStatusId);
         public Task<List<Table>> GetTablesByOwnerIdAsync(Guid guid);
     }

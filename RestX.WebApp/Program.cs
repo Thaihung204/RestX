@@ -50,6 +50,8 @@ builder.Services.AddScoped<IDishManagementService, DishManagementService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddSingleton<QRCodeGenerator>();
+builder.Services.AddScoped<IAiService, AiService>();
+builder.Services.AddHttpClient<IAiService, AiService>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddDbContext<RestXRestaurantManagementContext>(options =>

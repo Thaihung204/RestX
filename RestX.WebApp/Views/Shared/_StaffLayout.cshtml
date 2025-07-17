@@ -6,6 +6,8 @@
     <title>@ViewData["Title"] - Staff</title>
     <link rel="stylesheet" href="~/css/staff.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="~/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/staff-page-manager.js" asp-append-version="true"></script>
 </head>
 <body>
     <main id="main-content">
@@ -86,6 +88,11 @@
                             history.pushState({ path: url }, '', url);
                         }
                         setActiveLink(url);
+                        
+                        // Reinitialize page-specific JavaScript
+                        if (window.StaffPageManager) {
+                            window.StaffPageManager.reinitializePage(url);
+                        }
                     } else {
                         window.location.href = url; // fallback
                     }
@@ -138,6 +145,11 @@
             // Set initial state
             history.replaceState({ path: window.location.pathname }, '', window.location.pathname);
             setActiveLink(window.location.pathname);
+            
+            // Initialize current page
+            if (window.StaffPageManager) {
+                window.StaffPageManager.reinitializePage(window.location.pathname);
+            }
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

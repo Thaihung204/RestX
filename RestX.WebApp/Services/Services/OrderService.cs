@@ -48,10 +48,10 @@ namespace RestX.WebApp.Services.Services
             UniversalValue<Guid[]> temp2 = await CreatedOrderDetails(model);
             if (!temp2.ErrorMessage.IsNullOrEmpty())
             {
-                return UniversalValue<Guid>.Success(temp, "Tạo Order thành công, Tạo Order Detail thất bại");
+                return UniversalValue<Guid>.Success(temp, "Có lỗi xảy ra! Vui lòng liên hệ nhân viên!");
             }
 
-            return UniversalValue<Guid>.Success(temp, "Tạo Order thành công, Tạo Order Detail thành công");
+            return UniversalValue<Guid>.Success(temp, "Đặt đơn hàng thành công!\n Xin cảm ơn quý khách!");
         }
 
         public async Task<UniversalValue<Guid[]>> CreatedOrderDetails(CartViewModel model)

@@ -1,16 +1,13 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using RestX.WebApp.Helper;
 using QRCoder;
+using RestX.WebApp.Helper;
 using RestX.WebApp.Models;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using static QRCoder.PayloadGenerator;
-using SixLabors.ImageSharp.Formats.Png;
-using System;
 
 namespace RestX.WebApp.Services.Services
 {
@@ -122,11 +119,10 @@ namespace RestX.WebApp.Services.Services
         {
             var ownerId = UserHelper.GetCurrentOwnerId();
             Table table;
-            
+
             if (model.Id != 0)
             {
                 table = await Repo.GetByIdAsync<Table>(model.Id);
-                if (table == null) return null;
                 mapper.Map(model, table);
                 table.OwnerId = ownerId;
                 Repo.Update(table);
@@ -136,6 +132,8 @@ namespace RestX.WebApp.Services.Services
                 table = mapper.Map<Table>(model);
                 table.OwnerId = ownerId;
                 await Repo.CreateAsync(table);
+                GenerateQRCodeURL(ownerId, table.Id, model.TableNumber);
+                Repo.Update(table);
             }
             await Repo.SaveAsync();
             return table.Id;
@@ -179,7 +177,7 @@ namespace RestX.WebApp.Services.Services
             using var qrCode = new PngByteQRCode(data);
             var qrCodeImage = qrCode.GetGraphic(20);
 
-            using var qrStream = new MemoryStream(qrCodeImage); // I can not use QRCoder.ImageSharp so have to do this conversion
+            using var qrStream = new MemoryStream(qrCodeImage); 
             var qrImage = Image.Load<Rgba32>(qrStream);
 
             string logoPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Uploads\\Profile", "owner_avatar_" + ownerId + ".jpg");
@@ -187,10 +185,10 @@ namespace RestX.WebApp.Services.Services
             if (System.IO.File.Exists(logoPath))
             {
                 var logo = Image.Load<Rgba32>(logoPath);
-                int logoSize = qrImage.Width / 5; // Logo size is 1/5 of QR code size
+                int logoSize = qrImage.Width / 5;
                 logo.Mutate(x => x.Resize(logoSize, logoSize));
 
-                int x = (qrImage.Width - logoSize) / 2; // Set logo position to center
+                int x = (qrImage.Width - logoSize) / 2; 
                 int y = (qrImage.Height - logoSize) / 2;
                 qrImage.Mutate(ctx => ctx.DrawImage(logo, new Point(x, y), 1f));
 
@@ -200,7 +198,6 @@ namespace RestX.WebApp.Services.Services
                 string filePath = Path.Combine(saveFolder, fileName);
 
                 qrImage.Save(filePath);
-
             }
         }
     }

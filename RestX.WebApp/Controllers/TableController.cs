@@ -19,7 +19,6 @@ namespace RestX.WebApp.Controllers
         {
             this.tableService = tableService;
             this.httpContextAccessor = httpContextAccessor;
-            this.exceptionHandler = exceptionHandler;
         }
 
         [HttpGet("createqr")]
@@ -27,14 +26,27 @@ namespace RestX.WebApp.Controllers
         {
             try
             {
-            var user = Helper.UserHelper.HttpContextAccessor.HttpContext?.User;
-            var ownerIdClaim = user?.FindFirst("OwnerId");
-            var ownerIdString = ownerIdClaim.ToString();
-            ownerIdString = ownerIdString.Substring(ownerIdString.IndexOf(": ") + 1);
-            var ownerId = Guid.Parse(ownerIdString);
-            var model = await tableService.GetTablesByOwnerIdAsync(ownerId);
-            return View(model);
+                var user = Helper.UserHelper.HttpContextAccessor.HttpContext?.User;
+                var ownerIdClaim = user?.FindFirst("OwnerId");
+                var ownerIdString = ownerIdClaim.ToString();
+                ownerIdString = ownerIdString.Substring(ownerIdString.IndexOf(": ") + 1);
+                var ownerId = Guid.Parse(ownerIdString);
+
+
+                var model = await tableService.GetTablesByOwnerIdAsync(ownerId);
+                return View(model);
             }
+            catch (UnauthorizedAccessException)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, "An error occurred while loading dishes management.");
+                return View("Error");
+            }
+        }
+
         [HttpGet("Index")]
         public async Task<IActionResult> Index()
         {

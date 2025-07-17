@@ -1,208 +1,278 @@
-$(function () {
+﻿$(document).ready(function () {
+    console.log('Dashboard.js loaded');
 
+    // Don't create profit chart here - let the page handle it
+    // Just initialize other charts
 
-  // =====================================
-  // Profit
-  // =====================================
-  var chart = {
-    series: [
-      { name: "Revenue", data: typeof profitData !== "undefined" ? profitData : [] }
-    ],
+    // =====================================
+    // Breakup (Yearly Revenue)
+    // =====================================
+    function initializeYearlyBreakup() {
+        if (typeof yearlyRevenue !== 'undefined' && yearlyRevenue) {
+            const years = Object.keys(yearlyRevenue).sort();
+            const revenues = years.map(year => yearlyRevenue[year]);
 
-    chart: {
-      type: "bar",
-      height: 345,
-      offsetX: -15,
-      toolbar: { show: true },
-      foreColor: "#adb0bb",
-      fontFamily: 'inherit',
-      sparkline: { enabled: false },
-    },
+            console.log('Yearly data:', { years, revenues });
 
-    colors: ["#5D87FF"],
+            var breakup = {
+                color: "#adb5bd",
+                series: revenues,
+                labels: years,
+                chart: {
+                    width: 180,
+                    type: "donut",
+                    fontFamily: "Plus Jakarta Sans', sans-serif",
+                    foreColor: "#adb0bb",
+                },
+                plotOptions: {
+                    pie: {
+                        startAngle: 0,
+                        endAngle: 360,
+                        donut: {
+                            size: '75%',
+                        },
+                    },
+                },
+                stroke: {
+                    show: false,
+                },
 
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: "35%",
-        borderRadius: [6],
-        borderRadiusApplication: 'end',
-        borderRadiusWhenStacked: 'all'
-      },
-    },
-    markers: { size: 0 },
+                dataLabels: {
+                    enabled: false,
+                },
 
-    dataLabels: {
-      enabled: false,
-    },
+                legend: {
+                    show: false,
+                },
+                colors: ["#5D87FF", "#ecf2ff", "#F9F9FD"],
 
+                responsive: [
+                    {
+                        breakpoint: 991,
+                        options: {
+                            chart: {
+                                width: 150,
+                            },
+                        },
+                    },
+                ],
+                tooltip: {
+                    theme: "dark",
+                    fillSeriesColor: false,
+                    formatter: function (value, { seriesIndex, w }) {
+                        const year = w.config.labels[seriesIndex];
+                        return `${year}: $${value.toLocaleString()}`;
+                    }
+                },
+            };
 
-    legend: {
-      show: false,
-    },
-
-
-    grid: {
-      borderColor: "rgba(0,0,0,0.1)",
-      strokeDashArray: 3,
-      xaxis: {
-        lines: {
-          show: false,
-        },
-      },
-    },
-
-    xaxis: {
-      type: "category",
-      categories: typeof revenueLabels !== "undefined" ? revenueLabels : [],
-      labels: {
-        style: { cssClass: "grey--text lighten-2--text fill-color" },
-      },
-    },
-
-
-    yaxis: {
-      show: true,
-      min: 0,
-      max: 10000000,
-      tickAmount: 4,
-      labels: {
-        style: {
-          cssClass: "grey--text lighten-2--text fill-color",
-        },
-      },
-    },
-    stroke: {
-      show: true,
-      width: 3,
-      lineCap: "butt",
-      colors: ["transparent"],
-    },
-
-
-    tooltip: { theme: "light" },
-
-    responsive: [
-      {
-        breakpoint: 600,
-        options: {
-          plotOptions: {
-            bar: {
-              borderRadius: 3,
-            }
-          },
+            var chart = new ApexCharts(document.querySelector("#breakup"), breakup);
+            chart.render();
+        } else {
+            console.log('No yearly revenue data available');
         }
-      }
-    ]
+    }
 
+    // =====================================
+    // Earning (Monthly Earnings Trend)
+    // =====================================
+    function initializeMonthlyEarnings() {
+        if (typeof monthlyEarningsTrend !== 'undefined' && monthlyEarningsTrend && monthlyEarningsTrend.length > 0) {
+            // Use the dedicated monthly earnings trend data
+            console.log('Using monthly earnings trend data:', monthlyEarningsTrend);
 
-  };
+            // Generate month labels for the last 7 months
+            const monthLabels = [];
+            const now = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                monthLabels.push(date.toLocaleDateString('en-US', { month: 'short' }));
+            }
 
-  var chart = new ApexCharts(document.querySelector("#chart"), chart);
-  chart.render();
+            var earning = {
+                chart: {
+                    id: "sparkline3",
+                    type: "area",
+                    height: 60,
+                    sparkline: {
+                        enabled: true,
+                    },
+                    group: "sparklines",
+                    fontFamily: "Plus Jakarta Sans', sans-serif",
+                    foreColor: "#adb0bb",
+                },
+                series: [
+                    {
+                        name: "Earnings",
+                        color: "#49BEFF",
+                        data: monthlyEarningsTrend,
+                    },
+                ],
+                stroke: {
+                    curve: "smooth",
+                    width: 2,
+                },
+                fill: {
+                    colors: ["#f3feff"],
+                    type: "solid",
+                    opacity: 0.05,
+                },
 
+                markers: {
+                    size: 0,
+                },
+                tooltip: {
+                    theme: "dark",
+                    fixed: {
+                        enabled: true,
+                        position: "right",
+                    },
+                    x: {
+                        show: false,
+                    },
+                    formatter: function (value, { seriesIndex, dataPointIndex, w }) {
+                        const month = monthLabels[dataPointIndex] || 'Month';
+                        return `${month}: $${value.toLocaleString()}`;
+                    }
+                },
+            };
 
-  // =====================================
-  // Breakup
-  // =====================================
-  var breakup = {
-    color: "#adb5bd",
-    series: [38, 40, 25],
-    labels: ["2022", "2021", "2020"],
-    chart: {
-      width: 180,
-      type: "donut",
-      fontFamily: "Plus Jakarta Sans', sans-serif",
-      foreColor: "#adb0bb",
-    },
-    plotOptions: {
-      pie: {
-        startAngle: 0,
-        endAngle: 360,
-        donut: {
-          size: '75%',
-        },
-      },
-    },
-    stroke: {
-      show: false,
-    },
+            new ApexCharts(document.querySelector("#earning"), earning).render();
 
-    dataLabels: {
-      enabled: false,
-    },
+        } else if (typeof monthlyChartData !== 'undefined' && monthlyChartData) {
+            // Fallback: Extract monthly totals from monthlyChartData
+            const monthlyTotals = [];
+            const monthLabels = [];
 
-    legend: {
-      show: false,
-    },
-    colors: ["#5D87FF", "#ecf2ff", "#F9F9FD"],
+            // Get the last 7 months or available months
+            const sortedMonths = Object.keys(monthlyChartData).sort().slice(-7);
 
-    responsive: [
-      {
-        breakpoint: 991,
-        options: {
-          chart: {
-            width: 150,
-          },
-        },
-      },
-    ],
-    tooltip: {
-      theme: "dark",
-      fillSeriesColor: false,
-    },
-  };
+            for (const monthKey of sortedMonths) {
+                const monthData = monthlyChartData[monthKey];
+                const total = monthData.reduce((sum, day) => sum + day.Profit, 0);
+                monthlyTotals.push(total);
 
-  var chart = new ApexCharts(document.querySelector("#breakup"), breakup);
-  chart.render();
+                // Format month label
+                const [year, month] = monthKey.split('-');
+                const date = new Date(year, month - 1, 1);
+                monthLabels.push(date.toLocaleDateString('en-US', { month: 'short' }));
+            }
 
+            console.log('Using fallback monthly earnings data:', { monthLabels, monthlyTotals });
 
+            var earning = {
+                chart: {
+                    id: "sparkline3",
+                    type: "area",
+                    height: 60,
+                    sparkline: {
+                        enabled: true,
+                    },
+                    group: "sparklines",
+                    fontFamily: "Plus Jakarta Sans', sans-serif",
+                    foreColor: "#adb0bb",
+                },
+                series: [
+                    {
+                        name: "Earnings",
+                        color: "#49BEFF",
+                        data: monthlyTotals,
+                    },
+                ],
+                stroke: {
+                    curve: "smooth",
+                    width: 2,
+                },
+                fill: {
+                    colors: ["#f3feff"],
+                    type: "solid",
+                    opacity: 0.05,
+                },
 
-  // =====================================
-  // Earning
-  // =====================================
-  var earning = {
-    chart: {
-      id: "sparkline3",
-      type: "area",
-      height: 60,
-      sparkline: {
-        enabled: true,
-      },
-      group: "sparklines",
-      fontFamily: "Plus Jakarta Sans', sans-serif",
-      foreColor: "#adb0bb",
-    },
-    series: [
-      {
-        name: "Earnings",
-        color: "#49BEFF",
-        data: [25, 66, 20, 40, 12, 58, 20],
-      },
-    ],
-    stroke: {
-      curve: "smooth",
-      width: 2,
-    },
-    fill: {
-      colors: ["#f3feff"],
-      type: "solid",
-      opacity: 0.05,
-    },
+                markers: {
+                    size: 0,
+                },
+                tooltip: {
+                    theme: "dark",
+                    fixed: {
+                        enabled: true,
+                        position: "right",
+                    },
+                    x: {
+                        show: false,
+                    },
+                    formatter: function (value, { seriesIndex, dataPointIndex, w }) {
+                        const month = monthLabels[dataPointIndex] || 'Month';
+                        return `${month}: $${value.toLocaleString()}`;
+                    }
+                },
+            };
 
-    markers: {
-      size: 0,
-    },
-    tooltip: {
-      theme: "dark",
-      fixed: {
-        enabled: true,
-        position: "right",
-      },
-      x: {
-        show: false,
-      },
-    },
-  };
-  new ApexCharts(document.querySelector("#earning"), earning).render();
-})
+            new ApexCharts(document.querySelector("#earning"), earning).render();
+
+        } else if (typeof currentMonthRevenue !== 'undefined' && typeof previousMonthRevenue !== 'undefined') {
+            // Final fallback: use simple current vs previous month data
+            console.log('Using simple current vs previous month data');
+
+            var earning = {
+                chart: {
+                    id: "sparkline3",
+                    type: "area",
+                    height: 60,
+                    sparkline: {
+                        enabled: true,
+                    },
+                    group: "sparklines",
+                    fontFamily: "Plus Jakarta Sans', sans-serif",
+                    foreColor: "#adb0bb",
+                },
+                series: [
+                    {
+                        name: "Earnings",
+                        color: "#49BEFF",
+                        data: [previousMonthRevenue, currentMonthRevenue],
+                    },
+                ],
+                stroke: {
+                    curve: "smooth",
+                    width: 2,
+                },
+                fill: {
+                    colors: ["#f3feff"],
+                    type: "solid",
+                    opacity: 0.05,
+                },
+
+                markers: {
+                    size: 0,
+                },
+                tooltip: {
+                    theme: "dark",
+                    fixed: {
+                        enabled: true,
+                        position: "right",
+                    },
+                    x: {
+                        show: false,
+                    },
+                    formatter: function (value, { seriesIndex, dataPointIndex, w }) {
+                        const months = ['Last Month', 'This Month'];
+                        const month = months[dataPointIndex] || 'Month';
+                        return `${month}: $${value.toLocaleString()}`;
+                    }
+                },
+            };
+
+            new ApexCharts(document.querySelector("#earning"), earning).render();
+
+        } else {
+            console.log('No monthly earnings data available');
+        }
+    }
+
+    // Initialize charts after a short delay to ensure data is available
+    setTimeout(() => {
+        initializeYearlyBreakup();
+        initializeMonthlyEarnings();
+    }, 500);
+});

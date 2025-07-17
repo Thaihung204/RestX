@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using RestX.WebApp.Models;
 using RestX.WebApp.Services.DataTransferObjects;
 using RestX.WebApp.Services.Interfaces;
@@ -112,6 +113,16 @@ namespace RestX.WebApp.Controllers
             try
             {
                 var success = await orderDetailService.UpdateOrderDetailStatusAsync(request.OrderDetailId, request.IsActive);
+                // Broadcast toàn bộ danh sách order mới nhất
+                if (success)
+                {
+                    var customerRequest = await orderService.GetCustomerRequestsByStaffAsync();
+                    var hubContext = HttpContext.RequestServices.GetService(typeof(Microsoft.AspNetCore.SignalR.IHubContext<RestX.WebApp.Services.SignalRLab.SignalrServer>)) as Microsoft.AspNetCore.SignalR.IHubContext<RestX.WebApp.Services.SignalRLab.SignalrServer>;
+                    if (hubContext != null)
+                    {
+                        await hubContext.Clients.All.SendAsync("ReceiveOrderList", customerRequest.Orders);
+                    }
+                }
                 return Json(new { success = success, message = success ? "Order detail status updated successfully." : "Failed to update order detail status." });
             }
             catch (Exception ex)

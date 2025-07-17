@@ -351,6 +351,118 @@ window.StaffPageManager = (function () {
       }
     }
 
+    // --- SignalR real-time for new order ---
+    if (!window.StaffPageManager.signalRConnection) {
+      window.StaffPageManager.signalRConnection =
+        new signalR.HubConnectionBuilder()
+          .withUrl("/signalrServer")
+          .configureLogging(signalR.LogLevel.Debug)
+          .build();
+      window.StaffPageManager.signalRConnection.start().catch(function (err) {
+        console.error("SignalR connection error:", err);
+      });
+    }
+    const signalRConnection = window.StaffPageManager.signalRConnection;
+    if (signalRConnection) {
+      signalRConnection.off("ReceiveOrderList");
+      signalRConnection.on("ReceiveOrderList", function (orders) {
+        console.log("Received full order list via SignalR:", orders);
+        ordersData = orders;
+        window.customerRequestData = ordersData;
+        renderOrderList();
+      });
+      signalRConnection.off("ReceiveNewOrder");
+      signalRConnection.on("ReceiveNewOrder", function (order) {
+        console.log("Received new order via SignalR:", order);
+        ordersData.unshift(order);
+        window.customerRequestData = ordersData;
+        renderOrderList();
+      });
+    }
+
+    // Render lại danh sách order (gọi lại khi có order mới)
+    function renderOrderList() {
+      const listDiv = document.querySelector(".request-list");
+      if (!listDiv) return;
+      let html = "";
+      if (ordersData && ordersData.length > 0) {
+        ordersData.forEach((order) => {
+          html += `<div class="request-card ${
+            order.orderTime &&
+            new Date(order.orderTime).getTime() + 10 * 60 * 1000 > Date.now()
+              ? "attention"
+              : ""
+          }">
+                    <div class="request-header">
+                        <div class="request-info">
+                            <span class="table-number">Table ${
+                              order.tableNumber
+                            }</span>
+                            <span class="customer-name">${
+                              order.customerName
+                            }</span>
+                            <span class="customer-phone">${
+                              order.customerPhone
+                            }</span>
+                            <span class="request-time">${formatTimeAgo(
+                              order.orderTime
+                            )}</span>
+                        </div>
+                        <div class="order-status">
+                            <span class="status-badge status-${order.orderStatus
+                              .toLowerCase()
+                              .replace(/ /g, "-")}">${order.orderStatus}</span>
+                            <span class="total-amount">${order.totalAmount.toLocaleString(
+                              "en-US",
+                              { style: "currency", currency: "USD" }
+                            )}</span>
+                        </div>
+                    </div>
+                    <div class="request-content">
+                        <div class="order-summary">
+                            ${
+                              order.orderDetails &&
+                              order.orderDetails.length > 0
+                                ? `${order.orderDetails.length} items ordered`
+                                : "No items in this order"
+                            }
+                        </div>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn-action btn-view" onclick="showOrderDetails('${
+                          order.id
+                        }')">
+                            <i class="ti ti-eye"></i> View Details
+                        </button>
+                        ${
+                          order.orderDetails && order.orderDetails.length > 0
+                            ? `<button class="btn-action btn-edit" onclick="editOrderDetails('${order.id}')"><i class="ti ti-edit"></i> Edit Items</button>`
+                            : ""
+                        }
+                    </div>
+                </div>`;
+        });
+      } else {
+        html = `<div class="no-orders">
+                <i class="ti ti-clipboard-list"></i>
+                <h3>No customer orders found</h3>
+                <p>There are currently no active orders to display.</p>
+            </div>`;
+      }
+      listDiv.innerHTML = html;
+    }
+    function formatTimeAgo(orderTime) {
+      if (!orderTime) return "";
+      const orderDate = new Date(orderTime);
+      const now = new Date();
+      const diffMs = now - orderDate;
+      const diffMin = Math.floor(diffMs / 60000);
+      const diffHr = Math.floor(diffMin / 60);
+      if (diffMin < 60) return `${diffMin} minutes ago`;
+      if (diffHr < 24) return `${diffHr} hours ago`;
+      return orderDate.toLocaleString();
+    }
+
     window.showOrderDetails = function (orderId) {
       const order = ordersData.find((o) => o.id === orderId);
       if (!order) return;

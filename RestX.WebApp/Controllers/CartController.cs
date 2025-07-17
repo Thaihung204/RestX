@@ -57,7 +57,15 @@ namespace RestX.WebApp.Controllers
             }
 
             TempData["tempModel"] = JsonSerializer.Serialize(model);
-            await hubContext.Clients.All.SendAsync("ReceiveMessage");
+
+            // Broadcast new order to staff in real-time
+            if (returnUVOrderId.Data != Guid.Empty)
+            {
+                // Lấy toàn bộ danh sách order mới nhất
+                var customerRequest = await orderService.GetCustomerRequestsByStaffAsync();
+                await hubContext.Clients.All.SendAsync("ReceiveOrderList", customerRequest.Orders);
+            }
+
             return RedirectToAction("Index", new { OwnerId = model.OwnerId,
                                                    TableId = model.TableId });
         }

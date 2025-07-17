@@ -29,6 +29,11 @@ namespace RestX.WebApp.Services.Services
             return await CreateNewCustomerAsync(model, cancellationToken);
         }
 
+        public async Task<Customer?> FindCustomerByPhoneAsync(string phone, Guid ownerId, CancellationToken cancellationToken = default)
+        {
+            return await FindExistingCustomerAsync(phone, ownerId, cancellationToken);
+        }
+
         private static void ValidateLoginModel(LoginViewModel model)
         {
             if (model == null)

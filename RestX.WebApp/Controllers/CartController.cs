@@ -13,7 +13,10 @@ namespace RestX.WebApp.Controllers
         private readonly ICartService cartService;
         private readonly IOrderService orderService;
         private readonly IHubContext<SignalrServer> hubContext;
-        public CartController(IExceptionHandler exceptionHandler, ICartService cartService, IOrderService orderService, IHubContext<SignalrServer> hubContext) : base(exceptionHandler)
+        public CartController(IExceptionHandler exceptionHandler, 
+                              ICartService cartService, 
+                              IOrderService orderService, 
+                              IHubContext<SignalrServer> hubContext) : base(exceptionHandler)
         {
             this.cartService = cartService;
             this.orderService = orderService;
@@ -53,12 +56,18 @@ namespace RestX.WebApp.Controllers
             UniversalValue<Guid> returnUVOrderId = await orderService.CreatedOrder(model);
             if (!returnUVOrderId.ErrorMessage.IsNullOrEmpty())
             {
-                model.Message = returnUVOrderId.ErrorMessage;
+                TempData["Message"] = returnUVOrderId.ErrorMessage;
+                return RedirectToAction("Login", "AuthCustomer", new
+                {
+                    OwnerId = model.OwnerId,
+                    TableId = model.TableId
+                });
             }
 
             TempData["tempModel"] = JsonSerializer.Serialize(model);
             await hubContext.Clients.All.SendAsync("ReceiveMessage");
-            return RedirectToAction("Index", new { OwnerId = model.OwnerId,
+            TempData["Message"] = returnUVOrderId.SuccessMessage;
+            return RedirectToAction("Index", "Home", new { OwnerId = model.OwnerId,
                                                    TableId = model.TableId });
         }
     }

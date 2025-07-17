@@ -84,15 +84,17 @@
             <span class="icon">🧑‍💼</span>
             Ask for service
         </div>
-        <div class="quick-action">
-            <span class="icon">⭐</span>
-            Give feedback
-        </div>
+        <a asp-controller="Ai" asp-action="Index" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@Model.TableId" style="text-decoration: none;">
+            <div class="quick-action">
+                <span class="icon">⭐</span>
+                AI Suggest Dish
+            </div>
+        </a>
     </div>
 
     <!-- Order menu -->
     <a asp-controller="Menu" asp-action="Index" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@Model.TableId"
-       class="order-menu" style="cursor:pointer;">
+       class="order-menu" style="cursor:pointer; text-decoration: none;">
         <span class="icon">🍽️</span>
         View Menu - Order food
         <span class="arrow">&gt;</span>

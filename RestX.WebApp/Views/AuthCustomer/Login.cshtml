@@ -11,7 +11,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - RestX.WebApp</title>
-
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <style>
         * {
             margin: 0;
@@ -212,6 +212,16 @@
     </style>
 </head>
 <body>
+    <button type="button" class="btn btn-primary" id="liveToastBtn" hidden>Show live toast</button>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3 top-0 end-0">
+        <div id="liveToast" class="toast broder border-danger bg-white" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body text-danger">
+                @ViewBag.Message
+            </div>
+        </div>
+    </div>
+
     <div class="login-container">
         <a href="@Url.Action("Index", "Home", new { ownerId = Model.OwnerId, tableId = tableId ?? 1 })"
            class="back-link">← Quay lại trang chủ</a>
@@ -252,6 +262,7 @@
         </form>
     </div>
 
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const phoneInput = document.getElementById('phoneInput');
@@ -336,6 +347,21 @@
                 });
             }
         });
+
+        const toastTrigger = document.getElementById('liveToastBtn')
+        const toastLiveExample = document.getElementById('liveToast')
+
+        if (toastTrigger) {
+            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+            toastTrigger.addEventListener('click', () => {
+                toastBootstrap.show()
+            })
+        }
+
+        @if (!string.IsNullOrEmpty(ViewBag.Message as string))
+        {
+            @:toastTrigger.click();
+        }
     </script>
 </body>
 </html>

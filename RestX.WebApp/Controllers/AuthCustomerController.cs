@@ -21,6 +21,7 @@ namespace RestX.WebApp.Controllers
         {
             var viewModel = CreateLoginViewModel(ownerId, tableId, returnUrl);
             ViewBag.TableId = tableId;
+            ViewBag.Message = TempData["Message"];
 
             return View(viewModel);
         }

@@ -1,14 +1,25 @@
-﻿using RestX.WebApp.Helper;
+using QRCoder;
+using RestX.WebApp.Helper;
 using RestX.WebApp.Models;
 using RestX.WebApp.Models.ViewModels;
 using RestX.WebApp.Services.Interfaces;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using static QRCoder.PayloadGenerator;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace RestX.WebApp.Services.Services
 {
     public class TableService : BaseService, ITableService
     {
-        public TableService(IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
+        private readonly QRCodeGenerator qrGenerator;
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public TableService(QRCodeGenerator qrGenerator, IRepository repo, IHttpContextAccessor httpContextAccessor) : base(repo, httpContextAccessor)
         {
+            this.httpContextAccessor = httpContextAccessor;
+            this.qrGenerator = qrGenerator;
         }
 
         public async Task<Table> GetTableByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -75,6 +86,60 @@ namespace RestX.WebApp.Services.Services
                 TableNumber = updatedTable.TableNumber,
                 TableStatus = updatedTable.TableStatus
             };
+        }
+
+        public async Task<List<Table>> GetTablesByOwnerIdAsync(Guid guid)
+        {
+            var tables = await Repo.GetAsync<Table>(
+                filter: t => t.OwnerId == guid
+            );
+
+            // Test create qr code under
+            //Table table = tables.FirstOrDefault(t => t.Id == 5);
+            //GenerateQRCodeURL(guid, table.Id, 5);
+
+            return tables.ToList();
+        }
+
+        private void GenerateQRCodeURL(Guid ownerId, int tableId, int tableNum)
+        {
+            var schemeUrl = httpContextAccessor.HttpContext?.Request.Scheme;
+            var hostUrl = httpContextAccessor.HttpContext?.Request.Host;
+            string url = schemeUrl + "://" + hostUrl + "/Home/Index/" + ownerId + "/" + tableId;
+
+            var qrCodeData = qrGenerator.CreateQrCode(new Url(url), QRCodeGenerator.ECCLevel.Q);
+
+            GeneratePng(qrCodeData, ownerId, tableNum);
+        }
+
+        private void GeneratePng(QRCodeData data, Guid ownerId, int tableNum)
+        {
+            using var qrCode = new PngByteQRCode(data);
+            var qrCodeImage = qrCode.GetGraphic(20);
+
+            using var qrStream = new MemoryStream(qrCodeImage); // I can not use QRCoder.ImageSharp so have to do this conversion
+            var qrImage = Image.Load<Rgba32>(qrStream);
+
+            string logoPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Uploads\\Profile", "owner_avatar_" + ownerId + ".jpg");
+
+            if (System.IO.File.Exists(logoPath))
+            {
+                var logo = Image.Load<Rgba32>(logoPath);
+                int logoSize = qrImage.Width / 5; // Logo size is 1/5 of QR code size
+                logo.Mutate(x => x.Resize(logoSize, logoSize));
+
+                int x = (qrImage.Width - logoSize) / 2; // Set logo position to center
+                int y = (qrImage.Height - logoSize) / 2;
+                qrImage.Mutate(ctx => ctx.DrawImage(logo, new Point(x, y), 1f));
+
+                string fileName = $"Table{tableNum}_qrcode_{ownerId}.png";
+                string saveFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Uploads", "RestaurantQRCode");
+
+                string filePath = Path.Combine(saveFolder, fileName);
+
+                qrImage.Save(filePath);
+
+            }
         }
     }
 }

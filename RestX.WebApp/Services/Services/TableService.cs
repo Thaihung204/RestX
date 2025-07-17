@@ -95,8 +95,8 @@ namespace RestX.WebApp.Services.Services
             );
 
             // Test create qr code under
-            //GenerateQRCodeURL(guid, tables.Last().Id, tables.Last().TableNumber);
-            GenerateQRCodeURL(guid, tables.Last().Id, 10);
+            //Table table = tables.FirstOrDefault(t => t.Id == 5);
+            //GenerateQRCodeURL(guid, table.Id, 5);
 
             return tables.ToList();
         }

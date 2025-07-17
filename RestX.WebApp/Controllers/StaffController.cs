@@ -1,28 +1,29 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using RestX.WebApp.Models;
+using RestX.WebApp.Services.DataTransferObjects;
 using RestX.WebApp.Services.Interfaces;
-using RestX.WebApp.Services.Services;
 using System.Diagnostics;
-using System.Linq;
 
 namespace RestX.WebApp.Controllers
 {
-    [Authorize(Roles = "Staff")]
-
     public class StaffController : BaseController
     {
         public IMenuService menuService { get; }
         private readonly IStaffService staffService;
         private readonly ITableService tableService;
         private readonly IDishService dishService;
+        private readonly IOrderService orderService;
+        private readonly IOrderDetailService orderDetailService;
 
-        public StaffController(IMenuService menuService, IStaffService staffService, ITableService tableService, IDishService dishService, IExceptionHandler exceptionHandler) : base(exceptionHandler)
+        public StaffController(IMenuService menuService, IStaffService staffService, ITableService tableService, IDishService dishService, IOrderService orderService, IOrderDetailService orderDetailService, IExceptionHandler exceptionHandler) : base(exceptionHandler)
         {
             this.menuService = menuService;
             this.staffService = staffService;
             this.tableService = tableService;
             this.dishService = dishService;
+            this.orderService = orderService;
+            this.orderDetailService = orderDetailService;
         }
 
         [HttpGet]
@@ -31,11 +32,12 @@ namespace RestX.WebApp.Controllers
         {
             try
             {
-                return View();
+                var model = await orderService.GetCustomerRequestsByStaffAsync(cancellationToken);
+                return View(model);
             }
             catch (Exception ex)
             {
-                this.exceptionHandler.RaiseException(ex, "An error occurred while processing Index for OwnerId: {OwnerId}");
+                this.exceptionHandler.RaiseException(ex, "An error occurred while processing CustomerRequest for Staff");
                 return this.BadRequest("An unexpected error occurred. Please try again later.");
             }
         }
@@ -46,7 +48,6 @@ namespace RestX.WebApp.Controllers
         {
             try
             {
-                staffService.GetCurrentStaff(cancellationToken).Wait();
                 var model = await menuService.GetMenuViewModelAsync(cancellationToken);
                 return View(model);
             }
@@ -63,8 +64,7 @@ namespace RestX.WebApp.Controllers
         {
             try
             {
-                var staff = await staffService.GetCurrentStaff(cancellationToken);
-                var model = await tableService.GetAllTablesByOwnerIdAsync(staff.OwnerId, cancellationToken);
+                var model = await tableService.GetAllTablesByCurrentStaff(cancellationToken);
                 return View(model);
             }
             catch (Exception ex)
@@ -81,12 +81,6 @@ namespace RestX.WebApp.Controllers
             try
             {
                 var staff = await staffService.GetStaffProfileAsync(cancellationToken);
-
-                if (staff == null)
-                {
-                    return NotFound("Staff not found.");
-                }
-
                 return View(staff);
             }
             catch (Exception ex)
@@ -98,29 +92,42 @@ namespace RestX.WebApp.Controllers
 
         [HttpPost]
         [Route("Staff/UpdateDishAvailability")]
-        public async Task<IActionResult> UpdateDishAvailability([FromBody] UpdateDishAvailabilityRequest request)
+        public async Task<IActionResult> UpdateDishAvailability([FromBody] UpdateDishAvailability request)
         {
             try
-            {
-                Console.WriteLine($"Received request: DishId={request.DishId}, IsActive={request.IsActive}");
-                
-                var success = await dishService.UpdateDishAvailabilityAsync(request.DishId, request.IsActive);
-                
-                Console.WriteLine($"Update result: {success}");
-                
-                if (success)
-                {
-                    return Json(new { success = true, message = "Dish availability updated successfully." });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Failed to update dish availability. Dish not found or access denied." });
-                }
+            {                
+                var success = await dishService.UpdateDishAvailabilityAsync(request.DishId, request.IsActive);        
+                return Json(new { success = true, message = "Dish availability updated successfully." });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception in UpdateDishAvailability: {ex.Message}");
                 this.exceptionHandler.RaiseException(ex, $"An error occurred while updating dish availability for DishId: {request.DishId}");
+                return Json(new { success = false, message = "An unexpected error occurred. Please try again later." });
+            }
+        }
+
+        [HttpPost]
+        [Route("Staff/UpdateOrderDetailStatus")]
+        public async Task<IActionResult> UpdateOrderDetailStatus([FromBody] UpdateOrderDetailStatus request)
+        {
+            try
+            {
+                var success = await orderDetailService.UpdateOrderDetailStatusAsync(request.OrderDetailId, request.IsActive);
+                // Broadcast toàn bộ danh sách order mới nhất
+                if (success)
+                {
+                    var customerRequest = await orderService.GetCustomerRequestsByStaffAsync();
+                    var hubContext = HttpContext.RequestServices.GetService(typeof(Microsoft.AspNetCore.SignalR.IHubContext<RestX.WebApp.Services.SignalRLab.SignalrServer>)) as Microsoft.AspNetCore.SignalR.IHubContext<RestX.WebApp.Services.SignalRLab.SignalrServer>;
+                    if (hubContext != null)
+                    {
+                        await hubContext.Clients.All.SendAsync("ReceiveOrderList", customerRequest.Orders);
+                    }
+                }
+                return Json(new { success = success, message = success ? "Order detail status updated successfully." : "Failed to update order detail status." });
+            }
+            catch (Exception ex)
+            {
+                this.exceptionHandler.RaiseException(ex, $"An error occurred while updating order detail status for OrderDetailId: {request.OrderDetailId}");
                 return Json(new { success = false, message = "An unexpected error occurred. Please try again later." });
             }
         }
@@ -130,11 +137,5 @@ namespace RestX.WebApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-    }
-
-    public class UpdateDishAvailabilityRequest
-    {
-        public int DishId { get; set; }
-        public bool IsActive { get; set; }
     }
 }

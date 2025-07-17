@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using RestX.WebApp.Models.ViewModels;
@@ -65,7 +65,15 @@ namespace RestX.WebApp.Controllers
             }
 
             TempData["tempModel"] = JsonSerializer.Serialize(model);
-            await hubContext.Clients.All.SendAsync("ReceiveMessage");
+            
+            // Broadcast new order to staff in real-time
+            if (returnUVOrderId.Data != Guid.Empty)
+            {
+                // Lấy toàn bộ danh sách order mới nhất
+                var customerRequest = await orderService.GetCustomerRequestsByStaffAsync();
+                await hubContext.Clients.All.SendAsync("ReceiveOrderList", customerRequest.Orders);
+            }
+            
             TempData["Message"] = returnUVOrderId.SuccessMessage;
             return RedirectToAction("Index", "Home", new { OwnerId = model.OwnerId,
                                                    TableId = model.TableId });

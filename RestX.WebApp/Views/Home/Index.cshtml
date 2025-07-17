@@ -59,7 +59,7 @@
     {
         @if (ownerId.HasValue && tableId.HasValue)
         {
-            <a href="@Url.Action("Login", "AuthCustomer", new { ownerId = ownerId.Value, tableId = tableId.Value })"
+            <a href="@Url.Action("Login", "Customer", new { ownerId = ownerId.Value, tableId = tableId.Value })"
                class="phone-points" style="text-decoration: none; color: inherit; cursor: pointer;">
                 <span class="icon">🎁</span>
                 Enter phone number to accumulate points

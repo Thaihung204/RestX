@@ -58,6 +58,7 @@
 
         .form-group {
             margin-bottom: 20px;
+            position: relative;
         }
 
         .form-control {
@@ -74,6 +75,11 @@
                 border-color: #f0ad4e;
                 outline: none;
                 box-shadow: 0 0 0 2px rgba(240, 173, 78, 0.2);
+            }
+
+            .form-control:read-only {
+                background-color: #f8f9fa;
+                cursor: not-allowed;
             }
 
         .text-danger {
@@ -152,6 +158,30 @@
             display: none;
         }
 
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #6c757d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin {
+            0%
+
+        {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+
+        }
+
         /* Responsive */
         @@media (max-width: 480px) {
             .login-container
@@ -165,8 +195,7 @@
             font-size: 20px;
         }
 
-        }
-    </style>
+        }</style>
 </head>
 <body>
     <div class="login-container">
@@ -183,7 +212,7 @@
             <p>Đăng nhập để tích lũy điểm và nhận những ưu đãi hấp dẫn!</p>
         </div>
 
-        <form asp-controller="AuthCustomer" asp-action="Login" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@(tableId ?? 1)" method="post">
+        <form asp-controller="Customer" asp-action="Login" asp-route-ownerId="@Model.OwnerId" asp-route-tableId="@(tableId ?? 1)" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="OwnerId" />
             <input type="hidden" asp-for="ReturnUrl" />
@@ -192,13 +221,13 @@
 
             <div class="form-group">
                 <label asp-for="Phone" class="d-none"></label>
-                <input asp-for="Phone" class="form-control" placeholder="Số điện thoại *" type="tel" required />
+                <input asp-for="Phone" class="form-control" placeholder="Số điện thoại *" type="tel" required id="phoneInput" />
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Name" class="d-none"></label>
-                <input asp-for="Name" class="form-control" placeholder="Tên của bạn" />
+                <input asp-for="Name" class="form-control" placeholder="Tên của bạn" id="nameInput" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
@@ -209,15 +238,77 @@
     </div>
 
     <script>
-        document.getElementById('submitBtn').addEventListener('click', function() {
-            this.disabled = true;
-            this.innerHTML = 'Đang xử lý...';
-            this.closest('form').submit();
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.getElementById('phoneInput');
+            const nameInput = document.getElementById('nameInput');
+            const submitBtn = document.getElementById('submitBtn');
+            const ownerId = '@Model.OwnerId';
 
-        window.addEventListener('load', function() {
-            document.getElementById('submitBtn').disabled = false;
-            document.getElementById('submitBtn').innerHTML = 'Tiếp tục';
+            let phoneCheckTimeout;
+            let isExistingCustomer = false;
+
+            // Handle phone input with debounce
+            phoneInput.addEventListener('input', function() {
+                clearTimeout(phoneCheckTimeout);
+                const phone = this.value.trim();
+
+                // Reset name field when phone changes
+                if (!isExistingCustomer) {
+                    nameInput.value = '';
+                }
+                nameInput.readOnly = false;
+
+                if (phone.length >= 10) {
+                    phoneCheckTimeout = setTimeout(function() {
+                        checkExistingPhone(phone, ownerId);
+                    }, 800); // Delay 800ms after user stops typing
+                }
+            });
+
+            // Handle form submission
+            submitBtn.addEventListener('click', function() {
+                this.disabled = true;
+                this.innerHTML = 'Đang xử lý...';
+                this.closest('form').submit();
+            });
+
+            // Reset button state on page load
+            window.addEventListener('load', function() {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Tiếp tục';
+            });
+
+            function checkExistingPhone(phone, ownerId) {
+                // Make AJAX request to check phone - Updated URL to Customer controller
+                fetch(`/Customer/CheckPhone/${ownerId}?phone=${encodeURIComponent(phone)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        // Existing customer - auto-fill name
+                        nameInput.value = data.name;
+                        nameInput.readOnly = true;
+                        isExistingCustomer = true;
+                        console.log('Existing customer found:', data.name);
+                    } else {
+                        // New customer - allow name input
+                        nameInput.value = '';
+                        nameInput.readOnly = false;
+                        nameInput.focus();
+                        isExistingCustomer = false;
+                        console.log('New customer');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking phone:', error);
+                    nameInput.readOnly = false;
+                    isExistingCustomer = false;
+                });
+            }
         });
     </script>
 </body>

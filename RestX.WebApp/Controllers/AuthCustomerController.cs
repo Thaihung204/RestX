@@ -115,5 +115,29 @@ namespace RestX.WebApp.Controllers
 
             return RedirectToAction("Index", "Home", new { ownerId = Guid.Empty, tableId = 1 });
         }
+
+        [HttpGet]
+        [Route("AuthCustomer/CheckPhone/{ownerId:guid}")]
+        public async Task<IActionResult> CheckPhone(Guid ownerId, [FromQuery] string phone, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(phone))
+                    return Json(new { exists = false, name = "" });
+
+                var customer = await authCustomerService.FindCustomerByPhoneAsync(phone, ownerId, cancellationToken);
+
+                return Json(new
+                {
+                    exists = customer != null,
+                    name = customer?.Name ?? ""
+                });
+            }
+            catch (Exception ex)
+            {
+                exceptionHandler.RaiseException(ex, $"Error checking phone for OwnerId: {ownerId}");
+                return Json(new { exists = false, name = "" });
+            }
+        }
     }
 }

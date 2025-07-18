@@ -233,7 +233,7 @@
                 @foreach (var dish in category.Dishes)
                 {
                     <div class="menu-dish-card" dish-id="@dish.Id">
-                        <img class="menu-dish-img" src="@dish.ImageUrl" alt="@dish.Name" />
+                        <img class="menu-dish-img" src="@(Url.Content(dish.ImageUrl))" alt="@dish.Name" />
                         <div class="menu-dish-info">
                             <div class="menu-dish-name">@dish.Name</div>
                             @if (!string.IsNullOrEmpty(dish.Description))

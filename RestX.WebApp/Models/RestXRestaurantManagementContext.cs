@@ -57,7 +57,7 @@ public partial class RestXRestaurantManagementContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=TIS;Database=RestX_RestaurantManagement;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=sqlserver_container,1433;Database=RestX_RestaurantManagement;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -412,8 +412,6 @@ public partial class RestXRestaurantManagementContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__Table__3214EC0766A28536");
 
             entity.ToTable("Table");
-
-            entity.HasIndex(e => e.Qrcode, "IX_Table_QRCode");
 
             entity.HasIndex(e => e.Qrcode, "UQ__Table__5B869AD96220ED30").IsUnique();
 

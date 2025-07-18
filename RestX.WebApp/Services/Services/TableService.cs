@@ -17,7 +17,7 @@ namespace RestX.WebApp.Services.Services
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IMapper mapper;
 
-        public TableService(IRepository repo, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        public TableService(IRepository repo, IHttpContextAccessor httpContextAccessor, IMapper mapper, QRCodeGenerator qrGenerator)
             : base(repo, httpContextAccessor)
         {
             this.mapper = mapper;
@@ -132,7 +132,7 @@ namespace RestX.WebApp.Services.Services
                 table = mapper.Map<Table>(model);
                 table.OwnerId = ownerId;
                 await Repo.CreateAsync(table);
-                GenerateQRCodeURL(ownerId, table.Id, model.TableNumber);
+                table.Qrcode = GenerateQRCodeURL(ownerId, table.Id, model.TableNumber);
                 Repo.Update(table);
             }
             await Repo.SaveAsync();
@@ -161,7 +161,7 @@ namespace RestX.WebApp.Services.Services
             return tables.ToList();
         }
 
-        private void GenerateQRCodeURL(Guid ownerId, int tableId, int tableNum)
+        private string GenerateQRCodeURL(Guid ownerId, int tableId, int tableNum)
         {
             var schemeUrl = httpContextAccessor.HttpContext?.Request.Scheme;
             var hostUrl = httpContextAccessor.HttpContext?.Request.Host;
@@ -169,10 +169,10 @@ namespace RestX.WebApp.Services.Services
 
             var qrCodeData = qrGenerator.CreateQrCode(new Url(url), QRCodeGenerator.ECCLevel.Q);
 
-            GeneratePng(qrCodeData, ownerId, tableNum);
+            return GeneratePng(qrCodeData, ownerId, tableNum);
         }
 
-        private void GeneratePng(QRCodeData data, Guid ownerId, int tableNum)
+        private string GeneratePng(QRCodeData data, Guid ownerId, int tableNum)
         {
             using var qrCode = new PngByteQRCode(data);
             var qrCodeImage = qrCode.GetGraphic(20);
@@ -198,7 +198,9 @@ namespace RestX.WebApp.Services.Services
                 string filePath = Path.Combine(saveFolder, fileName);
 
                 qrImage.Save(filePath);
+                return saveFolder;
             }
+            return string.Empty; 
         }
     }
 }

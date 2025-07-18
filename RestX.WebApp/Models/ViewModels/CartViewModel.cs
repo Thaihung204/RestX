@@ -4,9 +4,10 @@
     {
         public Guid OwnerId { get; set; }
         public int TableId { get; set; }
-        public string DishListJson { get; set; }
+        public string? DishListJson { get; set; }
         public Guid? OrderId { get; set; }
         public string? Message { get; set; }
+        public DateTime? Time { get; set; }
         public DishCartViewModel[]? DishList { get; set; }
     }
 

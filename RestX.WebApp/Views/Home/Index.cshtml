@@ -27,9 +27,15 @@
         transition: background-color 0.2s;
     }
 
-        .phone-points:hover:not(.logged-in) {
-            background-color: #f0f8ff;
-        }
+    .phone-points:hover:not(.logged-in) {
+        background-color: #f0f8ff;
+    }
+
+    .floating-btn{
+        text-decoration: none;
+        border: none;
+        outline: none;
+    }
 
     .floating-btn p {
         background: white;
@@ -142,10 +148,10 @@
     </a>
 
     <!-- Floating button -->
-    <div class="floating-btn">
+    <a href="/Order/History/@(ownerId)/@(tableId)" class="floating-btn">
         <p style="display: none;">@message</p>
         <span>🔔</span>
-    </div>
+    </a>
 
     <div class="powered-by">
         Powered by RestX

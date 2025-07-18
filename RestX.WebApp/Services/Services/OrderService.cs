@@ -155,5 +155,54 @@ namespace RestX.WebApp.Services.Services
 
             return customerRequestViewModel;
         }
+
+        public async Task<List<CartViewModel>> GetOrdersByCustomerIdOwnerIdAsync(Guid ownerId, Guid customerId)
+        {
+            var orders = await Repo.GetAsync<Order>(
+                filter: o => o.OwnerId == ownerId && o.CustomerId == customerId && o.IsActive == true,
+                includeProperties: "OrderDetails,OrderDetails.Dish,OrderDetails.Dish.File"
+            );
+            orders = orders.OrderByDescending(o => o.Time);
+
+            List<CartViewModel> cartViewModels = new List<CartViewModel>();
+
+            try
+            {
+                foreach(var order in orders)
+                {
+                    List<OrderDetail> orderDetails = order.OrderDetails.ToList();
+                    DishCartViewModel[] dishCart = new DishCartViewModel[orderDetails.Count()];
+                    int i = 0;
+
+                    foreach (var orderDetail in orderDetails)
+                    {
+                        dishCart[i] = new DishCartViewModel()
+                        {
+                            DishId = orderDetail.DishId,
+                            DishName = orderDetail.Dish.Name,
+                            Quantity = orderDetail.Quantity,
+                            Price = orderDetail.Price,
+                            ImgUrl = orderDetail.Dish.File.Url,
+                        };
+                        i++;
+                    }
+
+                    cartViewModels.Add(new CartViewModel
+                    {
+                        OwnerId = order.OwnerId,
+                        TableId = order.TableId,
+                        OrderId = order.Id,
+                        Time = order.Time,
+                        DishList = dishCart,
+                    });
+
+                }
+            } catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            return cartViewModels;
+        }
     }
 }

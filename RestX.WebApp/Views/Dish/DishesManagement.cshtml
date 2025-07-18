@@ -102,10 +102,6 @@
                                             <img src="@(Url.Content(dish.ImageUrl))" class="rounded me-3" width="48" height="48" style="object-fit: cover;" alt="@dish.Name">
                                             <div>
                                                 <div class="fw-bold">@dish.Name</div>
-                                                @if (!string.IsNullOrEmpty(dish.Description))
-                                                {
-                                                    <small class="text-muted">@dish.Description</small>
-                                                }
                                             </div>
                                         </div>
                                     </td>

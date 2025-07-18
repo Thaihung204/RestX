@@ -10,12 +10,37 @@ namespace RestX.WebApp.Controllers
     public class OwnerController : BaseController
     {
         private readonly IDashboardService dashboardService;
+        private readonly IOwnerService ownerService;
 
         public OwnerController(
             IDashboardService dashboardService,
+            IOwnerService ownerService,
             IExceptionHandler exceptionHandler) : base(exceptionHandler)
         {
             this.dashboardService = dashboardService;
+            this.ownerService = ownerService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var vm = await ownerService.GetOwnerProfileViewModelAsync();
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(OwnerProfileViewModel vm)
+        {
+            var (success, passwordMessage) = await ownerService.UpdateOwnerProfileAsync(vm);
+
+            if (success)
+            {
+                return Json(new { success = true, message = passwordMessage ?? "Profile updated successfully!" });
+            }
+            else
+            {
+                return Json(new { success = false, message = passwordMessage ?? "Update failed!" });
+            }
         }
 
         public async Task<IActionResult> DashBoard(CancellationToken cancellationToken)

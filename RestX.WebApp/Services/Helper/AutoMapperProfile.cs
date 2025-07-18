@@ -20,6 +20,7 @@ namespace RestX.WebApp.Services.Helper
             CreateMap<DataTransferObjects.Dish, Dish>().ReverseMap();
             CreateMap<DataTransferObjects.Category, Category>().ReverseMap();
             CreateMap<CustomerViewModel, Customer>().ReverseMap();
+            CreateMap<OwnerProfileViewModel, Owner>().ReverseMap();
             CreateMap<Table, TableViewModel>().ReverseMap();
         }
     }

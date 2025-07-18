@@ -44,7 +44,6 @@ namespace RestX.WebApp.Controllers
         {
             try
             {
-
                 var resultDishId = await dishService.UpsertDishAsync(request);
 
                 if (resultDishId == null)

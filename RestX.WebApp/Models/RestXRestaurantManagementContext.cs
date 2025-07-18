@@ -413,8 +413,6 @@ public partial class RestXRestaurantManagementContext : DbContext
 
             entity.ToTable("Table");
 
-            entity.HasIndex(e => e.Qrcode, "IX_Table_QRCode");
-
             entity.HasIndex(e => e.Qrcode, "UQ__Table__5B869AD96220ED30").IsUnique();
 
             entity.Property(e => e.IsActive).HasDefaultValue(true);

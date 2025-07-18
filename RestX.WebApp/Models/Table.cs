@@ -8,20 +8,13 @@ namespace RestX.WebApp.Models;
 [Table("Table")]
 public partial class Table : Entity<int>
 {
-    [Required]
-    [ForeignKey("Owner")]
+
     public Guid OwnerId { get; set; }
 
-    [Required]
-    [ForeignKey("TableStatus")]
     public int TableStatusId { get; set; }
 
-    [Required]
     public int TableNumber { get; set; }
 
-    [Required]
-    [MaxLength(255)]
-    [Column("QRCode")]
     public string Qrcode { get; set; } = null!;
 
     [Column(TypeName = "bit")]

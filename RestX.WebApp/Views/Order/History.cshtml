@@ -94,7 +94,7 @@
                     @foreach (var dish in cart.DishList)
                     {
                         <div class="item-row" dish-id="@dish.DishId">
-                            <img src="@dish.ImgUrl" class="item-image" />
+                            <img src="@(Url.Content(dish.ImgUrl))" class="item-image" />
                             <div class="item-info">
                                 <p dish-name="@dish.DishName">@dish.Quantity × @dish.DishName</p>
                                 <p dish-price="@dish.Price">@((dish.Price * dish.Quantity).ToString("N0")) đ</p>

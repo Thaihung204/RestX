@@ -50,8 +50,8 @@
             <div class="owner-card" data-table-num="@item.TableNumber">
                 <div class="owner-card-body">
                     <label>Table @item.TableNumber</label>
-                    <img alt="qr test" src="@item.Qrcode" />
-                    <a href="@item.Qrcode" class="owner-btn owner-btn-primary" download="Table@(item.TableNumber)_qrcode_@(item.OwnerId).png">
+                    <img alt="qr test" src="@(Url.Content(item.Qrcode))" />
+                    <a href="@(Url.Content(item.Qrcode))" class="owner-btn owner-btn-primary" download="Table@(item.TableNumber)_qrcode_@(item.OwnerId).png">
                         <i class="bi bi-qr-code me-2"></i>
                         Download
                     </a>
